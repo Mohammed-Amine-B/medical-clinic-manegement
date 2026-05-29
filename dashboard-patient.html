@@ -1,0 +1,881 @@
+
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LYS MEDICAL â Espace Patient</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --navy:#0A1628;--navy-mid:#152238;--navy-light:#1E3150;
+  --gold:#C8A96E;--gold-light:#DFC28D;--gold-pale:#F5EDD9;
+  --white:#FAFAF8;--bg:#F2F0EA;--text:#2C3A4A;--muted:#8A9BB5;
+  --surface:#FFFFFF;--sidebar-w:260px;
+  --green:#3DAA70;--green-bg:#EAF7F0;--red:#E05050;--red-bg:#FBE9E9;
+  --blue:#378ADD;--blue-bg:#E8F3FB;--purple:#7C5CBF;--purple-bg:#F0EBFA;
+}
+html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);}
+
+/* ===== RTL SUPPORT ===== */
+html[dir="rtl"] body { font-family: 'Segoe UI', 'Tahoma', 'Arial', sans-serif; }
+html[dir="rtl"] .app { flex-direction: row-reverse; }
+html[dir="rtl"] .sb-logo { flex-direction: row-reverse; }
+html[dir="rtl"] .sb-role-badge { flex-direction: row-reverse; }
+html[dir="rtl"] .nav-item { flex-direction: row-reverse; text-align: right; }
+html[dir="rtl"] .nav-item.active::before { left: auto; right: 0; border-radius: 3px 0 0 3px; }
+html[dir="rtl"] .nav-badge { margin-left: 0; margin-right: auto; }
+html[dir="rtl"] .sb-user { flex-direction: row-reverse; }
+html[dir="rtl"] .sb-user > div { text-align: right; }
+html[dir="rtl"] .topbar { flex-direction: row-reverse; }
+html[dir="rtl"] .topbar-title { text-align: right; }
+html[dir="rtl"] .welcome-band { flex-direction: row-reverse; }
+html[dir="rtl"] .wb-rdv { text-align: left; }
+html[dir="rtl"] .wb-rdv-label { text-align: left; }
+html[dir="rtl"] .wb-rdv-date { text-align: left; }
+html[dir="rtl"] .wb-rdv-med { text-align: left; }
+html[dir="rtl"] .card-head { flex-direction: row-reverse; }
+html[dir="rtl"] .rdv-item { flex-direction: row-reverse; }
+html[dir="rtl"] .rdv-info { text-align: right; }
+html[dir="rtl"] .ord-item { flex-direction: row-reverse; }
+html[dir="rtl"] .ord-info { text-align: right; }
+html[dir="rtl"] .sc-icon { float: left; }
+html[dir="rtl"] .sc-label,.sc-value,.sc-info { text-align: right; }
+html[dir="rtl"] .vital-row { direction: rtl; }
+html[dir="rtl"] .ptable th, html[dir="rtl"] .ptable td { text-align: right; }
+html[dir="rtl"] .welcome-band::before { right: auto; left: -40px; }
+
+/* ===== LANGUAGE SWITCHER ===== */
+.lang-switcher {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  background: var(--bg);
+  border-radius: 10px;
+  padding: 3px;
+  border: 1px solid rgba(0,0,0,0.08);
+  flex-shrink: 0;
+}
+.lang-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 7px;
+  border: none;
+  background: transparent;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.lang-btn .flag { font-size: 14px; line-height: 1; }
+.lang-btn:hover { color: var(--navy); }
+.lang-btn.active {
+  background: var(--surface);
+  color: var(--blue);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+}
+html[dir="rtl"] .lang-btn { font-family: 'Segoe UI', Tahoma, Arial, sans-serif; }
+
+.app{display:flex;height:100vh;overflow:hidden;}
+.sidebar{width:var(--sidebar-w);min-width:var(--sidebar-w);background:var(--navy);display:flex;flex-direction:column;overflow:hidden;}
+.sb-logo{display:flex;align-items:center;gap:12px;padding:28px 24px 24px;border-bottom:1px solid rgba(200,169,110,0.1);}
+.sb-logo-icon{width:34px;height:34px;background:rgba(200,169,110,0.12);border-radius:9px;display:flex;align-items:center;justify-content:center;}
+.sb-logo-icon svg{width:18px;height:18px;}
+.sb-logo-name{font-family:'Cormorant Garamond',serif;font-size:15px;font-weight:600;color:var(--white);letter-spacing:2px;text-transform:uppercase;}
+.sb-logo-sub{font-size:9.5px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;}
+.sb-role-badge{margin:14px 16px;background:rgba(55,138,221,0.12);border:1px solid rgba(55,138,221,0.2);border-radius:10px;padding:10px 14px;display:flex;align-items:center;gap:10px;}
+.srb-dot{width:8px;height:8px;border-radius:50%;background:var(--blue);flex-shrink:0;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.4;}}
+.srb-text{font-size:12px;color:#7EC8E3;font-weight:500;}
+.sb-section-label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(138,155,181,0.5);padding:16px 24px 8px;}
+.sb-nav{display:flex;flex-direction:column;gap:2px;padding:0 12px;}
+.nav-item{display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:10px;cursor:pointer;transition:all 0.2s;color:var(--muted);font-size:13.5px;font-weight:400;text-decoration:none;position:relative;}
+.nav-item svg{width:16px;height:16px;flex-shrink:0;opacity:0.7;}
+.nav-item:hover{background:rgba(255,255,255,0.05);color:var(--white);}
+.nav-item.active{background:rgba(55,138,221,0.15);color:#7EC8E3;}
+.nav-item.active svg{opacity:1;color:var(--blue);}
+.nav-item.active::before{content:'';position:absolute;left:0;top:25%;bottom:25%;width:3px;border-radius:0 3px 3px 0;background:var(--blue);}
+.nav-badge{margin-left:auto;font-size:10px;font-weight:500;background:var(--blue);color:var(--white);padding:2px 7px;border-radius:20px;}
+.sb-bottom{margin-top:auto;padding:16px 12px 24px;}
+.sb-user{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:10px;background:rgba(255,255,255,0.05);}
+.avatar{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;background:rgba(55,138,221,0.2);color:#7EC8E3;}
+.sb-user-name{font-size:13px;font-weight:500;color:var(--white);}
+.sb-user-role{font-size:11px;color:var(--muted);}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+.topbar{background:var(--surface);border-bottom:1px solid rgba(0,0,0,0.06);padding:0 28px;height:64px;display:flex;align-items:center;gap:14px;flex-shrink:0;}
+.topbar-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:500;color:var(--navy);flex:1;}
+.topbar-title em{font-style:italic;color:var(--blue);}
+.tb-icon{width:38px;height:38px;border-radius:10px;background:var(--bg);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--muted);transition:all 0.2s;text-decoration:none;position:relative;}
+.tb-icon:hover{background:var(--blue-bg);color:var(--blue);}
+.content{flex:1;overflow-y:auto;padding:28px;}
+.content::-webkit-scrollbar{width:5px;}
+.content::-webkit-scrollbar-thumb{background:#D5D0C8;border-radius:10px;}
+.welcome-band{background:linear-gradient(135deg,var(--navy) 0%,#1A2E4A 100%);border-radius:16px;padding:26px 30px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;position:relative;overflow:hidden;}
+.welcome-band::before{content:'';position:absolute;right:-40px;top:-40px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(55,138,221,0.15) 0%,transparent 70%);}
+.wb-text h2{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:400;color:var(--white);margin-bottom:4px;}
+.wb-text h2 em{color:#7EC8E3;font-style:italic;}
+.wb-text p{font-size:13px;color:var(--muted);font-weight:300;}
+.wb-rdv{background:rgba(255,255,255,0.07);border:1px solid rgba(55,138,221,0.2);border-radius:12px;padding:14px 18px;text-align:right;flex-shrink:0;}
+.wb-rdv-label{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
+.wb-rdv-date{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:500;color:#7EC8E3;line-height:1.2;}
+.wb-rdv-med{font-size:11px;color:var(--muted);margin-top:2px;}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px;}
+.stat-card{background:var(--surface);border-radius:13px;padding:18px 20px;border:1px solid rgba(0,0,0,0.05);transition:transform 0.2s;}
+.stat-card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,0.07);}
+.sc-icon{float:right;width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;}
+.sc-icon svg{width:17px;height:17px;}
+.sc-icon.blue{background:var(--blue-bg);} .sc-icon.blue svg{color:var(--blue);}
+.sc-icon.gold{background:var(--gold-pale);} .sc-icon.gold svg{color:var(--gold);}
+.sc-icon.green{background:var(--green-bg);} .sc-icon.green svg{color:var(--green);}
+.sc-icon.purple{background:var(--purple-bg);} .sc-icon.purple svg{color:var(--purple);}
+.sc-label{font-size:11px;color:var(--muted);letter-spacing:0.8px;text-transform:uppercase;margin-bottom:8px;}
+.sc-value{font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:500;color:var(--navy);line-height:1;margin-bottom:4px;}
+.sc-info{font-size:11.5px;color:var(--muted);}
+.two-col{display:grid;grid-template-columns:1.4fr 1fr;gap:18px;margin-bottom:24px;}
+.card{background:var(--surface);border-radius:13px;border:1px solid rgba(0,0,0,0.05);overflow:hidden;}
+.card-head{display:flex;align-items:center;justify-content:space-between;padding:16px 20px 12px;border-bottom:1px solid rgba(0,0,0,0.05);}
+.card-title{font-size:13px;font-weight:500;color:var(--navy);}
+.card-action{font-size:12px;color:var(--blue);cursor:pointer;background:none;border:none;font-family:'DM Sans',sans-serif;text-decoration:none;}
+.card-action:hover{color:var(--navy);}
+.rdv-item{display:flex;align-items:center;gap:14px;padding:14px 20px;border-bottom:1px solid rgba(0,0,0,0.04);cursor:pointer;transition:background 0.15s;}
+.rdv-item:last-child{border-bottom:none;}
+.rdv-item:hover{background:rgba(55,138,221,0.03);}
+.rdv-date-box{width:44px;height:44px;border-radius:10px;background:var(--blue-bg);display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;}
+.rdv-day{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:500;color:var(--blue);line-height:1;}
+.rdv-month{font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--blue);opacity:0.7;}
+.rdv-info{flex:1;}
+.rdv-title{font-size:13px;font-weight:500;color:var(--navy);}
+.rdv-meta{font-size:11.5px;color:var(--muted);font-weight:300;margin-top:1px;}
+.badge{font-size:10px;padding:3px 9px;border-radius:20px;font-weight:500;}
+.b-green{background:var(--green-bg);color:var(--green);}
+.b-blue{background:var(--blue-bg);color:var(--blue);}
+.b-amber{background:#FFF4E0;color:#C27D1A;}
+.b-grey{background:#F0F0F0;color:#888;}
+.ord-item{display:flex;align-items:center;gap:14px;padding:12px 20px;border-bottom:1px solid rgba(0,0,0,0.04);}
+.ord-item:last-child{border-bottom:none;}
+.ord-icon{width:38px;height:38px;border-radius:9px;background:var(--gold-pale);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.ord-icon svg{width:17px;height:17px;color:var(--gold);}
+.ord-info{flex:1;}
+.ord-title{font-size:13px;font-weight:500;color:var(--navy);}
+.ord-meta{font-size:11.5px;color:var(--muted);font-weight:300;}
+.vital-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:16px 20px;}
+.vital-item{background:var(--bg);border-radius:10px;padding:12px 14px;text-align:center;}
+.vital-val{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:500;color:var(--navy);}
+.vital-unit{font-size:10px;color:var(--muted);font-weight:300;}
+.vital-lbl{font-size:10.5px;color:var(--muted);margin-top:2px;letter-spacing:0.5px;}
+.vital-status{display:inline-block;font-size:9px;padding:2px 7px;border-radius:20px;margin-top:4px;font-weight:500;}
+.vs-ok{background:var(--green-bg);color:var(--green);}
+.vs-warn{background:#FFF4E0;color:#C27D1A;}
+.ptable{width:100%;border-collapse:collapse;}
+.ptable th{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);padding:10px 20px;text-align:left;border-bottom:1px solid rgba(0,0,0,0.05);}
+.ptable td{font-size:13px;padding:14px 20px;border-bottom:1px solid rgba(0,0,0,0.04);vertical-align:middle;}
+.ptable tr:last-child td{border-bottom:none;}
+.ptable tr:hover td{background:rgba(55,138,221,0.02);}
+.p-name{font-weight:500;color:var(--navy);}
+.p-muted{font-size:11px;color:var(--muted);}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+.stat-card,.card,.welcome-band{animation:fadeUp 0.35s ease both;}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="sb-logo">
+      <div class="sb-logo-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M12 4v16M4 12h16" stroke="#C8A96E" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="12" r="9" stroke="#C8A96E" stroke-width="1.5" opacity="0.4"/></svg></div>
+      <div><div class="sb-logo-name">Lys Medical</div><div class="sb-logo-sub" data-i18n="portal">Portail patient</div></div>
+    </div>
+    <div class="sb-role-badge"><span class="srb-dot"></span><span class="srb-text" data-i18n="patient_space">ð¤ Espace Patient</span></div>
+    <div class="sb-section-label" data-i18n="my_space">Mon espace</div>
+    <nav class="sb-nav">
+      <a href="dashboard-patient.html" class="nav-item active">
+        <svg viewBox="0 0 20 20" fill="none"><rect x="2" y="2" width="7" height="7" rx="2" stroke="currentColor" stroke-width="1.3"/><rect x="11" y="2" width="7" height="7" rx="2" stroke="currentColor" stroke-width="1.3"/><rect x="2" y="11" width="7" height="7" rx="2" stroke="currentColor" stroke-width="1.3"/><rect x="11" y="11" width="7" height="7" rx="2" stroke="currentColor" stroke-width="1.3"/></svg>
+        <span data-i18n="dashboard">Tableau de bord</span>
+      </a>
+      <a href="rdv-patient.html" class="nav-item">
+        <svg viewBox="0 0 20 20" fill="none"><rect x="3" y="4" width="14" height="14" rx="2" stroke="currentColor" stroke-width="1.3"/><path d="M7 2v4M13 2v4M3 9h14" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        <span data-i18n="appointments">Mes rendez-vous</span> <span class="nav-badge">1</span>
+      </a>
+      
+      <a href="ordonnance-patient.html" class="nav-item">
+        <svg viewBox="0 0 20 20" fill="none"><path d="M5 2h10a1 1 0 011 1v14a1 1 0 01-1 1H5a1 1 0 01-1-1V3a1 1 0 011-1z" stroke="currentColor" stroke-width="1.3"/><path d="M7 7h6M7 10h6M7 13h4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        <span data-i18n="prescriptions">Mes ordonnances</span>
+      </a>
+      <a href="notifications-patient.html" class="nav-item">
+        <svg viewBox="0 0 20 20" fill="none"><path d="M10 2a6 6 0 016 6c0 4 2 5 2 5H2s2-1 2-5a6 6 0 016-6z" stroke="currentColor" stroke-width="1.3"/><path d="M8 17a2 2 0 004 0" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        <span data-i18n="notifications">Notifications</span> <span class="nav-badge">2</span>
+      </a>
+    </nav>
+    <div class="sb-section-label" data-i18n="account">Compte</div>
+    <nav class="sb-nav">
+      <a href="parametres-patient.html" class="nav-item">
+        <svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="3" stroke="currentColor" stroke-width="1.3"/><path d="M10 2v2M10 16v2M2 10h2M16 10h2M4.22 4.22l1.41 1.41M14.36 14.36l1.42 1.42M4.22 15.78l1.41-1.41M14.36 5.64l1.42-1.42" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        <span data-i18n="profile">Mon profil</span>
+      </a>
+      <a href="login.html" class="nav-item" style="color:#E05050;">
+        <svg viewBox="0 0 20 20" fill="none"><path d="M9 3H4a1 1 0 00-1 1v12a1 1 0 001 1h12a1 1 0 001-1v-5" stroke="currentColor" stroke-width="1.3"/><path d="M17 3l-8 8M13 3h4v4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span data-i18n="logout">DÃ©connexion</span>
+      </a>
+    </nav>
+    <div class="sb-bottom">
+      <div class="sb-user">
+        <div class="avatar">SB</div>
+        <div><div class="sb-user-name">Sara Benlahcen</div><div class="sb-user-role" data-i18n="patient_role">Patient</div></div>
+      </div>
+    </div>
+  </aside>
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-title" data-i18n="topbar_title">Mon espace â <em>Patient</em></div>
+
+      <!-- ===== LANGUAGE SWITCHER ===== -->
+      <div class="lang-switcher" role="group" aria-label="Choisir la langue / Ø§Ø®ØªÙØ§Ø± Ø§ÙÙØºØ©">
+        <button class="lang-btn active" id="btn-fr" onclick="setLang('fr')" aria-pressed="true">
+          <span class="flag">ð«ð·</span> FranÃ§ais
+        </button>
+        <button class="lang-btn" id="btn-ar" onclick="setLang('ar')" aria-pressed="false">
+          <span class="flag">ð©ð¿</span> Ø§ÙØ¹Ø±Ø¨ÙØ©
+        </button>
+      </div>
+
+      <a href="notifications-patient.html" class="tb-icon"><svg width="16" height="16" viewBox="0 0 20 20" fill="none"><path d="M10 2a6 6 0 016 6v3l1.5 2.5H2.5L4 11V8a6 6 0 016-6z" stroke="currentColor" stroke-width="1.3"/><path d="M8 16.5a2 2 0 004 0" stroke="currentColor" stroke-width="1.3"/></svg></a>
+      <a href="parametres-patient.html" class="tb-icon"><svg width="16" height="16" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="8" r="3.5" stroke="currentColor" stroke-width="1.3"/><path d="M3 18c0-3.314 3.134-6 7-6s7 2.686 7 6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></a>
+    </div>
+
+    <div class="content">
+      <div class="welcome-band">
+        <div class="wb-text">
+          <h2 data-i18n="welcome_h2">Bonjour, <em>Sara</em></h2>
+          <p data-i18n="welcome_p">Bienvenue dans votre espace mÃ©dical personnel â LYS MEDICAL</p>
+        </div>
+        <div class="wb-rdv">
+          <div class="wb-rdv-label" data-i18n="next_appt">Prochain RDV</div>
+          <div class="wb-rdv-date" style="font-size:13px;color:var(--muted);">Chargement...</div>
+        </div>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card"><div class="sc-icon blue"><svg viewBox="0 0 20 20" fill="none"><rect x="3" y="4" width="14" height="14" rx="2" stroke="currentColor" stroke-width="1.3"/><path d="M7 2v4M13 2v4M3 9h14" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></div><div class="sc-label" data-i18n="stat_next_appt">Prochain RDV</div><div class="sc-value" style="font-size:22px;"></div><div class="sc-info">Chargement...</div></div>
+        <div class="stat-card"><div class="sc-icon gold"><svg viewBox="0 0 20 20" fill="none"><path d="M5 2h10a1 1 0 011 1v14a1 1 0 01-1 1H5a1 1 0 01-1-1V3a1 1 0 011-1z" stroke="currentColor" stroke-width="1.3"/><path d="M7 7h6M7 10h4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></div><div class="sc-label" data-i18n="stat_prescriptions">Ordonnances actives</div><div class="sc-value">0</div><div class="sc-info">Chargement...</div></div>
+        <div class="stat-card"><div class="sc-icon green"><svg viewBox="0 0 20 20" fill="none"><path d="M10 3v14M5 8l5-5 5 5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="sc-label" data-i18n="stat_visits">Visites totales</div><div class="sc-value">0</div><div class="sc-info">Chargement...</div></div>
+        <div class="stat-card"><div class="sc-icon purple"><svg viewBox="0 0 20 20" fill="none"><path d="M10 6v5M10 14v1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="10" cy="10" r="7.5" stroke="currentColor" stroke-width="1.3"/></svg></div><div class="sc-label" data-i18n="stat_results">RÃ©sultats en attente</div><div class="sc-value">0</div><div class="sc-info">Aucun resultat</div></div>
+      </div>
+      <div class="two-col">
+        <div class="card">
+          <div class="card-head"><span class="card-title" data-i18n="my_appointments">Mes rendez-vous</span><a href="rdv-patient.html#book" class="card-action" data-i18n="take_appt">+ Nouveau RDV</a></div>
+          <div class="rdv-item"><div class="rdv-date-box"><div class="rdv-day">18</div><div class="rdv-month" data-i18n="month_mars">Mars</div></div><div class="rdv-info"><div class="rdv-title" data-i18n="rdv1_title">Suivi grossesse S2</div><div class="rdv-meta">Dr. Houda Benali Â· 10h30 Â· 45 min</div></div><span class="badge b-blue" data-i18n="confirmed">ConfirmÃ©</span></div>
+          <div class="rdv-item"><div class="rdv-date-box" style="background:#EAF7F0;"><div class="rdv-day" style="color:var(--green);">28</div><div class="rdv-month" style="color:var(--green);" data-i18n="month_fev">FÃ©v</div></div><div class="rdv-info"><div class="rdv-title" data-i18n="rdv2_title">Consultation gÃ©nÃ©rale</div><div class="rdv-meta">Dr. Karim Dridi Â· 09h00 Â· 30 min</div></div><span class="badge b-grey" data-i18n="done">TerminÃ©</span></div>
+          <div class="rdv-item"><div class="rdv-date-box" style="background:#F0EDE7;"><div class="rdv-day" style="color:var(--muted);">05</div><div class="rdv-month" style="color:var(--muted);" data-i18n="month_jan">Jan</div></div><div class="rdv-info"><div class="rdv-title" data-i18n="rdv3_title">Analyse sanguine</div><div class="rdv-meta">Dr. Karim Dridi Â· 08h30 Â· 15 min</div></div><span class="badge b-grey" data-i18n="done2">TerminÃ©</span></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:18px;">
+          <div class="card">
+            <div class="card-head"><span class="card-title" data-i18n="my_vitals">Mes constantes</span></div>
+            <div class="vital-row">
+              <div class="vital-item"><div class="vital-val" id="vitalPoids">--<span class="vital-unit">kg</span></div><div class="vital-lbl" data-i18n="weight">Poids</div><span class="vital-status vs-ok" data-i18n="normal">Normal</span></div>
+              <div class="vital-item"><div class="vital-val" id="vitalTension">--</div><div class="vital-lbl" data-i18n="bp">Tension</div><span class="vital-status vs-ok" data-i18n="normal2">Normal</span></div>
+              <div class="vital-item"><div class="vital-val" id="vitalSpo2">--<span class="vital-unit">%</span></div><div class="vital-lbl">SpOâ</div><span class="vital-status vs-ok" data-i18n="excellent">Excellent</span></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-head"><span class="card-title" data-i18n="my_prescriptions">Mes ordonnances</span><a href="ordonnance-patient.html" class="card-action" data-i18n="see_all">Voir tout â</a></div>
+            <div class="ord-item"><div class="ord-icon"><svg viewBox="0 0 20 20" fill="none"><path d="M5 2h10a1 1 0 011 1v14a1 1 0 01-1 1H5a1 1 0 01-1-1V3a1 1 0 011-1z" stroke="currentColor" stroke-width="1.3"/><path d="M7 7h6M7 10h4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></div><div class="ord-info"><div class="ord-title" data-i18n="presc1">Vitamines prÃ©natales</div><div class="ord-meta">Dr. Dridi Â· 28 fÃ©v. 2026</div></div><span class="badge b-green" data-i18n="active">Active</span></div>
+            <div class="ord-item"><div class="ord-icon"><svg viewBox="0 0 20 20" fill="none"><path d="M5 2h10a1 1 0 011 1v14a1 1 0 01-1 1H5a1 1 0 01-1-1V3a1 1 0 011-1z" stroke="currentColor" stroke-width="1.3"/><path d="M7 7h6M7 10h4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></div><div class="ord-info"><div class="ord-title">Ventoline 100mcg</div><div class="ord-meta">Dr. Dridi Â· 15 jan. 2026</div></div><span class="badge b-amber" data-i18n="renew">Ã renouveler</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card" style="margin:0 28px 28px;">
+  <div class="card-head">
+    <span class="card-title" data-i18n="medical_history">Historique mÃ©dical</span>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <select style="border:1.5px solid #E8E6E0;border-radius:8px;padding:5px 10px;font-size:12px;font-family:'DM Sans',sans-serif;color:var(--navy);background:var(--white);outline:none;cursor:pointer;">
+        <option data-i18n="all_period">Toute la pÃ©riode</option>
+        <option>2026</option>
+        <option>2025</option>
+        <option>2024</option>
+      </select>
+    </div>
+  </div>
+  <table class="ptable">
+    <thead>
+      <tr>
+        <th data-i18n="th_date">Date</th>
+        <th data-i18n="th_doctor">MÃ©decin</th>
+        <th data-i18n="th_type">Type</th>
+        <th data-i18n="th_reason">Motif de consultation</th>
+        <th data-i18n="th_duration">DurÃ©e</th>
+        <th data-i18n="th_doc">Document</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td><span class="p-name">18 mars 2026</span><br><span class="p-muted" data-i18n="upcoming">Ã venir</span></td><td>Dr. Houda Benali</td><td><span class="badge" style="background:#F0EBFA;color:#7C5CBF;" data-i18n="pregnancy_badge">ð¤° Grossesse</span></td><td data-i18n="rdv1_title2">Suivi grossesse S2</td><td>45 min</td><td><span class="badge b-blue" data-i18n="confirmed_rdv">RDV confirmÃ©</span></td></tr>
+      <tr><td><span class="p-name">12 mars 2026</span></td><td>Dr. Samira Meziani</td><td><span class="badge" style="background:var(--blue-bg);color:var(--blue);" data-i18n="consult_badge">ð©º Consultation</span></td><td data-i18n="hist2_reason">Bilan de santÃ© annuel</td><td>45 min</td><td><span class="badge b-green" data-i18n="hist_presc">Ordonnance</span></td></tr>
+      <tr><td><span class="p-name">28 fÃ©v. 2026</span></td><td>Dr. Karim Dridi</td><td><span class="badge" style="background:var(--green-bg);color:var(--green);" data-i18n="followup_badge">ð Suivi</span></td><td data-i18n="hist3_reason">Rhume / FiÃ¨vre 38.5Â°</td><td>20 min</td><td><span class="badge b-grey" data-i18n="archived">ArchivÃ©</span></td></tr>
+      <tr><td><span class="p-name">05 jan. 2026</span></td><td>Dr. Karim Dridi</td><td><span class="badge" style="background:#FFF4E0;color:#C27D1A;" data-i18n="analysis_badge">ð§ª Analyse</span></td><td data-i18n="hist4_reason">Bilan sanguin complet</td><td>15 min</td><td><span class="badge b-amber" data-i18n="result_pending">RÃ©sultat en attente</span></td></tr>
+      <tr><td><span class="p-name">14 oct. 2025</span></td><td>Dr. Houda Benali</td><td><span class="badge" style="background:var(--red-bg);color:var(--red);" data-i18n="emergency_badge">ð¨ Urgence</span></td><td data-i18n="hist5_reason">Crise d'asthme lÃ©gÃ¨re</td><td>30 min</td><td><span class="badge b-green" data-i18n="hist_presc2">Ordonnance</span></td></tr>
+      <tr><td><span class="p-name">03 aoÃ»t 2025</span></td><td>Dr. Samira Meziani</td><td><span class="badge" style="background:var(--blue-bg);color:var(--blue);" data-i18n="consult_badge2">ð©º Consultation</span></td><td data-i18n="hist6_reason">Consultation prÃ©-grossesse</td><td>60 min</td><td><span class="badge b-grey" data-i18n="archived2">ArchivÃ©</span></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<script>
+const ALLOWED_ROLES = ['patient', 'admin'];
+const ROLE_REDIRECTS = {
+  admin: 'admin.html',
+  secretaire: 'dashboard-secretaire.html',
+  medecin: 'dashboard-medecin.html',
+  patient: 'dashboard-patient.html'
+};
+
+async function checkSession(){
+  try{
+    const res = await fetch('backend/check_session.php', { credentials: 'same-origin' });
+    const data = await res.json();
+
+    if(!data.logged || !data.user){
+      window.location.href = 'login.html';
+      return;
+    }
+
+    const role = String(data.user.role || '').toLowerCase();
+    if(!ALLOWED_ROLES.includes(role)){ 
+      window.location.href = ROLE_REDIRECTS[role] || 'login.html';
+    }
+  }catch(e){
+    window.location.href = 'login.html';
+  }
+}
+
+async function logout(){
+  await fetch('backend/logout.php');
+  window.location.href = 'login.html';
+}
+
+async function loadPatientProfile(){
+  try{
+    const res = await fetch('backend/patients/get_my_profile.php', { credentials: 'same-origin' });
+    const data = await res.json();
+
+    if(!data.success || !data.patient){
+      console.warn('Failed to load patient profile');
+      return;
+    }
+
+    const patient = data.patient;
+    const prenom = String(patient.prenom || '').trim();
+    const nom = String(patient.nom || '').trim();
+    const fullName = `${prenom} ${nom}`.trim() || 'Patient';
+
+    // Update sidebar user name
+    const userNameEl = document.querySelector('.sb-user-name');
+    if(userNameEl){
+      userNameEl.textContent = fullName;
+    }
+
+    // Update avatar initials
+    const initials = (prenom.charAt(0) + nom.charAt(0)).toUpperCase() || 'P';
+    const avatarEl = document.querySelector('.avatar');
+    if(avatarEl){
+      avatarEl.textContent = initials;
+    }
+
+    // Update welcome greeting with first name only
+    const welcomeH2 = document.querySelector('[data-i18n="welcome_h2"]');
+    if(welcomeH2){
+      const lang = document.documentElement.getAttribute('lang') || 'fr';
+      if(lang === 'ar'){
+        welcomeH2.innerHTML = `ÙØ±Ø­Ø¨Ø§ÙØ <em>${prenom}</em>`;
+      } else {
+        welcomeH2.innerHTML = `Bonjour, <em>${prenom}</em>`;
+      }
+    }
+  }catch(e){
+    console.error('Error loading patient profile:', e);
+  }
+}
+
+function formatDateHeure(dateHeure){
+  if(!dateHeure) return { date: '', time: '' };
+  try {
+    const dt = new Date(dateHeure);
+    const day = dt.getDate();
+    const month = dt.toLocaleString('fr-FR', { month: 'short' });
+    const time = dt.toLocaleString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+    return { date: `${day}`, month: month, time: time };
+  } catch(e) {
+    return { date: '', time: '' };
+  }
+}
+
+function updateNextRdvDisplay(nextRdv){
+  const wbRdv = document.querySelector('.wb-rdv');
+  const statNextAppt = document.querySelector('.stat-card:nth-child(1) .sc-value');
+  const statNextInfo = document.querySelector('.stat-card:nth-child(1) .sc-info');
+
+  if(!nextRdv){
+    if(wbRdv){
+      wbRdv.innerHTML = `
+        <div class="wb-rdv-label" data-i18n="next_appt">Prochain RDV</div>
+        <div class="wb-rdv-date" style="font-size:13px;color:var(--muted);">Aucun</div>
+      `;
+    }
+    if(statNextAppt) statNextAppt.textContent = 'Aucun';
+    if(statNextInfo) statNextInfo.textContent = 'Aucun RDV a venir';
+    return;
+  }
+
+  const { date, month, time } = formatDateHeure(nextRdv.dateHeure);
+  const medecinFull = `${nextRdv.medecin_prenom || ''} ${nextRdv.medecin_nom || ''}`.trim() || 'Medecin';
+  const spec = nextRdv.medecin_specialite ? ` - ${nextRdv.medecin_specialite}` : '';
+  const dateLabel = `${date} ${month.charAt(0).toUpperCase() + month.slice(1)}`;
+
+  if(wbRdv){
+    wbRdv.innerHTML = `
+      <div class="wb-rdv-label" data-i18n="next_appt">Prochain RDV</div>
+      <div class="wb-rdv-date">${dateLabel}<br>${time}</div>
+      <div class="wb-rdv-med">${medecinFull}${spec}</div>
+    `;
+  }
+  if(statNextAppt) statNextAppt.textContent = dateLabel;
+  if(statNextInfo) statNextInfo.textContent = `${medecinFull} - ${time}`;
+}
+
+function updateNumericStat(cardIndex, value, info){
+  const valueEl = document.querySelector(`.stat-card:nth-child(${cardIndex}) .sc-value`);
+  const infoEl = document.querySelector(`.stat-card:nth-child(${cardIndex}) .sc-info`);
+  if(valueEl) valueEl.textContent = String(value);
+  if(infoEl) infoEl.textContent = info;
+}
+
+async function loadPatientDashboardStats(){
+  try{
+    const res = await fetch('backend/patients/get_dashboard_stats.php', { credentials: 'same-origin' });
+    const data = await res.json();
+
+    if(!data.success || !data.stats){
+      console.warn('Failed to load patient dashboard stats');
+      return;
+    }
+
+    updateNextRdvDisplay(data.stats.prochain_rdv || null);
+    updateNumericStat(2, data.stats.ordonnances_actives ?? 0, 'Total patient');
+    updateNumericStat(3, data.stats.visites_totales ?? 0, 'RDV termines');
+    updateNumericStat(4, data.stats.resultats_en_attente ?? 0, 'Aucun resultat');
+  }catch(e){
+    console.error('Error loading patient dashboard stats:', e);
+  }
+}
+
+function getStatusBadgeClass(statut){
+  const s = String(statut || '').toLowerCase();
+  if(s === 'confirmÃ©' || s === 'en_attente') return 'b-blue';
+  if(s === 'terminÃ©' || s === 'fait') return 'b-grey';
+  return 'b-grey';
+}
+
+function getStatusBadgeText(statut){
+  const s = String(statut || '').toLowerCase();
+  if(s === 'confirmÃ©') return 'ConfirmÃ©';
+  if(s === 'en_attente') return 'En attente';
+  if(s === 'terminÃ©' || s === 'fait') return 'TerminÃ©';
+  return String(statut || '');
+}
+
+async function loadPatientRDV(){
+  try{
+    const res = await fetch('backend/rdv/get_my_rdv.php', { credentials: 'same-origin' });
+    const data = await res.json();
+
+    if(!data.success || !Array.isArray(data.rdv)){
+      console.warn('Failed to load patient RDV');
+      return;
+    }
+
+    const rdvs = data.rdv;
+
+    // Update welcome band with next RDV (first in list since ordered DESC)
+    if(rdvs.length > 0){
+      const nextRdv = rdvs[rdvs.length - 1]; // Get last one (earliest future)
+      const { date, month, time } = formatDateHeure(nextRdv.dateHeure);
+      const medecin_full = `${nextRdv.medecin_prenom || ''} ${nextRdv.medecin_nom || ''}`.trim() || 'MÃ©decin';
+      const spec = nextRdv.medecin_specialite ? ` â ${nextRdv.medecin_specialite}` : '';
+
+      const wbRdv = document.querySelector('.wb-rdv');
+      if(wbRdv){
+        wbRdv.innerHTML = `
+          <div class="wb-rdv-label" data-i18n="next_appt">Prochain RDV</div>
+          <div class="wb-rdv-date">${date} ${month.charAt(0).toUpperCase() + month.slice(1)}<br>${time}</div>
+          <div class="wb-rdv-med">${medecin_full}${spec}</div>
+        `;
+      }
+
+      // Update stat card with next RDV info
+      const statNextAppt = document.querySelector('.stat-card:nth-child(1) .sc-value');
+      const statNextInfo = document.querySelector('.stat-card:nth-child(1) .sc-info');
+      if(statNextAppt){
+        statNextAppt.textContent = `${date} ${month.charAt(0).toUpperCase() + month.slice(1)}`;
+      }
+      if(statNextInfo){
+        statNextInfo.textContent = `${medecin_full} Â· ${time}`;
+      }
+    } else {
+      // No RDVs - clear welcome band
+      const wbRdv = document.querySelector('.wb-rdv');
+      if(wbRdv){
+        wbRdv.innerHTML = `
+          <div class="wb-rdv-label" data-i18n="next_appt">Prochain RDV</div>
+          <div class="wb-rdv-date" style="font-size:13px;color:var(--muted);">Aucun</div>
+        `;
+      }
+    }
+
+    // Render RDV items in the card
+    const rdvContainer = document.querySelector('.card .rdv-item')?.parentElement;
+    if(rdvContainer){
+      // Remove old RDV items (keep header and button)
+      const oldItems = rdvContainer.querySelectorAll('.rdv-item');
+      oldItems.forEach(item => item.remove());
+
+      if(rdvs.length === 0){
+        // Add empty state
+        const emptyDiv = document.createElement('div');
+        emptyDiv.style.padding = '20px';
+        emptyDiv.style.textAlign = 'center';
+        emptyDiv.style.color = 'var(--muted)';
+        emptyDiv.style.fontSize = '13px';
+        emptyDiv.innerHTML = 'Aucun rendez-vous pour le moment';
+        rdvContainer.appendChild(emptyDiv);
+      } else {
+        rdvs.forEach(rdv => {
+          const { date, month, time } = formatDateHeure(rdv.dateHeure);
+          const medecin_full = `${rdv.medecin_prenom || ''} ${rdv.medecin_nom || ''}`.trim() || 'MÃ©decin';
+          const duree = rdv.duree ? ` Â· ${rdv.duree} min` : '';
+          const badgeClass = getStatusBadgeClass(rdv.statut);
+          const badgeText = getStatusBadgeText(rdv.statut);
+          const type = rdv.typeConsultation || 'Consultation';
+
+          const rdvItem = document.createElement('div');
+          rdvItem.className = 'rdv-item';
+          rdvItem.innerHTML = `
+            <div class="rdv-date-box">
+              <div class="rdv-day">${date}</div>
+              <div class="rdv-month">${month.charAt(0).toUpperCase() + month.slice(1)}</div>
+            </div>
+            <div class="rdv-info">
+              <div class="rdv-title">${type}</div>
+              <div class="rdv-meta">${medecin_full} Â· ${time}${duree}</div>
+            </div>
+            <span class="badge ${badgeClass}">${badgeText}</span>
+          `;
+          rdvContainer.appendChild(rdvItem);
+        });
+      }
+    }
+  }catch(e){
+    console.error('Error loading patient RDV:', e);
+  }
+}
+
+async function loadPatientConstantes(){
+  try{
+    const res = await fetch('backend/patients/get_constantes.php', { credentials: 'same-origin' });
+    const data = await res.json();
+
+    if(!data.success || !data.constantes){
+      console.warn('Failed to load patient constantes');
+      return;
+    }
+
+    const constantes = data.constantes;
+    const poidsEl = document.getElementById('vitalPoids');
+    const tensionEl = document.getElementById('vitalTension');
+    const spo2El = document.getElementById('vitalSpo2');
+
+    if(poidsEl){
+      const poids = constantes.poids !== null && constantes.poids !== undefined && constantes.poids !== ''
+        ? Number(constantes.poids).toLocaleString('fr-FR', { maximumFractionDigits: 1 })
+        : '--';
+      poidsEl.innerHTML = `${poids}<span class="vital-unit">kg</span>`;
+    }
+
+    if(tensionEl){
+      tensionEl.textContent = constantes.tension || '--';
+    }
+
+    if(spo2El){
+      const spo2 = constantes.spo2 !== null && constantes.spo2 !== undefined && constantes.spo2 !== '' ? constantes.spo2 : '--';
+      spo2El.innerHTML = `${spo2}<span class="vital-unit">%</span>`;
+    }
+  }catch(e){
+    console.error('Error loading patient constantes:', e);
+  }
+}
+async function loadPatientOrdonnances(){
+  try{
+    const res = await fetch('backend/ordonnance/get_my_ordonnances_patient.php', { credentials: 'same-origin' });
+    const data = await res.json();
+
+    if(!data.success || !Array.isArray(data.ordonnances)){
+      console.warn('Failed to load patient ordonnances');
+      return;
+    }
+
+    const ordonnances = data.ordonnances;
+    const ordContainer = document.querySelector('.card .ord-item')?.parentElement;
+
+    if(!ordContainer) return;
+
+    // Remove old ord items (keep header)
+    const oldItems = ordContainer.querySelectorAll('.ord-item');
+    oldItems.forEach(item => item.remove());
+
+    if(ordonnances.length === 0){
+      // Add empty state
+      const emptyDiv = document.createElement('div');
+      emptyDiv.style.padding = '20px';
+      emptyDiv.style.textAlign = 'center';
+      emptyDiv.style.color = 'var(--muted)';
+      emptyDiv.style.fontSize = '13px';
+      emptyDiv.innerHTML = 'Aucune ordonnance disponible';
+      ordContainer.appendChild(emptyDiv);
+    } else {
+      ordonnances.slice(0, 2).forEach(ord => { // Show only first 2
+        const dateStr = ord.date ? new Date(ord.date).toLocaleDateString('fr-FR', {
+          day: 'numeric',
+          month: 'short',
+          year: 'numeric'
+        }) : 'Date inconnue';
+
+        const statusClass = ord.statut === 'active' ? 'b-green' : 'b-amber';
+        const statusText = ord.statut === 'active' ? 'Active' : 'Ã renouveler';
+
+        const ordItem = document.createElement('div');
+        ordItem.className = 'ord-item';
+        ordItem.innerHTML = `
+          <div class="ord-icon"><svg viewBox="0 0 20 20" fill="none"><path d="M5 2h10a1 1 0 011 1v14a1 1 0 01-1 1H5a1 1 0 01-1-1V3a1 1 0 011-1z" stroke="currentColor" stroke-width="1.3"/><path d="M7 7h6M7 10h4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></div>
+          <div class="ord-info">
+            <div class="ord-title">Ordonnance #${ord.idOrdonnance}</div>
+            <div class="ord-meta">${ord.medecin_name} Â· ${dateStr}</div>
+          </div>
+          <span class="badge ${statusClass}">${statusText}</span>
+        `;
+        ordContainer.appendChild(ordItem);
+      });
+    }
+  }catch(e){
+    console.error('Error loading patient ordonnances:', e);
+  }
+}
+
+window.addEventListener('DOMContentLoaded', checkSession);
+
+document.addEventListener('DOMContentLoaded', async function(){
+  const logoutLink = Array.from(document.querySelectorAll('a[href="login.html"]'))
+    .find(a => a.textContent.includes('DÃ©connexion'));
+  if(logoutLink){
+    logoutLink.href = '#';
+    logoutLink.addEventListener('click', function(e){
+      e.preventDefault();
+      logout();
+    });
+  }
+  
+  // Load patient profile and RDV data
+  loadPatientProfile();
+  await loadPatientRDV();
+  loadPatientOrdonnances();
+  loadPatientConstantes();
+  loadPatientDashboardStats();
+});
+
+// ==========================================
+// TRANSLATIONS â FR / AR
+// ==========================================
+const translations = {
+  fr: {
+    portal: "Portail patient",
+    patient_space: "ð¤ Espace Patient",
+    my_space: "Mon espace",
+    dashboard: "Tableau de bord",
+    appointments: "Mes rendez-vous",
+    medical_file: "Mon dossier mÃ©dical",
+    prescriptions: "Mes ordonnances",
+    notifications: "Notifications",
+    account: "Compte",
+    profile: "Mon profil",
+    logout: "DÃ©connexion",
+    patient_role: "Patient",
+    topbar_title: "Mon espace â <em>Patient</em>",
+    welcome_h2: "Bonjour, <em>Sara</em>",
+    welcome_p: "Bienvenue dans votre espace mÃ©dical personnel â LYS MEDICAL",
+    next_appt: "Prochain RDV",
+    stat_next_appt: "Prochain RDV",
+    stat_prescriptions: "Ordonnances actives",
+    stat_new: "â 1 nouvelle",
+    stat_visits: "Visites totales",
+    stat_since: "depuis 2024",
+    stat_results: "RÃ©sultats en attente",
+    stat_blood: "analyse sanguine",
+    my_appointments: "Mes rendez-vous",
+    take_appt: "+ Nouveau RDV",
+    month_mars: "Mars",
+    month_fev: "FÃ©v",
+    month_jan: "Jan",
+    rdv1_title: "Suivi grossesse S2",
+    rdv2_title: "Consultation gÃ©nÃ©rale",
+    rdv3_title: "Analyse sanguine",
+    confirmed: "ConfirmÃ©",
+    done: "TerminÃ©",
+    done2: "TerminÃ©",
+    new_appt_btn: "Prendre un nouveau rendez-vous",
+    my_vitals: "Mes constantes",
+    weight: "Poids",
+    bp: "Tension",
+    normal: "Normal",
+    normal2: "Normal",
+    excellent: "Excellent",
+    my_prescriptions: "Mes ordonnances",
+    see_all: "Voir tout â",
+    presc1: "Vitamines prÃ©natales",
+    active: "Active",
+    renew: "Ã renouveler",
+    medical_history: "Historique mÃ©dical",
+    all_period: "Toute la pÃ©riode",
+    th_date: "Date",
+    th_doctor: "MÃ©decin",
+    th_type: "Type",
+    th_reason: "Motif de consultation",
+    th_duration: "DurÃ©e",
+    th_doc: "Document",
+    upcoming: "Ã venir",
+    pregnancy_badge: "ð¤° Grossesse",
+    consult_badge: "ð©º Consultation",
+    consult_badge2: "ð©º Consultation",
+    followup_badge: "ð Suivi",
+    analysis_badge: "ð§ª Analyse",
+    emergency_badge: "ð¨ Urgence",
+    rdv1_title2: "Suivi grossesse S2",
+    hist2_reason: "Bilan de santÃ© annuel",
+    hist3_reason: "Rhume / FiÃ¨vre 38.5Â°",
+    hist4_reason: "Bilan sanguin complet",
+    hist5_reason: "Crise d'asthme lÃ©gÃ¨re",
+    hist6_reason: "Consultation prÃ©-grossesse",
+    confirmed_rdv: "RDV confirmÃ©",
+    hist_presc: "Ordonnance",
+    hist_presc2: "Ordonnance",
+    archived: "ArchivÃ©",
+    archived2: "ArchivÃ©",
+    result_pending: "RÃ©sultat en attente"
+  },
+  ar: {
+    portal: "Ø¨ÙØ§Ø¨Ø© Ø§ÙÙØ±ÙØ¶",
+    patient_space: "ð¤ ÙØ¶Ø§Ø¡ Ø§ÙÙØ±ÙØ¶",
+    my_space: "ÙØ¶Ø§Ø¦Ù",
+    dashboard: "ÙÙØ­Ø© Ø§ÙØªØ­ÙÙ",
+    appointments: "ÙÙØ§Ø¹ÙØ¯Ù",
+    medical_file: "ÙÙÙÙ Ø§ÙØ·Ø¨Ù",
+    prescriptions: "ÙØµÙØ§ØªÙ Ø§ÙØ·Ø¨ÙØ©",
+    notifications: "Ø§ÙØ¥Ø´Ø¹Ø§Ø±Ø§Øª",
+    account: "Ø§ÙØ­Ø³Ø§Ø¨",
+    profile: "ÙÙÙÙ Ø§ÙØ´Ø®ØµÙ",
+    logout: "ØªØ³Ø¬ÙÙ Ø§ÙØ®Ø±ÙØ¬",
+    patient_role: "ÙØ±ÙØ¶",
+    topbar_title: "ÙØ¶Ø§Ø¦Ù â <em>ÙØ±ÙØ¶</em>",
+    welcome_h2: "ÙØ±Ø­Ø¨Ø§ÙØ <em>Ø³Ø§Ø±Ø©</em>",
+    welcome_p: "ÙØ±Ø­Ø¨Ø§Ù Ø¨Ù ÙÙ ÙØ¶Ø§Ø¦Ù Ø§ÙØ·Ø¨Ù Ø§ÙØ´Ø®ØµÙ â LYS MEDICAL",
+    next_appt: "Ø§ÙÙÙØ¹Ø¯ Ø§ÙÙØ§Ø¯Ù",
+    stat_next_appt: "Ø§ÙÙÙØ¹Ø¯ Ø§ÙÙØ§Ø¯Ù",
+    stat_prescriptions: "Ø§ÙÙØµÙØ§Øª Ø§ÙÙØ´Ø·Ø©",
+    stat_new: "â 1 Ø¬Ø¯ÙØ¯Ø©",
+    stat_visits: "ÙØ¬ÙÙØ¹ Ø§ÙØ²ÙØ§Ø±Ø§Øª",
+    stat_since: "ÙÙØ° 2024",
+    stat_results: "ÙØªØ§Ø¦Ø¬ ÙÙØ¯ Ø§ÙØ§ÙØªØ¸Ø§Ø±",
+    stat_blood: "ØªØ­ÙÙÙ Ø¯Ù",
+    my_appointments: "ÙÙØ§Ø¹ÙØ¯Ù",
+    take_appt: "â Ø­Ø¬Ø² ÙÙØ¹Ø¯",
+    month_mars: "ÙØ§Ø±Ø³",
+    month_fev: "ÙØ¨Ø±Ø§ÙØ±",
+    month_jan: "ÙÙØ§ÙØ±",
+    rdv1_title: "ÙØªØ§Ø¨Ø¹Ø© Ø§ÙØ­ÙÙ Ø£Ø³Ø¨ÙØ¹ 2",
+    rdv2_title: "Ø§Ø³ØªØ´Ø§Ø±Ø© Ø¹Ø§ÙØ©",
+    rdv3_title: "ØªØ­ÙÙÙ Ø§ÙØ¯Ù",
+    confirmed: "ÙØ¤ÙØ¯",
+    done: "ÙÙØªÙÙ",
+    done2: "ÙÙØªÙÙ",
+    new_appt_btn: "Ø­Ø¬Ø² ÙÙØ¹Ø¯ Ø¬Ø¯ÙØ¯",
+    my_vitals: "ÙØ¤Ø´Ø±Ø§ØªÙ Ø§ÙØ­ÙÙÙØ©",
+    weight: "Ø§ÙÙØ²Ù",
+    bp: "Ø¶ØºØ· Ø§ÙØ¯Ù",
+    normal: "Ø·Ø¨ÙØ¹Ù",
+    normal2: "Ø·Ø¨ÙØ¹Ù",
+    excellent: "ÙÙØªØ§Ø²",
+    my_prescriptions: "ÙØµÙØ§ØªÙ Ø§ÙØ·Ø¨ÙØ©",
+    see_all: "â Ø¹Ø±Ø¶ Ø§ÙÙÙ",
+    presc1: "ÙÙØªØ§ÙÙÙØ§Øª ÙØ§ ÙØ¨Ù Ø§ÙÙÙØ§Ø¯Ø©",
+    active: "ÙØ´Ø·Ø©",
+    renew: "ØªØ¬Ø¯ÙØ¯ ÙØ·ÙÙØ¨",
+    medical_history: "Ø§ÙØ³Ø¬Ù Ø§ÙØ·Ø¨Ù",
+    all_period: "ÙÙ Ø§ÙÙØªØ±Ø§Øª",
+    th_date: "Ø§ÙØªØ§Ø±ÙØ®",
+    th_doctor: "Ø§ÙØ·Ø¨ÙØ¨",
+    th_type: "Ø§ÙÙÙØ¹",
+    th_reason: "Ø³Ø¨Ø¨ Ø§ÙØ§Ø³ØªØ´Ø§Ø±Ø©",
+    th_duration: "Ø§ÙÙØ¯Ø©",
+    th_doc: "Ø§ÙÙØ«ÙÙØ©",
+    upcoming: "ÙØ§Ø¯Ù",
+    pregnancy_badge: "ð¤° Ø­ÙÙ",
+    consult_badge: "ð©º Ø§Ø³ØªØ´Ø§Ø±Ø©",
+    consult_badge2: "ð©º Ø§Ø³ØªØ´Ø§Ø±Ø©",
+    followup_badge: "ð ÙØªØ§Ø¨Ø¹Ø©",
+    analysis_badge: "ð§ª ØªØ­ÙÙÙ",
+    emergency_badge: "ð¨ Ø·Ø§Ø±Ø¦",
+    rdv1_title2: "ÙØªØ§Ø¨Ø¹Ø© Ø§ÙØ­ÙÙ Ø£Ø³Ø¨ÙØ¹ 2",
+    hist2_reason: "ÙØ­Øµ ØµØ­Ù Ø³ÙÙÙ",
+    hist3_reason: "Ø²ÙØ§Ù / Ø­ÙÙ 38.5Â°",
+    hist4_reason: "ØªØ­ÙÙÙ Ø¯Ù Ø´Ø§ÙÙ",
+    hist5_reason: "ÙÙØ¨Ø© Ø±Ø¨Ù Ø®ÙÙÙØ©",
+    hist6_reason: "Ø§Ø³ØªØ´Ø§Ø±Ø© ÙØ§ ÙØ¨Ù Ø§ÙØ­ÙÙ",
+    confirmed_rdv: "ÙÙØ¹Ø¯ ÙØ¤ÙØ¯",
+    hist_presc: "ÙØµÙØ© Ø·Ø¨ÙØ©",
+    hist_presc2: "ÙØµÙØ© Ø·Ø¨ÙØ©",
+    archived: "ÙØ¤Ø±Ø´Ù",
+    archived2: "ÙØ¤Ø±Ø´Ù",
+    result_pending: "ÙØªÙØ¬Ø© ÙÙØ¯ Ø§ÙØ§ÙØªØ¸Ø§Ø±"
+  }
+};
+
+let currentLang = 'fr';
+
+function setLang(lang) {
+  currentLang = lang;
+  const html = document.documentElement;
+
+  // Update dir and lang attribute
+  html.setAttribute('lang', lang);
+  html.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+
+  // Update button states
+  document.getElementById('btn-fr').classList.toggle('active', lang === 'fr');
+  document.getElementById('btn-ar').classList.toggle('active', lang === 'ar');
+  document.getElementById('btn-fr').setAttribute('aria-pressed', lang === 'fr');
+  document.getElementById('btn-ar').setAttribute('aria-pressed', lang === 'ar');
+
+  // Translate all elements
+  const t = translations[lang];
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (t[key] !== undefined) {
+      el.innerHTML = t[key];
+    }
+  });
+}
+</script>
+</body>
+</html>

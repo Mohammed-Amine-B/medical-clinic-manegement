@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr" id="html-root">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LYS MEDICAL — Connexion</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --navy: #0A1628; --navy-mid: #152238; --navy-light: #1E3150;
+            --gold: #C8A96E; --gold-light: #DFC28D; --gold-pale: #F5EDD9;
+            --white: #FAFAF8; --text-muted: #8A9BB5; --border: rgba(200,169,110,0.2);
+        }
+        html, body { height: 100%; }
+        body { font-family: 'DM Sans', sans-serif; background: var(--navy); display: flex; align-items: stretch; min-height: 100vh; overflow: hidden; }
+
+        /* ── LANGUAGE SWITCHER ── */
+        .lang-switcher {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            background: rgba(255,255,255,0.93);
+            border: 1.5px solid #E8E6E0;
+            border-radius: 30px;
+            padding: 4px;
+            gap: 2px;
+            box-shadow: 0 2px 14px rgba(10,22,40,0.12);
+        }
+        [dir="rtl"] .lang-switcher { right: auto; left: 20px; }
+        .lang-btn {
+            padding: 7px 16px;
+            border-radius: 24px;
+            font-size: 12.5px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            background: transparent;
+            color: var(--text-muted);
+            transition: all 0.22s;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-family: 'DM Sans', sans-serif;
+        }
+        .lang-btn .flag { font-size: 15px; }
+        .lang-btn.active {
+            background: var(--navy);
+            color: var(--gold-light);
+            box-shadow: 0 2px 8px rgba(10,22,40,0.18);
+        }
+        .lang-btn:not(.active):hover { background: #F0EDE6; color: var(--navy); }
+
+        /* ── LEFT PANEL ── */
+        .left-panel { flex: 1; position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; min-height: 100vh; }
+        .left-panel img.bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: brightness(0.45) saturate(0.7); transition: transform 8s ease; }
+        .left-panel:hover img.bg { transform: scale(1.03); }
+        .left-overlay { position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(10,22,40,0.0) 0%, rgba(10,22,40,0.2) 40%, rgba(10,22,40,0.85) 100%); }
+        .left-content { position: relative; z-index: 2; padding: 48px 52px; }
+        .brand-badge { display: inline-flex; align-items: center; gap: 10px; background: rgba(200,169,110,0.12); border: 1px solid var(--border); border-radius: 40px; padding: 8px 18px; margin-bottom: 32px; }
+        .brand-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--gold); animation: pulse 2s ease-in-out infinite; }
+        @keyframes pulse { 0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.5;transform:scale(0.8);} }
+        .brand-badge span { font-size: 11px; letter-spacing: 2.5px; text-transform: uppercase; color: var(--gold-light); font-weight: 500; }
+        [dir="rtl"] .brand-badge span { font-family: 'Tajawal', sans-serif; letter-spacing: 0; font-size: 13px; }
+        .left-heading { font-family: 'Cormorant Garamond', serif; font-size: clamp(36px,4vw,56px); font-weight: 300; color: var(--white); line-height: 1.1; margin-bottom: 16px; letter-spacing: -0.5px; }
+        .left-heading em { font-style: italic; color: var(--gold-light); }
+        [dir="rtl"] .left-heading { font-family: 'Tajawal', sans-serif; font-size: clamp(30px,3.5vw,48px); letter-spacing: 0; font-weight: 400; }
+        .left-tagline { font-size: 14px; color: var(--text-muted); font-weight: 300; line-height: 1.7; max-width: 360px; }
+        [dir="rtl"] .left-tagline { font-family: 'Tajawal', sans-serif; font-size: 15px; }
+        .left-stats { display: flex; gap: 36px; margin-top: 40px; padding-top: 32px; border-top: 1px solid rgba(200,169,110,0.15); }
+        .stat-item { display: flex; flex-direction: column; gap: 4px; }
+        .stat-number { font-family: 'Cormorant Garamond', serif; font-size: 30px; font-weight: 500; color: var(--gold-light); line-height: 1; }
+        .stat-label { font-size: 11px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; }
+        [dir="rtl"] .stat-label { font-family: 'Tajawal', sans-serif; letter-spacing: 0; font-size: 12px; }
+
+        /* ── RIGHT PANEL ── */
+        .right-panel { width: 480px; min-width: 480px; background: var(--white); display: flex; flex-direction: column; justify-content: center; padding: 64px 56px; position: relative; overflow-y: auto; }
+        .right-panel::before { content: ''; position: absolute; top: -120px; right: -80px; width: 280px; height: 280px; border-radius: 50%; background: radial-gradient(circle,rgba(200,169,110,0.07) 0%,transparent 70%); pointer-events: none; }
+        [dir="rtl"] .right-panel::before { right: auto; left: -80px; }
+        .logo-mark { display: flex; align-items: center; gap: 12px; margin-bottom: 52px; }
+        .logo-icon { width: 38px; height: 38px; background: var(--navy); border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .logo-icon svg { width: 20px; height: 20px; }
+        .logo-name { font-family: 'Cormorant Garamond', serif; font-size: 17px; font-weight: 600; color: var(--navy); letter-spacing: 2px; text-transform: uppercase; line-height: 1; }
+        .logo-sub { font-size: 10px; color: var(--text-muted); letter-spacing: 1.5px; text-transform: uppercase; }
+        [dir="rtl"] .logo-sub { font-family: 'Tajawal', sans-serif; letter-spacing: 0; font-size: 11px; }
+        .form-heading { font-family: 'Cormorant Garamond', serif; font-size: 34px; font-weight: 400; color: var(--navy); line-height: 1.15; margin-bottom: 8px; }
+        [dir="rtl"] .form-heading { font-family: 'Tajawal', sans-serif; font-size: 30px; font-weight: 500; }
+        .form-sub { font-size: 14px; color: var(--text-muted); font-weight: 300; margin-bottom: 40px; line-height: 1.5; }
+        [dir="rtl"] .form-sub { font-family: 'Tajawal', sans-serif; font-size: 15px; }
+
+        .field { margin-bottom: 22px; position: relative; }
+        .field label { display: block; font-size: 11px; font-weight: 500; color: var(--navy); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 10px; }
+        [dir="rtl"] .field label { font-family: 'Tajawal', sans-serif; letter-spacing: 0; font-size: 13px; }
+        .field-wrap { position: relative; }
+        .field-icon { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; color: var(--text-muted); pointer-events: none; transition: color 0.2s; }
+        [dir="rtl"] .field-icon { left: auto; right: 16px; }
+        .field input { width: 100%; height: 50px; padding: 0 16px 0 44px; border: 1.5px solid #E8E6E0; border-radius: 12px; font-size: 14px; font-family: 'DM Sans', sans-serif; font-weight: 300; color: var(--navy); background: #FEFEFE; transition: all 0.25s; outline: none; }
+        [dir="rtl"] .field input { padding: 0 44px 0 16px; font-family: 'Tajawal', sans-serif; text-align: right; }
+        .field input::placeholder { color: #C0BBAF; }
+        .field input:hover { border-color: #C8B99A; }
+        .field input:focus { border-color: var(--gold); background: var(--gold-pale); box-shadow: 0 0 0 4px rgba(200,169,110,0.1); }
+        .field-wrap:focus-within .field-icon { color: var(--gold); }
+        .field-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+        .field-row label { margin-bottom: 0; }
+        .forgot-link { font-size: 12px; color: var(--gold); text-decoration: none; font-weight: 400; transition: color 0.2s; }
+        [dir="rtl"] .forgot-link { font-family: 'Tajawal', sans-serif; font-size: 13px; }
+        .forgot-link:hover { color: var(--navy); }
+        .eye-toggle { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: var(--text-muted); padding: 4px; transition: color 0.2s; display: flex; align-items: center; }
+        [dir="rtl"] .eye-toggle { right: auto; left: 14px; }
+        .eye-toggle:hover { color: var(--navy); }
+
+        /* ── BTN LOGIN ── */
+        .btn-login {
+            display: flex; align-items: center; justify-content: center;
+            width: 100%; height: 54px;
+            background: var(--gold); color: var(--navy);
+            border: none; border-radius: 13px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px; font-weight: 700;
+            letter-spacing: 2px; text-transform: uppercase;
+            cursor: pointer; margin-top: 12px;
+            box-shadow: 0 8px 24px rgba(200,169,110,0.35);
+            transition: all 0.2s;
+        }
+        [dir="rtl"] .btn-login { font-family: 'Tajawal', sans-serif; letter-spacing: 0; font-size: 16px; }
+        .btn-login:hover { background: #B8994E; transform: translateY(-2px); box-shadow: 0 14px 32px rgba(200,169,110,0.45); }
+        .btn-login:active { transform: translateY(0); }
+        .btn-login:disabled { cursor: wait; transform: none; }
+        .login-message { min-height: 18px; margin-top: 12px; font-size: 12.5px; line-height: 1.45; color: #E05050; text-align: center; font-weight: 400; }
+        [dir="rtl"] .login-message { font-family: 'Tajawal', sans-serif; font-size: 13.5px; }
+
+        .divider { display: flex; align-items: center; gap: 14px; margin: 28px 0; }
+        .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: #EAE8E2; }
+        .divider span { font-size: 12px; color: #BBBBBB; white-space: nowrap; font-weight: 300; }
+        [dir="rtl"] .divider span { font-family: 'Tajawal', sans-serif; font-size: 13px; }
+
+        .signup-text { text-align: center; font-size: 13.5px; color: var(--text-muted); font-weight: 300; }
+        [dir="rtl"] .signup-text { font-family: 'Tajawal', sans-serif; font-size: 14px; }
+        .signup-text a { color: var(--navy); font-weight: 500; text-decoration: none; border-bottom: 1px solid var(--gold); padding-bottom: 1px; transition: color 0.2s; }
+        .signup-text a:hover { color: var(--gold); }
+
+        .role-chips { display: flex; gap: 10px; margin-bottom: 20px; justify-content: center; flex-wrap: wrap; }
+        .chip { padding: 12px 22px; border-radius: 12px; font-size: 13.5px; font-weight: 500; border: 1.5px solid #E0DDD6; color: var(--text-muted); cursor: pointer; transition: all 0.2s; letter-spacing: 0.5px; }
+        [dir="rtl"] .chip { font-family: 'Tajawal', sans-serif; letter-spacing: 0; font-size: 14px; }
+        .chip:hover, .chip.active { background: var(--navy); color: var(--gold-light); border-color: var(--navy); box-shadow: 0 4px 14px rgba(10,22,40,0.15); }
+        .chip-admin { border-color: rgba(224,80,80,0.35); color: #E05050; }
+        .chip-admin:hover, .chip-admin.active { background: #E05050; color: #fff; border-color: #E05050; box-shadow: 0 4px 14px rgba(224,80,80,0.25); }
+
+
+        @media (max-width: 900px) {
+            body { flex-direction: column; overflow: auto; }
+            .left-panel { min-height: 320px; max-height: 320px; }
+            .right-panel { width: 100%; min-width: unset; padding: 40px 32px 48px; }
+        }
+        @media (max-width: 480px) {
+            .right-panel { padding: 32px 24px 40px; }
+            .left-content { padding: 28px 24px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- LANGUAGE SWITCHER -->
+    <div class="lang-switcher">
+        <button class="lang-btn active" id="btn-fr" onclick="setLang('fr')">
+            <span class="flag">🇫🇷</span> FR
+        </button>
+        <button class="lang-btn" id="btn-ar" onclick="setLang('ar')">
+            <span class="flag">🇩🇿</span> عر
+        </button>
+    </div>
+
+    <!-- LEFT -->
+    <div class="left-panel">
+        <img class="bg" src="cabinet.jpg" alt="LYS MEDICAL">
+        <div class="left-overlay"></div>
+        <div class="left-content">
+            <div class="brand-badge">
+                <span class="dot"></span>
+                <span data-i18n="badge">Cabinet médical connecté</span>
+            </div>
+            <h1 class="left-heading" data-i18n-html="heading">Votre espace<br><em>de confiance</em></h1>
+            <p class="left-tagline" data-i18n="tagline">Une solution intégrée pour médecins, patients et équipes administratives. Sécurisée, fluide et disponible en permanence.</p>
+            <div class="left-stats">
+                <div class="stat-item"><span class="stat-number">3&thinsp;200+</span><span class="stat-label" data-i18n="stat1">Patients</span></div>
+                <div class="stat-item"><span class="stat-number">98%</span><span class="stat-label" data-i18n="stat2">Satisfaction</span></div>
+                <div class="stat-item"><span class="stat-number">24/7</span><span class="stat-label" data-i18n="stat3">Disponibilité</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- RIGHT -->
+    <div class="right-panel">
+        <div class="logo-mark">
+            <div class="logo-icon">
+                <svg viewBox="0 0 24 24" fill="none"><path d="M12 4v16M4 12h16" stroke="#C8A96E" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="12" r="9" stroke="#C8A96E" stroke-width="1.5" opacity="0.4"/></svg>
+            </div>
+            <div>
+                <div class="logo-name">Lys Medical</div>
+                <div class="logo-sub" data-i18n="portal">Portail de gestion</div>
+            </div>
+        </div>
+
+        <h2 class="form-heading" data-i18n-html="formHeading">Bon retour<br>parmi nous.</h2>
+        <p class="form-sub" data-i18n="formSub">Accédez à votre espace personnel en toute sécurité.</p>
+
+        <div class="field">
+            <label data-i18n="emailLabel">Adresse e-mail</label>
+            <div class="field-wrap">
+                <input type="email" id="email" placeholder="nom@cabinet.dz" data-i18n-placeholder="emailPlaceholder" autocomplete="off">
+                <svg class="field-icon" viewBox="0 0 20 20" fill="none"><path d="M2.5 5.5h15v11h-15v-11z" stroke="currentColor" stroke-width="1.25" stroke-linejoin="round"/><path d="M2.5 5.5l7.5 7 7.5-7" stroke="currentColor" stroke-width="1.25" stroke-linejoin="round"/></svg>
+            </div>
+        </div>
+
+        <div class="field">
+            <div class="field-row">
+                <label data-i18n="pwdLabel">Mot de passe</label>
+                <a href="lys-medical-forgot.html" class="forgot-link" data-i18n="forgotLink">Mot de passe oublié ?</a>
+            </div>
+            <div class="field-wrap">
+              <input type="password" placeholder="••••••••" id="password" autocomplete="new-password">
+                <svg class="field-icon" viewBox="0 0 20 20" fill="none"><rect x="3" y="9" width="14" height="9" rx="2" stroke="currentColor" stroke-width="1.25"/><path d="M6.5 9V6a3.5 3.5 0 017 0v3" stroke="currentColor" stroke-width="1.25" stroke-linecap="round"/></svg>
+                <button class="eye-toggle" type="button" id="togglePwd">
+                    <svg id="eyeIcon" width="16" height="16" viewBox="0 0 20 20" fill="none"><path d="M2 10s3-6 8-6 8 6 8 6-3 6-8 6-8-6-8-6z" stroke="currentColor" stroke-width="1.25"/><circle cx="10" cy="10" r="2.5" stroke="currentColor" stroke-width="1.25"/></svg>
+                </button>
+            </div>
+        </div>
+
+        <div class="divider" style="margin-bottom:4px;"><span data-i18n="roleLabel">Connectez-vous en tant que</span></div>
+
+        <div class="role-chips" id="role-chips"></div>
+
+
+        <button class="btn-login" type="button" onclick="doLogin()" id="btn-login">
+            <span data-i18n="loginBtn">Se connecter</span>
+        </button>
+        <div id="login-message" class="login-message" role="alert" aria-live="polite"></div>
+
+        <div class="divider" style="margin-top:28px;"><span data-i18n="noAccount">Pas encore de compte ?</span></div>
+
+        <p class="signup-text">
+            <span data-i18n="signupText">Demandez votre accès à l'équipe —</span>
+            <a href="lys-medical-signup.html" data-i18n="signupLink">Créer un compte</a>
+        </p>
+    </div>
+
+    <script>
+        // ── TRANSLATIONS ──
+        const i18n = {
+            fr: {
+                badge: 'Cabinet médical connecté',
+                heading: 'Votre espace<br><em>de confiance</em>',
+                tagline: 'Une solution intégrée pour médecins, patients et équipes administratives. Sécurisée, fluide et disponible en permanence.',
+                stat1: 'Patients', stat2: 'Satisfaction', stat3: 'Disponibilité',
+                portal: 'Portail de gestion',
+                formHeading: 'Bon retour<br>parmi nous.',
+                formSub: 'Accédez à votre espace personnel en toute sécurité.',
+                emailLabel: 'Adresse e-mail',
+                emailPlaceholder: 'nom@cabinet.dz',
+                pwdLabel: 'Mot de passe',
+                forgotLink: 'Mot de passe oublié ?',
+                roleLabel: 'Connectez-vous en tant que',
+                loginBtn: 'Se connecter',
+                loginLoading: 'Connexion…',
+                noAccount: 'Pas encore de compte ?',
+                signupText: "Demandez votre accès à l'équipe —",
+                signupLink: 'Créer un compte',
+                roles: ['Médecin', 'Patient', 'Secrétaire', 'Admin'],
+                adminIdx: 3,
+            },
+            ar: {
+                badge: 'عيادة طبية متصلة',
+                heading: 'مرحباً بك<br><em>من جديد</em>',
+                tagline: 'حل متكامل للأطباء والمرضى والفرق الإدارية. آمن وسلس ومتاح على مدار الساعة.',
+                stat1: 'مريض', stat2: 'رضا', stat3: 'توفر',
+                portal: 'بوابة الإدارة',
+                formHeading: 'أهلاً بعودتك<br>مرة أخرى.',
+                formSub: 'ادخل إلى فضائك الشخصي بأمان تام.',
+                emailLabel: 'البريد الإلكتروني',
+                emailPlaceholder: 'الاسم@عيادة.dz',
+                pwdLabel: 'كلمة المرور',
+                forgotLink: 'نسيت كلمة المرور؟',
+                roleLabel: 'تسجيل الدخول بصفتك',
+                loginBtn: 'تسجيل الدخول',
+                loginLoading: 'جارٍ الدخول…',
+                noAccount: 'ليس لديك حساب؟',
+                signupText: 'اطلب صلاحية الوصول من الفريق —',
+                signupLink: 'إنشاء حساب',
+                roles: ['طبيب', 'مريض', 'سكرتيرة', 'مدير'],
+                adminIdx: 3,
+            }
+        };
+
+        let currentLang = 'fr';
+        let activeRoleIdx = 0;
+        const roleKeys = ['medecin', 'patient', 'secretaire', 'admin'];
+        const roleRedirects = {
+            medecin: 'dashboard-medecin.html',
+            doctor: 'dashboard-medecin.html',
+            patient: 'dashboard-patient.html',
+            secretaire: 'dashboard-secretaire.html',
+            secretary: 'dashboard-secretaire.html',
+            admin: 'admin.html'
+        };
+        // Demo credentials for soutenance/local demo only. Remove before production.
+        const demoAccounts = {
+            admin: { login: 'admin', password: '123456' },
+            medecin: { login: 'med1', password: '123456' },
+            secretaire: { login: 'sec1', password: '123456' },
+            patient: { login: 'pat1', password: '123456' }
+        };
+
+        function updateLoginButtonStyle() {
+            const t = i18n[currentLang];
+            const btn = document.getElementById('btn-login');
+            if (!btn) return;
+
+            if (activeRoleIdx === t.adminIdx) {
+                btn.style.background = '#E05050';
+                btn.style.boxShadow = '0 8px 24px rgba(224,80,80,0.35)';
+                btn.style.color = '#fff';
+            } else {
+                btn.style.background = 'var(--gold)';
+                btn.style.boxShadow = '0 8px 24px rgba(200,169,110,0.35)';
+                btn.style.color = 'var(--navy)';
+            }
+        }
+
+        function renderChips() {
+            const t = i18n[currentLang];
+            const container = document.getElementById('role-chips');
+            container.innerHTML = '';
+            t.roles.forEach((role, idx) => {
+                const span = document.createElement('span');
+                let cls = 'chip';
+                if (idx === t.adminIdx) cls += ' chip-admin';
+                if (idx === activeRoleIdx) cls += ' active';
+                span.className = cls;
+                span.textContent = role;
+                span.addEventListener('click', () => {
+                    activeRoleIdx = idx;
+
+                    const roleKey = roleKeys[idx];
+                    const account = demoAccounts[roleKey];
+                    if (account) {
+                        document.getElementById('email').value = account.login;
+                        document.getElementById('password').value = account.password;
+                        setLoginMessage('');
+                    }
+
+                    renderChips();
+                    updateLoginButtonStyle();
+                });
+                container.appendChild(span);
+            });
+        }
+
+        function applyTranslations(lang) {
+            const t = i18n[lang];
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (t[key] !== undefined) el.textContent = t[key];
+            });
+            document.querySelectorAll('[data-i18n-html]').forEach(el => {
+                const key = el.getAttribute('data-i18n-html');
+                if (t[key] !== undefined) el.innerHTML = t[key];
+            });
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                const key = el.getAttribute('data-i18n-placeholder');
+                if (t[key] !== undefined) el.placeholder = t[key];
+            });
+        }
+
+        function setLang(lang) {
+            currentLang = lang;
+            const html = document.getElementById('html-root');
+            html.setAttribute('lang', lang);
+            html.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+            document.title = lang === 'ar' ? 'ليس ميديكال — تسجيل الدخول' : 'LYS MEDICAL — Connexion';
+            document.getElementById('btn-fr').classList.toggle('active', lang === 'fr');
+            document.getElementById('btn-ar').classList.toggle('active', lang === 'ar');
+            applyTranslations(lang);
+            renderChips();
+        }
+
+        function setLoginMessage(message) {
+            const box = document.getElementById('login-message');
+            if (box) box.textContent = message || '';
+        }
+
+        function setLoginLoading(isLoading) {
+            const t = i18n[currentLang];
+            const btn = document.getElementById('btn-login');
+            btn.disabled = isLoading;
+            btn.querySelector('span').textContent = isLoading ? t.loginLoading : t.loginBtn;
+            btn.style.opacity = isLoading ? '0.8' : '1';
+        }
+
+        async function doLogin() {
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const requestedRole = roleKeys[activeRoleIdx] || '';
+
+            setLoginMessage('');
+            if (!email || !password) {
+                setLoginMessage(currentLang === 'ar' ? 'يرجى إدخال البريد الإلكتروني وكلمة المرور.' : 'Veuillez saisir votre e-mail et votre mot de passe.');
+                return;
+            }
+
+            setLoginLoading(true);
+            try {
+                console.log('LOGIN DEBUG:', { email, password, requestedRole });
+                const response = await fetch('backend/login.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password, requestedRole })
+                });
+
+                let data;
+                try {
+                    data = await response.json();
+                } catch (e) {
+                    throw new Error('Malformed response');
+                }
+
+                if (!response.ok || !data || data.success !== true) {
+                    setLoginMessage(data && data.message ? data.message : (currentLang === 'ar' ? 'تعذر تسجيل الدخول. تحقق من البيانات وحاول مرة أخرى.' : 'Connexion impossible. Vérifiez vos identifiants et réessayez.'));
+                    setLoginLoading(false);
+                    return;
+                }
+
+                const role = String(data.role || '').toLowerCase();
+                const redirect = data.redirect || roleRedirects[role];
+                if (!redirect) {
+                    setLoginMessage(currentLang === 'ar' ? 'تم تسجيل الدخول، لكن الدور غير معروف.' : 'Connexion réussie, mais le rôle est inconnu.');
+                    setLoginLoading(false);
+                    return;
+                }
+
+                window.location.href = redirect;
+            } catch (error) {
+                setLoginMessage(currentLang === 'ar' ? 'الخادم غير متاح حالياً. حاول لاحقاً.' : 'Serveur indisponible pour le moment. Réessayez plus tard.');
+                setLoginLoading(false);
+            }
+        }
+
+        document.getElementById('togglePwd').addEventListener('click', () => {
+            const inp = document.getElementById('password');
+            const icon = document.getElementById('eyeIcon');
+            const show = inp.type === 'password';
+            inp.type = show ? 'text' : 'password';
+            icon.innerHTML = show
+                ? '<path d="M3 3l14 14M8.5 8.6A3 3 0 0011.4 11.5M6 6.1C4 7.3 2.6 9 2 10c1.5 3 4.5 6 8 6a8 8 0 004-1.1M14 14a6.7 6.7 0 002.5-2.5C18 9 15.5 4 10 4a6.8 6.8 0 00-2.5.5" stroke="currentColor" stroke-width="1.25" stroke-linecap="round"/>'
+                : '<path d="M2 10s3-6 8-6 8 6 8 6-3 6-8 6-8-6-8-6z" stroke="currentColor" stroke-width="1.25"/><circle cx="10" cy="10" r="2.5" stroke="currentColor" stroke-width="1.25"/>';
+        });
+
+        // Init
+        renderChips();
+        updateLoginButtonStyle();
+    </script>
+</body>
+</html>

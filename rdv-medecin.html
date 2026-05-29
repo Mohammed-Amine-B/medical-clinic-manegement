@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LYS MEDICAL — Mes Rendez-vous · Médecin</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --navy:#0A1628;--navy-mid:#152238;--navy-light:#1E3150;
+  --gold:#C8A96E;--gold-light:#DFC28D;--gold-pale:#F5EDD9;
+  --white:#FAFAF8;--bg:#F2F0EA;--text:#2C3A4A;--muted:#8A9BB5;
+  --border:rgba(200,169,110,0.2);--surface:#FFFFFF;--sidebar-w:260px;
+  --green:#3DAA70;--green-bg:#EAF7F0;--red:#E05050;--red-bg:#FBE9E9;
+  --blue:#378ADD;--blue-bg:#E8F3FB;
+}
+html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);}
+.app{display:flex;height:100vh;overflow:hidden;}
+
+/* SIDEBAR */
+.sidebar{width:var(--sidebar-w);min-width:var(--sidebar-w);background:var(--navy);display:flex;flex-direction:column;overflow:hidden;}
+.sb-logo{display:flex;align-items:center;gap:12px;padding:28px 24px 24px;border-bottom:1px solid rgba(200,169,110,0.1);}
+.sb-logo-icon{width:34px;height:34px;background:rgba(200,169,110,0.12);border-radius:9px;display:flex;align-items:center;justify-content:center;}
+.sb-logo-name{font-family:'Cormorant Garamond',serif;font-size:15px;font-weight:600;color:var(--white);letter-spacing:2px;text-transform:uppercase;}
+.sb-logo-sub{font-size:9.5px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;}
+.sb-role-badge{margin:14px 16px;background:rgba(200,169,110,0.12);border:1px solid var(--border);border-radius:10px;padding:10px 14px;display:flex;align-items:center;gap:10px;}
+.srb-dot{width:8px;height:8px;border-radius:50%;background:var(--gold);flex-shrink:0;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.4;}}
+.srb-text{font-size:12px;color:var(--gold-light);font-weight:500;letter-spacing:0.5px;}
+.sb-section-label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(138,155,181,0.5);padding:16px 24px 8px;}
+.sb-nav{display:flex;flex-direction:column;gap:2px;padding:0 12px;}
+.nav-item{display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:10px;cursor:pointer;transition:all 0.2s;color:var(--muted);font-size:13.5px;font-weight:400;text-decoration:none;position:relative;}
+.nav-item svg{width:16px;height:16px;flex-shrink:0;opacity:0.7;}
+.nav-item:hover{background:rgba(255,255,255,0.05);color:var(--white);}
+.nav-item.active{background:rgba(200,169,110,0.12);color:var(--gold-light);}
+.nav-item.active svg{opacity:1;color:var(--gold);}
+.nav-item.active::before{content:'';position:absolute;left:0;top:25%;bottom:25%;width:3px;border-radius:0 3px 3px 0;background:var(--gold);}
+.nav-badge{margin-left:auto;font-size:10px;font-weight:500;background:var(--gold);color:var(--navy);padding:2px 7px;border-radius:20px;}
+.sb-bottom{margin-top:auto;padding:16px 12px 24px;}
+.sb-user{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:10px;background:rgba(255,255,255,0.05);}
+.avatar{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;background:rgba(200,169,110,0.2);color:var(--gold-light);}
+.sb-user-name{font-size:13px;font-weight:500;color:var(--white);}
+.sb-user-role{font-size:11px;color:var(--muted);}
+
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+.topbar{background:var(--surface);border-bottom:1px solid rgba(0,0,0,0.06);padding:0 28px;height:64px;display:flex;align-items:center;gap:14px;flex-shrink:0;}
+.topbar-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:500;color:var(--navy);flex:1;}
+.topbar-title em{font-style:italic;color:var(--gold);}
+.tb-icon{width:38px;height:38px;border-radius:10px;background:var(--bg);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--muted);transition:all 0.2s;text-decoration:none;position:relative;}
+.tb-icon:hover{background:var(--gold-pale);color:var(--navy);}
+.tb-icon.notif::after{content:'4';position:absolute;top:6px;right:6px;width:14px;height:14px;border-radius:50%;background:var(--red);color:var(--white);font-size:8px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+.content{flex:1;overflow-y:auto;padding:28px;}
+.content::-webkit-scrollbar{width:5px;}
+.content::-webkit-scrollbar-thumb{background:#D5D0C8;border-radius:10px;}
+
+/* PAGE HEADER */
+.page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;}
+.page-header-left h1{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:400;color:var(--navy);}
+.page-header-left h1 em{font-style:italic;color:var(--gold);}
+.page-header-left p{font-size:13px;color:var(--muted);margin-top:2px;}
+.btn-primary{height:40px;padding:0 20px;background:var(--navy);color:var(--white);border:none;border-radius:10px;font-size:13px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s;display:flex;align-items:center;gap:8px;}
+.btn-primary:hover{background:var(--navy-light);transform:translateY(-1px);box-shadow:0 4px 12px rgba(10,22,40,0.3);}
+.btn-primary svg{width:14px;height:14px;}
+
+/* STATS ROW */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px;}
+.stat-card{background:var(--surface);border-radius:13px;padding:16px 20px;border:1px solid rgba(0,0,0,0.05);display:flex;align-items:center;gap:14px;transition:transform 0.2s,box-shadow 0.2s,border-color 0.2s;cursor:pointer;}
+.stat-card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,0.07);}
+.stat-card.active{border-color:var(--gold);box-shadow:0 8px 22px rgba(0,0,0,0.12);}
+.sc-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.sc-icon svg{width:18px;height:18px;}
+.sc-icon.gold{background:var(--gold-pale);} .sc-icon.gold svg{color:var(--gold);}
+.sc-icon.blue{background:var(--blue-bg);} .sc-icon.blue svg{color:var(--blue);}
+.sc-icon.green{background:var(--green-bg);} .sc-icon.green svg{color:var(--green);}
+.sc-icon.red{background:var(--red-bg);} .sc-icon.red svg{color:var(--red);}
+.sc-val{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:500;color:var(--navy);line-height:1;}
+.sc-lbl{font-size:11px;color:var(--muted);letter-spacing:0.5px;margin-top:1px;}
+
+/* TOOLBAR */
+.toolbar{background:var(--surface);border-radius:13px;border:1px solid rgba(0,0,0,0.05);padding:14px 20px;margin-bottom:18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.tb-search-wrap{display:flex;align-items:center;gap:8px;background:var(--bg);border:1.5px solid transparent;border-radius:10px;padding:0 12px;height:36px;flex:1;min-width:200px;transition:border-color 0.2s;}
+.tb-search-wrap:focus-within{border-color:var(--gold);}
+.tb-search-wrap svg{width:13px;height:13px;color:var(--muted);}
+.tb-search-wrap input{border:none;background:transparent;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--navy);outline:none;width:100%;}
+.tb-search-wrap input::placeholder{color:#B0A898;}
+.filter-select{height:36px;padding:0 14px;border:1.5px solid rgba(0,0,0,0.08);border-radius:10px;font-size:12.5px;font-family:'DM Sans',sans-serif;color:var(--navy);background:var(--white);outline:none;cursor:pointer;appearance:none;}
+.filter-select:hover{border-color:var(--gold);}
+.view-toggle{display:flex;background:var(--bg);border-radius:10px;padding:3px;gap:2px;border:1px solid rgba(0,0,0,0.06);}
+.vt-btn{width:34px;height:30px;border:none;background:transparent;border-radius:7px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--muted);transition:all 0.2s;}
+.vt-btn.active{background:var(--surface);color:var(--navy);box-shadow:0 1px 4px rgba(0,0,0,0.1);}
+.vt-btn svg{width:14px;height:14px;}
+
+/* CALENDAR WEEK */
+.calendar-section{background:var(--surface);border-radius:13px;border:1px solid rgba(0,0,0,0.05);margin-bottom:18px;overflow:hidden;}
+.cal-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid rgba(0,0,0,0.05);}
+.cal-nav{display:flex;align-items:center;gap:8px;}
+.cal-nav-btn{width:30px;height:30px;border:1.5px solid rgba(0,0,0,0.08);border-radius:8px;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--muted);transition:all 0.2s;font-family:'DM Sans',sans-serif;}
+.cal-nav-btn:hover{border-color:var(--gold);color:var(--gold);}
+.cal-week-label{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:500;color:var(--navy);}
+.cal-today-btn{padding:6px 14px;border:1.5px solid var(--border);border-radius:8px;background:transparent;font-size:12px;font-family:'DM Sans',sans-serif;color:var(--gold);cursor:pointer;transition:all 0.2s;}
+.cal-today-btn:hover{background:var(--gold-pale);}
+
+.week-grid{display:grid;grid-template-columns:60px repeat(7,1fr);border-bottom:1px solid rgba(0,0,0,0.05);}
+.wg-day-head{padding:10px 8px;text-align:center;border-left:1px solid rgba(0,0,0,0.04);}
+.wg-day-head:first-child{border-left:none;}
+.wg-day-name{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);}
+.wg-day-num{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:500;color:var(--navy);line-height:1;margin-top:2px;}
+.wg-day-num.today{color:var(--gold);}
+.wg-corner{padding:10px 8px;}
+
+.time-grid{display:grid;grid-template-columns:60px repeat(7,1fr);max-height:340px;overflow-y:auto;}
+.time-grid::-webkit-scrollbar{width:4px;}
+.time-grid::-webkit-scrollbar-thumb{background:#D5D0C8;border-radius:10px;}
+.time-slot-label{font-size:10px;color:var(--muted);padding:0 8px;height:52px;display:flex;align-items:flex-start;padding-top:4px;border-right:1px solid rgba(0,0,0,0.04);}
+.time-slot-cell{height:52px;border-left:1px solid rgba(0,0,0,0.04);border-bottom:1px solid rgba(0,0,0,0.03);position:relative;cursor:pointer;transition:background 0.15s;}
+.time-slot-cell:hover{background:rgba(200,169,110,0.04);}
+.time-appt{position:absolute;left:3px;right:3px;top:3px;border-radius:7px;padding:4px 7px;font-size:10.5px;font-weight:500;overflow:hidden;cursor:pointer;transition:transform 0.15s;}
+.time-appt:hover{transform:scale(1.02);}
+.time-appt.gold{background:rgba(200,169,110,0.15);border-left:3px solid var(--gold);color:var(--navy);}
+.time-appt.green{background:var(--green-bg);border-left:3px solid var(--green);color:#1a6640;}
+.time-appt.red{background:var(--red-bg);border-left:3px solid var(--red);color:#9e1c1c;}
+.time-appt.blue{background:var(--blue-bg);border-left:3px solid var(--blue);color:#1b4e8a;}
+.time-appt-time{font-size:9px;opacity:0.7;margin-bottom:1px;}
+.time-appt-name{font-size:10.5px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.time-appt-type{font-size:9.5px;opacity:0.7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+
+/* TABLE LIST */
+.rdv-table-section{background:var(--surface);border-radius:13px;border:1px solid rgba(0,0,0,0.05);overflow:hidden;margin-bottom:18px;}
+.rdv-table-head{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid rgba(0,0,0,0.05);}
+.rdv-table-title{font-size:13px;font-weight:500;color:var(--navy);}
+.badge{font-size:10px;padding:3px 9px;border-radius:20px;font-weight:500;}
+.b-green{background:var(--green-bg);color:var(--green);}
+.b-amber{background:#FFF4E0;color:#C27D1A;}
+.b-red{background:var(--red-bg);color:var(--red);}
+.b-grey{background:#F0F0F0;color:#888;}
+.b-blue{background:var(--blue-bg);color:var(--blue);}
+.ptable{width:100%;border-collapse:collapse;}
+.ptable th{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);font-weight:500;padding:10px 20px;text-align:left;border-bottom:1px solid rgba(0,0,0,0.05);}
+.ptable td{padding:12px 20px;font-size:13px;color:var(--navy);border-bottom:1px solid rgba(0,0,0,0.04);}
+.ptable tr:last-child td{border-bottom:none;}
+.ptable tr:hover td{background:rgba(200,169,110,0.03);}
+.p-name{font-weight:500;}
+.p-muted{font-size:11.5px;color:var(--muted);font-weight:300;}
+.row-urgent td{background:rgba(224,80,80,0.02);}
+.action-btn{padding:5px 12px;border-radius:7px;font-size:11px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s;border:none;}
+.action-btn.view{background:var(--gold-pale);color:var(--navy);}
+.action-btn.view:hover{background:var(--gold);color:var(--white);}
+.action-btn.cancel{background:var(--red-bg);color:var(--red);}
+.action-btn.cancel:hover{background:var(--red);color:var(--white);}
+.action-btn.complete{background:var(--green-bg);color:var(--green);}
+.action-btn.complete:hover{background:var(--green);color:var(--white);}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(10,22,40,0.5);z-index:200;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--surface);border-radius:16px;width:540px;max-width:95vw;max-height:90vh;overflow-y:auto;box-shadow:0 24px 80px rgba(0,0,0,0.25);}
+.modal-head{padding:24px 28px 0;display:flex;align-items:center;justify-content:space-between;}
+.modal-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:500;color:var(--navy);}
+.modal-close{width:32px;height:32px;border:none;background:var(--bg);border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:16px;transition:all 0.2s;}
+.modal-close:hover{background:var(--red-bg);color:var(--red);}
+.modal-body{padding:20px 28px 28px;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
+.form-row.single{grid-template-columns:1fr;}
+.form-group{display:flex;flex-direction:column;gap:6px;}
+.form-label{font-size:11.5px;font-weight:500;color:var(--text);letter-spacing:0.3px;}
+.form-input,.form-select,.form-textarea{width:100%;border:1.5px solid rgba(0,0,0,0.1);border-radius:10px;padding:0 14px;height:40px;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--navy);background:var(--bg);outline:none;transition:border-color 0.2s;-webkit-appearance:none;}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--gold);background:var(--white);}
+.form-textarea{height:80px;padding:10px 14px;resize:vertical;}
+.form-divider{height:1px;background:rgba(0,0,0,0.06);margin:16px 0;}
+.modal-footer{display:flex;justify-content:flex-end;gap:10px;padding-top:8px;}
+.btn-secondary{height:38px;padding:0 18px;background:transparent;color:var(--muted);border:1.5px solid rgba(0,0,0,0.1);border-radius:10px;font-size:13px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s;}
+.btn-secondary:hover{border-color:var(--muted);color:var(--navy);}
+.btn-save{height:38px;padding:0 22px;background:var(--navy);color:var(--white);border:none;border-radius:10px;font-size:13px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s;}
+.btn-save:hover{background:var(--navy-light);}
+
+/* TOAST */
+#toast{position:fixed;bottom:24px;right:24px;background:var(--navy);color:var(--white);padding:12px 18px;border-radius:10px;font-size:13px;z-index:999;opacity:0;transform:translateY(16px);transition:all 0.3s;pointer-events:none;border-left:3px solid var(--gold);}
+#toast.success{border-left-color:var(--green);}
+#toast.error{border-left-color:var(--red);}
+
+/* Animations */
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+.stats-row,.toolbar,.calendar-section,.rdv-table-section{animation:fadeUp 0.35s ease both;}
+.rdv-table-section{animation-delay:0.1s;}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sb-logo">
+      <div class="sb-logo-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M12 4v16M4 12h16" stroke="#C8A96E" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="12" r="9" stroke="#C8A96E" stroke-width="1.5" opacity="0.4"/></svg></div>
+      <div><div class="sb-logo-name">Lys Medical</div><div class="sb-logo-sub">Portail de gestion</div></div>
+    </div>
+    <div class="sb-role-badge"><span class="srb-dot"></span><span class="srb-text">Espace Médecin</span></div>
+    <div class="sb-section-label">Menu médecin</div>
+    <nav class="sb-nav">
+      <a href="dashboard-medecin.html" class="nav-item">
+        <svg viewBox="0 0 20 20" fill="none"><rect x="2" y="2" width="7" height="7" rx="2" stroke="currentColor" stroke-width="1.3"/><rect x="11" y="2" width="7" height="7" rx="2" stroke="currentColor" stroke-width="1.3"/><rect x="2" y="11" width="7" height="7" rx="2" stroke="currentColor" stroke-width="1.3"/><rect x="11" y="11" width="7" height="7" rx="2" stroke="currentColor" stroke-width="1.3"/></svg>
+        Tableau de bord
+      </a>
+      <a href="patients-medecin.html" class="nav-item">
+        <svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="7" r="3.5" stroke="currentColor" stroke-width="1.3"/><path d="M3 17c0-3.314 3.134-6 7-6s7 2.686 7 6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        Mes patients
+      </a>
+      <a href="rdv-medecin.html" class="nav-item active">
+        <svg viewBox="0 0 20 20" fill="none"><rect x="3" y="4" width="14" height="14" rx="2" stroke="currentColor" stroke-width="1.3"/><path d="M7 2v4M13 2v4M3 9h14" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        Mes rendez-vous <span class="nav-badge">8</span>
+      </a>
+      <a href="lys-medical-ordonnance.html" class="nav-item">
+        <svg viewBox="0 0 20 20" fill="none"><path d="M5 2h10a1 1 0 011 1v14a1 1 0 01-1 1H5a1 1 0 01-1-1V3a1 1 0 011-1z" stroke="currentColor" stroke-width="1.3"/><path d="M7 7h6M7 10h6M7 13h4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        Ordonnances
+      </a>
+      <a href="notifications-medecin.html" class="nav-item">
+        <svg viewBox="0 0 20 20" fill="none"><path d="M10 2a6 6 0 016 6c0 4 2 5 2 5H2s2-1 2-5a6 6 0 016-6z" stroke="currentColor" stroke-width="1.3"/><path d="M8 17a2 2 0 004 0" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        Notifications <span class="nav-badge">4</span>
+      </a>
+      <a href="lys-medical-historique.html" class="nav-item">
+        <svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7.5" stroke="currentColor" stroke-width="1.3"/><path d="M10 6v4l3 2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        Historique
+      </a>
+    </nav>
+    <div class="sb-section-label">Compte</div>
+    <nav class="sb-nav">
+      <a href="parametres-medecin.html" class="nav-item">
+        <svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="3" stroke="currentColor" stroke-width="1.3"/><path d="M10 2v2M10 16v2M2 10h2M16 10h2M4.22 4.22l1.41 1.41M14.36 14.36l1.42 1.42M4.22 15.78l1.41-1.41M14.36 5.64l1.42-1.42" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        Paramètres
+      </a>
+      <a href="login.html" class="nav-item" style="color:#E05050;">
+        <svg viewBox="0 0 20 20" fill="none"><path d="M9 3H4a1 1 0 00-1 1v12a1 1 0 001 1h12a1 1 0 001-1v-5" stroke="currentColor" stroke-width="1.3"/><path d="M17 3l-8 8M13 3h4v4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Déconnexion
+      </a>
+    </nav>
+    <div class="sb-bottom">
+      <div class="sb-user">
+        <div class="avatar">DK</div>
+        <div><div class="sb-user-name">Dr. Karim Dridi</div><div class="sb-user-role">Médecin généraliste</div></div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-title">Mes Rendez-vous — <em>Médecin</em></div>
+      <a href="notifications-medecin.html" class="tb-icon notif">
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="none"><path d="M10 2a6 6 0 016 6v3l1.5 2.5H2.5L4 11V8a6 6 0 016-6z" stroke="currentColor" stroke-width="1.3"/><path d="M8 16.5a2 2 0 004 0" stroke="currentColor" stroke-width="1.3"/></svg>
+      </a>
+      <a href="parametres-medecin.html" class="tb-icon">
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="8" r="3.5" stroke="currentColor" stroke-width="1.3"/><path d="M3 18c0-3.314 3.134-6 7-6s7 2.686 7 6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+      </a>
+    </div>
+
+    <div class="content">
+
+      <!-- PAGE HEADER -->
+      <div class="page-header">
+        <div class="page-header-left">
+          <h1>Mon agenda — <em>Semaine du 14 mars</em></h1>
+          <p>Gestion complète de vos rendez-vous patients</p>
+        </div>
+      </div>
+
+      <!-- STATS -->
+      <div class="stats-row">
+        <div class="stat-card" id="statToday" onclick="setStatFilter('today', this)">
+          <div class="sc-icon gold"><svg viewBox="0 0 20 20" fill="none"><rect x="3" y="4" width="14" height="14" rx="2" stroke="currentColor" stroke-width="1.3"/><path d="M7 2v4M13 2v4M3 9h14" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></div>
+          <div><div class="sc-val" id="todayRdv">0</div><div class="sc-lbl">Aujourd'hui</div></div>
+        </div>
+        <div class="stat-card" id="statDone" onclick="setStatFilter('done', this)">
+          <div class="sc-icon green"><svg viewBox="0 0 20 20" fill="none"><path d="M4 10l4 4 8-8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div><div class="sc-val" id="doneRdv">0</div><div class="sc-lbl">Terminés</div></div>
+        </div>
+        <div class="stat-card" id="statPending" onclick="setStatFilter('pending', this)">
+          <div class="sc-icon blue"><svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7.5" stroke="currentColor" stroke-width="1.3"/><path d="M10 6v4l3 2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></div>
+          <div><div class="sc-val" id="pendingRdv">0</div><div class="sc-lbl">En attente</div></div>
+        </div>
+        <div class="stat-card" id="statUrgent" onclick="setStatFilter('urgent', this)">
+          <div class="sc-icon red"><svg viewBox="0 0 20 20" fill="none"><path d="M10 6v5M10 14v1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="10" cy="10" r="7.5" stroke="currentColor" stroke-width="1.3"/></svg></div>
+          <div><div class="sc-val" id="urgentRdv">0</div><div class="sc-lbl">Urgences</div></div>
+        </div>
+      </div>
+
+      <!-- TOOLBAR -->
+      <div class="toolbar">
+        <div class="tb-search-wrap">
+          <svg viewBox="0 0 20 20" fill="none"><circle cx="9" cy="9" r="5.5" stroke="currentColor" stroke-width="1.3"/><path d="M13.5 13.5L17 17" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+          <input type="text" id="rdvSearch" placeholder="Rechercher un patient…" oninput="filterTable()">
+        </div>
+        <select class="filter-select" id="filterStatus" onchange="filterTable()">
+          <option value="">Tous les statuts</option>
+          <option value="Venu">Venu</option>
+          <option value="En attente">En attente</option>
+          <option value="Urgent">Urgent</option>
+          <option value="Annulé">Annulé</option>
+        </select>
+        <select class="filter-select" id="filterMotif" onchange="filterTable()">
+          <option value="">Tous les motifs</option>
+          <option value="Consultation">Consultation générale</option>
+          <option value="Urgence">Urgence</option>
+          <option value="Suivi">Suivi</option>
+          <option value="Ordonnance">Ordonnance</option>
+        </select>
+        <div class="view-toggle">
+          <button class="vt-btn active" id="btnCalView" onclick="setView('cal')" title="Vue agenda">
+            <svg viewBox="0 0 20 20" fill="none"><rect x="3" y="4" width="14" height="14" rx="2" stroke="currentColor" stroke-width="1.3"/><path d="M7 2v4M13 2v4M3 9h14" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+          </button>
+          <button class="vt-btn" id="btnListView" onclick="setView('list')" title="Vue liste">
+            <svg viewBox="0 0 20 20" fill="none"><path d="M4 6h12M4 10h12M4 14h8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- CALENDAR WEEK VIEW -->
+      <div class="calendar-section" id="calView">
+        <div class="cal-header">
+          <div class="cal-nav">
+            <button class="cal-nav-btn" onclick="prevWeek()">‹</button>
+            <span class="cal-week-label" id="weekLabel">14 – 20 Mars 2026</span>
+            <button class="cal-nav-btn" onclick="nextWeek()">›</button>
+          </div>
+          <button class="cal-today-btn" onclick="goToday()">Aujourd'hui</button>
+        </div>
+        <div class="week-grid" id="weekGrid">
+          <div class="wg-corner"></div>
+          <div class="wg-day-head"><div class="wg-day-name">LUN</div><div class="wg-day-num today">14</div></div>
+          <div class="wg-day-head"><div class="wg-day-name">MAR</div><div class="wg-day-num">15</div></div>
+          <div class="wg-day-head"><div class="wg-day-name">MER</div><div class="wg-day-num">16</div></div>
+          <div class="wg-day-head"><div class="wg-day-name">JEU</div><div class="wg-day-num">17</div></div>
+          <div class="wg-day-head"><div class="wg-day-name">VEN</div><div class="wg-day-num">18</div></div>
+          <div class="wg-day-head"><div class="wg-day-name">SAM</div><div class="wg-day-num">19</div></div>
+          <div class="wg-day-head"><div class="wg-day-name">DIM</div><div class="wg-day-num">20</div></div>
+        </div>
+        <div class="time-grid" id="timeGrid"></div>
+        <div id="calendarFallback" style="padding:16px 20px;border-top:1px solid rgba(0,0,0,0.05);"></div>
+      </div>
+
+      <!-- LIST VIEW (hidden by default) -->
+      <div class="rdv-table-section" id="listView" style="display:none;">
+        <div class="rdv-table-head">
+          <span class="rdv-table-title">Liste des rendez-vous</span>
+          <span id="rdvCount" class="badge b-blue">10 RDV</span>
+        </div>
+        <table class="ptable" id="rdvTable">
+          <thead>
+            <tr>
+              <th>Patient</th>
+              <th>Date &amp; Heure</th>
+              <th>Motif</th>
+              <th>Durée</th>
+              <th>Statut</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="rdvBody"></tbody>
+        </table>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /app -->
+
+<!-- MODAL NOUVEAU RDV -->
+<div class="modal-overlay" id="rdvModal">
+  <div class="modal">
+    <div class="modal-head">
+      <span class="modal-title" id="modalTitle">Nouveau Rendez-vous</span>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Patient</label>
+          <select class="form-select" id="fPatient">
+            <option value="">Sélectionner un patient…</option>
+            <option value="">Sélectionner un patient…</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Motif de consultation</label>
+          <select class="form-select" id="fMotif">
+            <option value="">Choisir le motif…</option>
+            <option>Consultation générale</option>
+            <option>Renouvellement ordonnance</option>
+            <option>Urgence</option>
+            <option>Suivi chronique</option>
+            <option>Bilan de santé</option>
+            <option>Analyse sanguine</option>
+            <option>Suivi grossesse</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Date</label>
+          <input type="date" class="form-input" id="fDate">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Heure</label>
+          <select class="form-select" id="fHeure">
+            <option>08h00</option><option>08h30</option><option>09h00</option>
+            <option>09h30</option><option>10h00</option><option>10h30</option>
+            <option>11h00</option><option>11h30</option><option>14h00</option>
+            <option>14h30</option><option>15h00</option><option>15h30</option>
+            <option>16h00</option><option>16h30</option><option>17h00</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Durée</label>
+          <select class="form-select" id="fDuree">
+            <option>15 min</option><option selected>30 min</option><option>45 min</option><option>60 min</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Priorité</label>
+          <select class="form-select" id="fPriorite">
+            <option value="normale">Normale</option>
+            <option value="urgente">Urgente</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-divider"></div>
+      <div class="form-row single">
+        <div class="form-group">
+          <label class="form-label">Notes internes (facultatif)</label>
+          <textarea class="form-textarea" id="fNotes" placeholder="Observations ou instructions particulières…"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="closeModal()">Annuler</button>
+        <button class="btn-save" onclick="saveRdv()">Enregistrer le RDV</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL CONSTANTES PATIENT -->
+<div class="modal-overlay" id="constantesModal">
+  <div class="modal">
+    <div class="modal-head">
+      <span class="modal-title" id="constantesModalTitle">Constantes patient</span>
+      <button class="modal-close" onclick="closeConstantesModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="constantesRdvId">
+      <div style="font-size:12px;color:var(--muted);margin-bottom:14px;" id="constantesPatientName">Patient</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Poids (kg)</label>
+          <input type="number" step="0.1" min="0" class="form-input" id="constPoids" placeholder="Ex: 62.5">
+        </div>
+        <div class="form-group">
+          <label class="form-label">SpO2 (%)</label>
+          <input type="number" min="0" max="100" class="form-input" id="constSpo2" placeholder="Ex: 98">
+        </div>
+      </div>
+      <div class="form-row single">
+        <div class="form-group">
+          <label class="form-label">Tension</label>
+          <input type="text" class="form-input" id="constTension" placeholder="Ex: 12/7">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="closeConstantesModal()">Annuler</button>
+        <button class="btn-save" onclick="saveConstantes()">Enregistrer</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+const MEDecinRDV_URL = 'backend/medecin/get_rdv.php';
+const REAL_HOURS = ['08:00','08:30','09:00','09:30','10:00','10:30','11:00','11:30','12:00','14:00','14:30','15:00','15:30','16:00','16:30','17:00'];
+const REAL_DAY_NAMES = ['DIM','LUN','MAR','MER','JEU','VEN','SAM'];
+let medecinRdvs = [];
+let rdvs = [];
+let filteredRdvs = [];
+let nextId = 1;
+let realCurrentWeekStart = null;
+let currentView = 'cal';
+let activeStatFilter = '';
+const constantesCache = new Map();
+
+function safeSetText(id, value){
+  const el = document.getElementById(id);
+  if(el) el.textContent = value;
+}
+
+function realParseDateTime(value) {
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? null : date;
+}
+
+function realFormatDate(value) {
+  const date = realParseDateTime(value);
+  return date ? date.toLocaleDateString('fr-FR') : '';
+}
+
+function realFormatTime(value) {
+  const date = realParseDateTime(value);
+  return date ? date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) : '';
+}
+
+function realNormalizeStatus(statut) {
+  const normalized = String(statut || '').trim().toLowerCase().replace(/\s+/g, '_');
+  if (['venu', 'termine', 'terminé', 'complete', 'completed', 'present'].includes(normalized)) return 'Venu';
+  if (['urgent', 'urgence'].includes(normalized)) return 'Urgent';
+  if (['annule', 'annulé', 'cancelled'].includes(normalized)) return 'Annulé';
+  return 'En attente';
+}
+
+function realGetWeekStart(date) {
+  const start = new Date(date);
+  start.setHours(0, 0, 0, 0);
+  const day = start.getDay();
+  const diff = day === 0 ? -6 : 1 - day;
+  start.setDate(start.getDate() + diff);
+  return start;
+}
+
+function realGetWeekDates() {
+  const base = realCurrentWeekStart ? new Date(realCurrentWeekStart) : realGetWeekStart(new Date());
+  return Array.from({ length: 7 }, (_, index) => {
+    const date = new Date(base);
+    date.setDate(base.getDate() + index);
+    return date;
+  });
+}
+
+function realWeekLabel(weekDates) {
+  if (!weekDates.length) return '';
+  const first = weekDates[0];
+  const last = weekDates[weekDates.length - 1];
+  const firstLabel = first.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' });
+  const lastLabel = last.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+  return `${firstLabel} – ${lastLabel}`;
+}
+
+function realBuildWeekHeaders() {
+  const weekGrid = document.getElementById('weekGrid');
+  const weekLabel = document.getElementById('weekLabel');
+  const weekDates = realGetWeekDates();
+  const todayKey = new Date().toDateString();
+
+  if (weekLabel) weekLabel.textContent = realWeekLabel(weekDates);
+  if (!weekGrid) return weekDates;
+
+  weekGrid.innerHTML = `<div class="wg-corner"></div>` + weekDates.map((date) => `
+    <div class="wg-day-head">
+      <div class="wg-day-name">${REAL_DAY_NAMES[date.getDay()]}</div>
+      <div class="wg-day-num${date.toDateString() === todayKey ? ' today' : ''}">${date.getDate()}</div>
+    </div>
+  `).join('');
+
+  return weekDates;
+}
+
+function realUpdateStats() {
+  const todayKey = new Date().toDateString();
+  const todayRdv = medecinRdvs.filter((rdv) => {
+    const date = realParseDateTime(rdv.dateHeure);
+    return date && date.toDateString() === todayKey;
+  }).length;
+  const doneRdv = medecinRdvs.filter((rdv) => realNormalizeStatus(rdv.statut) === 'Venu').length;
+  const pendingRdv = medecinRdvs.filter((rdv) => realNormalizeStatus(rdv.statut) === 'En attente').length;
+  const urgentRdv = medecinRdvs.filter((rdv) => String(rdv.typeConsultation || '').trim().toLowerCase() === 'urgence').length;
+
+  safeSetText('todayRdv', todayRdv);
+  safeSetText('doneRdv', doneRdv);
+  safeSetText('pendingRdv', pendingRdv);
+  safeSetText('urgentRdv', urgentRdv);
+}
+
+function setStatFilter(filter, card) {
+  const cards = document.querySelectorAll('.stat-card');
+  if (activeStatFilter === filter) {
+    activeStatFilter = '';
+    cards.forEach((c) => c.classList.remove('active'));
+  } else {
+    activeStatFilter = filter;
+    cards.forEach((c) => c.classList.toggle('active', c === card));
+  }
+  filterTable();
+}
+
+function realRenderCalendarFallback(weekAppointments) {
+  const fallback = document.getElementById('calendarFallback');
+  if (!fallback) return;
+
+  if (!weekAppointments.length) {
+    fallback.innerHTML = `<div style="text-align:center;color:var(--muted);padding:8px 0;">Aucun rendez-vous</div>`;
+    return;
+  }
+
+  fallback.innerHTML = '';
+}
+
+function renderTable(data) {
+  const tbody = document.getElementById('rdvBody');
+  const count = document.getElementById('rdvCount');
+  if (count) count.textContent = `${data.length} RDV`;
+  if (!tbody) return;
+
+  if (!data.length) {
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:24px 20px;">Aucun rendez-vous</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = data.map((r) => {
+
+    let badgeCls = 'b-amber';
+    if (r.statut === 'Venu') badgeCls = 'b-green';
+    else if (r.statut === 'Urgent') badgeCls = 'b-red';
+    else if (r.statut === 'Annulé') badgeCls = 'b-grey';
+
+    return `<tr class="${r.statut === 'Urgent' ? 'row-urgent' : ''}">
+      <td><span class="p-name">${r.patient}</span></td>
+      <td>${r.date} · ${r.heure}</td>
+      <td>${r.motif}</td>
+      <td>${r.duree}</td>
+      <td><span class="badge ${badgeCls}">${r.statut}</span></td>
+      <td style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;align-items:center;">
+      ${r.rawStatut === 'confirme'
+        ? `<button type="button" class="action-btn complete" data-rdv-action data-action="present" data-id="${r.id}">Marquer présent</button>`
+        : r.rawStatut === 'present'
+          ? `<button type="button" class="action-btn complete" data-rdv-action data-action="termine" data-id="${r.id}">Terminer consultation</button>`
+          : ''
+      }
+      ${['present', 'venu', 'termine'].includes(r.rawStatut) ? `<a class="action-btn view" href="lys-medical-ordonnance.html?idRDV=${encodeURIComponent(r.id)}">Ordonnance</a>` : ''}
+      ${['present', 'venu', 'termine'].includes(r.rawStatut) ? `<button type="button" class="action-btn view" data-constantes-action data-id="${r.id}" data-patient="${r.patient.replace(/"/g, '&quot;')}">Ajouter constantes</button>` : ''}
+      </td>
+    </tr>`;
+  }).join('');
+  document.querySelectorAll('[data-rdv-action]').forEach(btn => {
+  btn.addEventListener('click', function(e){
+    e.preventDefault();
+    e.stopPropagation();
+
+    const id = Number(this.dataset.id);
+    const action = this.dataset.action;
+
+    console.log('Clicked RDV action:', id, action);
+    updateDoctorRdvStatus(id, action);
+  });
+});
+  document.querySelectorAll('[data-constantes-action]').forEach(btn => {
+    btn.addEventListener('click', function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      openConstantesModal(Number(this.dataset.id), this.dataset.patient || 'Patient');
+    });
+  });
+  refreshConstantesButtons();
+}
+
+function getFilteredRdvs() {
+  const q = document.getElementById('rdvSearch')?.value.toLowerCase().trim() || '';
+  const st = document.getElementById('filterStatus')?.value || '';
+  const mo = document.getElementById('filterMotif')?.value || '';
+
+  return rdvs.filter((r) => {
+    const matchQ = !q || String(r.patient || '').toLowerCase().includes(q);
+    const matchSt = !st || r.statut === st;
+    const matchMo = !mo || String(r.motif || '').toLowerCase().includes(mo.toLowerCase());
+    let matchStatFilter = true;
+
+    if (activeStatFilter === 'today') {
+      const date = realParseDateTime(r.dateHeureRaw);
+      matchStatFilter = date ? date.toDateString() === new Date().toDateString() : false;
+    } else if (activeStatFilter === 'done') {
+      matchStatFilter = realNormalizeStatus(r.statut) === 'Venu';
+    } else if (activeStatFilter === 'pending') {
+      matchStatFilter = realNormalizeStatus(r.statut) === 'En attente';
+    } else if (activeStatFilter === 'urgent') {
+      matchStatFilter = String(r.motif || '').trim().toLowerCase() === 'urgence';
+    }
+
+    return matchQ && matchSt && matchMo && matchStatFilter;
+  });
+}
+
+function buildTimeGrid(data = filteredRdvs) {
+  const grid = document.getElementById('timeGrid');
+  if (!grid) return;
+
+  const weekDates = realBuildWeekHeaders();
+  const weekKeys = weekDates.map((date) => date.toDateString());
+  const weekAppointments = data.filter((rdv) => {
+    const date = realParseDateTime(rdv.dateHeureRaw);
+    return date && weekKeys.includes(date.toDateString());
+  });
+
+  grid.innerHTML = '';
+
+  REAL_HOURS.forEach((hour) => {
+    const lbl = document.createElement('div');
+    lbl.className = 'time-slot-label';
+    lbl.textContent = hour.replace(':', 'h');
+    grid.appendChild(lbl);
+
+    weekDates.forEach((dateObj) => {
+      const cell = document.createElement('div');
+      cell.className = 'time-slot-cell';
+      cell.onclick = () => openNewRdvAt(dateObj.toLocaleDateString('fr-FR'), hour.replace(':', 'h'));
+
+      const appt = weekAppointments.find((rdv) => {
+        const date = realParseDateTime(rdv.dateHeureRaw);
+        if (!date) return false;
+        const hourKey = date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+        return date.toDateString() === dateObj.toDateString() && hourKey === hour;
+      });
+
+      if (appt) {
+        const div = document.createElement('div');
+        let cls = 'gold';
+        if (appt.statut === 'Venu') cls = 'green';
+        else if (appt.statut === 'Urgent') cls = 'red';
+        else if (appt.priorite === 'urgente') cls = 'red';
+
+        div.className = `time-appt ${cls}`;
+        div.innerHTML = `<div class="time-appt-time">${appt.heure}</div><div class="time-appt-name">${appt.patient}</div><div class="time-appt-type">${appt.motif} · ${appt.statut}</div>`;
+        div.onclick = (e) => { e.stopPropagation(); };
+        cell.appendChild(div);
+      }
+
+      grid.appendChild(cell);
+    });
+  });
+
+  realRenderCalendarFallback(weekAppointments);
+}
+
+function filterTable() {
+  filteredRdvs = getFilteredRdvs();
+  buildTimeGrid(filteredRdvs);
+  renderTable(filteredRdvs);
+}
+
+function setView(view) {
+  currentView = view;
+  const calView = document.getElementById('calView');
+  const listView = document.getElementById('listView');
+  const btnCalView = document.getElementById('btnCalView');
+  const btnListView = document.getElementById('btnListView');
+
+  if (calView) calView.style.display = view === 'cal' ? 'block' : 'none';
+  if (listView) listView.style.display = view === 'list' ? 'block' : 'none';
+  if (btnCalView) btnCalView.classList.toggle('active', view === 'cal');
+  if (btnListView) btnListView.classList.toggle('active', view === 'list');
+}
+
+function renderRdv(data) {
+  medecinRdvs = Array.isArray(data) ? data : [];
+  rdvs = medecinRdvs.map((r) => ({
+    id: Number(r.idRDV),
+    patient: `${r.patient_prenom || ''} ${r.patient_nom || ''}`.trim() || 'Patient',
+    date: realFormatDate(r.dateHeure),
+    heure: realFormatTime(r.dateHeure),
+    motif: r.typeConsultation || 'Consultation',
+    duree: r.duree ? `${r.duree} min` : '—',
+    statut: realNormalizeStatus(r.statut),
+    rawStatut: String(r.statut || '').trim().toLowerCase(),
+    priorite: realNormalizeStatus(r.statut) === 'Urgent' ? 'urgente' : 'normale',
+    telephone: r.telephone || '',
+    dateHeureRaw: r.dateHeure || ''
+  }));
+  filteredRdvs = [...rdvs];
+
+  const firstDate = medecinRdvs.length ? realParseDateTime(medecinRdvs[0].dateHeure) : new Date();
+  realCurrentWeekStart = realGetWeekStart(firstDate || new Date());
+  nextId = rdvs.length ? Math.max(...rdvs.map((rdv) => rdv.id)) + 1 : 1;
+
+  console.log('Loaded RDV:', rdvs);
+  console.log('Current week start:', realCurrentWeekStart);
+  realUpdateStats();
+  filteredRdvs = getFilteredRdvs();
+  buildTimeGrid(filteredRdvs);
+  renderTable(filteredRdvs);
+}
+
+async function loadRdv(){
+  try{
+    const res = await fetch('backend/medecin/get_rdv.php', { credentials: 'same-origin' });
+    const data = await res.json();
+    console.log('Doctor RDV:', data);
+
+    if(!data.success){
+      medecinRdvs = [];
+      rdvs = [];
+      filteredRdvs = [];
+      realCurrentWeekStart = realGetWeekStart(new Date());
+      realUpdateStats();
+      console.log('Loaded RDV:', rdvs);
+      console.log('Current week start:', realCurrentWeekStart);
+      buildTimeGrid([]);
+      renderTable([]);
+      return;
+    }
+
+    medecinRdvs = Array.isArray(data.rdv) ? data.rdv : [];
+    rdvs = medecinRdvs.map((r) => ({
+      id: Number(r.idRDV),
+      patient: `${r.patient_prenom || ''} ${r.patient_nom || ''}`.trim() || 'Patient',
+      date: realFormatDate(r.dateHeure),
+      heure: realFormatTime(r.dateHeure),
+      motif: r.typeConsultation || 'Consultation',
+      duree: r.duree ? `${r.duree} min` : '—',
+      statut: realNormalizeStatus(r.statut),
+      rawStatut: String(r.statut || '').trim().toLowerCase(),
+      priorite: realNormalizeStatus(r.statut) === 'Urgent' ? 'urgente' : 'normale',
+      telephone: r.telephone || '',
+      dateHeureRaw: r.dateHeure || ''
+    }));
+    filteredRdvs = [...rdvs];
+
+    if (rdvs.length > 0) {
+      const firstDate = realParseDateTime(rdvs[0].dateHeureRaw);
+      if (firstDate) {
+        realCurrentWeekStart = realGetWeekStart(firstDate);
+      }
+    } else {
+      realCurrentWeekStart = realGetWeekStart(new Date());
+    }
+
+    console.log('Loaded RDV:', rdvs);
+    console.log('Current week start:', realCurrentWeekStart);
+    realUpdateStats();
+    filteredRdvs = getFilteredRdvs();
+    buildTimeGrid(filteredRdvs);
+    renderTable(filteredRdvs);
+  }catch(e){
+    console.error('loadRdv error:', e);
+  }
+}
+
+async function checkSession(){
+  try{
+    const res = await fetch('backend/check_session.php', { credentials:'same-origin' });
+    const data = await res.json();
+
+    if(!data.logged || !data.user){
+      window.location.href = 'login.html';
+      return false;
+    }
+
+    if(String(data.user.role || '').toLowerCase() !== 'medecin'){
+      window.location.href = 'login.html';
+      return false;
+    }
+
+    return true;
+  }catch(e){
+    console.error('checkSession error:', e);
+    window.location.href = 'login.html';
+    return false;
+  }
+}
+function showToast(message, type = 'info') {
+  const t = document.getElementById('toast');
+  if (!t) {
+    console.log(message);
+    return;
+  }
+
+  t.textContent = message;
+  t.className = type === 'success' ? 'success' : type === 'error' ? 'error' : '';
+  t.style.opacity = '1';
+  t.style.transform = 'translateY(0)';
+
+  clearTimeout(t._t);
+  t._t = setTimeout(() => {
+    t.style.opacity = '0';
+    t.style.transform = 'translateY(16px)';
+  }, 2200);
+}
+
+function fillConstantesForm(constantes) {
+  document.getElementById('constPoids').value = constantes?.poids ?? '';
+  document.getElementById('constTension').value = constantes?.tension ?? '';
+  document.getElementById('constSpo2').value = constantes?.spo2 ?? '';
+}
+
+async function fetchConstantesForRdv(idRDV, force = false) {
+  const cacheKey = String(idRDV || '');
+  if (!force && constantesCache.has(cacheKey)) {
+    return constantesCache.get(cacheKey);
+  }
+
+  const res = await fetch(`backend/medecin/get_patient_constantes.php?idRDV=${encodeURIComponent(cacheKey)}`, {
+    credentials: 'same-origin'
+  });
+  const data = await res.json();
+
+  if (!res.ok || !data.success) {
+    throw new Error(data.message || 'Erreur de chargement des constantes');
+  }
+
+  constantesCache.set(cacheKey, data);
+  return data;
+}
+
+async function refreshConstantesButtons() {
+  const buttons = Array.from(document.querySelectorAll('[data-constantes-action]'));
+  await Promise.all(buttons.map(async (btn) => {
+    const idRDV = btn.dataset.id;
+    if (!idRDV) return;
+
+    try {
+      const data = await fetchConstantesForRdv(idRDV);
+      btn.textContent = data.exists ? 'Modifier constantes' : 'Ajouter constantes';
+      btn.dataset.hasConstantes = data.exists ? '1' : '0';
+    } catch (e) {
+      console.error('refreshConstantesButtons error:', e);
+      btn.textContent = 'Ajouter constantes';
+    }
+  }));
+}
+
+async function openConstantesModal(idRDV, patientName) {
+  document.getElementById('constantesRdvId').value = String(idRDV || '');
+  document.getElementById('constantesPatientName').textContent = patientName || 'Patient';
+  document.getElementById('constantesModalTitle').textContent = 'Ajouter constantes';
+  fillConstantesForm(null);
+  document.getElementById('constantesModal').classList.add('open');
+  document.getElementById('constPoids').focus();
+
+  try {
+    const data = await fetchConstantesForRdv(idRDV);
+    document.getElementById('constantesModalTitle').textContent = data.exists ? 'Modifier constantes' : 'Ajouter constantes';
+    fillConstantesForm(data.constantes);
+  } catch (e) {
+    console.error('openConstantesModal error:', e);
+    showToast(e.message || 'Erreur de chargement des constantes', 'error');
+  }
+}
+
+function closeConstantesModal() {
+  document.getElementById('constantesModal').classList.remove('open');
+}
+
+async function saveConstantes() {
+  const idRDV = document.getElementById('constantesRdvId').value;
+  try {
+    const res = await fetch('backend/medecin/add_patient_constantes.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'same-origin',
+      body: JSON.stringify({
+        idRDV,
+        poids: document.getElementById('constPoids').value,
+        tension: document.getElementById('constTension').value,
+        spo2: document.getElementById('constSpo2').value
+      })
+    });
+    const data = await res.json();
+    if (!res.ok || !data.success) {
+      showToast(data.message || 'Erreur lors de l’enregistrement', 'error');
+      return;
+    }
+    closeConstantesModal();
+    constantesCache.delete(String(idRDV || ''));
+    await refreshConstantesButtons();
+    showToast('Constantes enregistrées', 'success');
+  } catch (e) {
+    console.error('saveConstantes error:', e);
+    showToast('Erreur serveur', 'error');
+  }
+}
+
+async function updateDoctorRdvStatus(idRDV, statut){
+  try{
+    console.log('Updating RDV status:', idRDV, statut);
+    const res = await fetch('backend/rdv/update_status_medecin.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'same-origin',
+      body: JSON.stringify({ idRDV, statut })
+    });
+
+    const data = await res.json();
+    console.log('Update status response:', data);
+
+    if(!res.ok || !data.success){
+      showToast(data.message || 'Erreur de mise à jour', 'error');
+      return;
+    }
+
+    showToast('RDV mis à jour', 'success');
+    await loadRdv();
+    setView(currentView);
+  }catch(e){
+    console.error('updateDoctorRdvStatus error:', e);
+    showToast('Erreur serveur', 'error');
+  }
+}
+
+
+
+function prevWeek(){
+  realCurrentWeekStart = realGetWeekStart(new Date(realCurrentWeekStart || new Date()));
+  realCurrentWeekStart.setDate(realCurrentWeekStart.getDate() - 7);
+  buildTimeGrid(getFilteredRdvs());
+}
+
+function nextWeek(){
+  realCurrentWeekStart = realGetWeekStart(new Date(realCurrentWeekStart || new Date()));
+  realCurrentWeekStart.setDate(realCurrentWeekStart.getDate() + 7);
+  buildTimeGrid(getFilteredRdvs());
+}
+
+function goToday(){
+  realCurrentWeekStart = realGetWeekStart(new Date());
+  buildTimeGrid(getFilteredRdvs());
+}
+
+rdvs = [];
+filteredRdvs = [];
+realCurrentWeekStart = realGetWeekStart(new Date());
+realUpdateStats();
+buildTimeGrid([]);
+renderTable([]);
+
+window.addEventListener('DOMContentLoaded', async function () {
+  const canLoad = await checkSession();
+  if (canLoad) {
+    await loadRdv();
+    setView(currentView);
+  }
+});
+</script>
+</body>
+</html>

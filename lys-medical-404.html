@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LYS MEDICAL — Page introuvable</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --navy:#0A1628;--navy-mid:#152238;--navy-light:#1E3150;
+  --gold:#C8A96E;--gold-light:#DFC28D;--gold-pale:#F5EDD9;
+  --white:#FAFAF8;--text-muted:#8A9BB5;
+  --border:rgba(200,169,110,0.2);
+}
+html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--navy);color:var(--white);overflow:hidden;}
+
+/* ── BACKGROUND ── */
+.bg{position:fixed;inset:0;z-index:0;}
+
+/* Grid pattern */
+.bg-grid{
+  position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(200,169,110,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(200,169,110,0.04) 1px, transparent 1px);
+  background-size:60px 60px;
+  mask-image:radial-gradient(ellipse 80% 80% at 50% 50%, black 20%, transparent 100%);
+}
+
+/* Radial glow center */
+.bg-glow{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:800px;height:800px;border-radius:50%;
+  background:radial-gradient(circle, rgba(200,169,110,0.07) 0%, transparent 65%);
+  animation:breathe 6s ease-in-out infinite;
+}
+@keyframes breathe{0%,100%{transform:translate(-50%,-50%) scale(1);}50%{transform:translate(-50%,-50%) scale(1.08);}}
+
+/* Corner ornaments */
+.corner{position:absolute;width:120px;height:120px;opacity:0.15;}
+.corner svg{width:100%;height:100%;}
+.corner.tl{top:24px;left:24px;}
+.corner.tr{top:24px;right:24px;transform:scaleX(-1);}
+.corner.bl{bottom:24px;left:24px;transform:scaleY(-1);}
+.corner.br{bottom:24px;right:24px;transform:scale(-1);}
+
+/* Floating particles */
+.particles{position:absolute;inset:0;pointer-events:none;}
+.particle{
+  position:absolute;border-radius:50%;
+  background:var(--gold);opacity:0;
+  animation:float var(--dur,8s) ease-in-out var(--delay,0s) infinite;
+}
+@keyframes float{
+  0%{opacity:0;transform:translateY(0) scale(0);}
+  20%{opacity:0.4;transform:translateY(-20px) scale(1);}
+  80%{opacity:0.2;transform:translateY(-80px) scale(0.7);}
+  100%{opacity:0;transform:translateY(-120px) scale(0);}
+}
+
+/* ── MAIN CONTENT ── */
+.page{
+  position:relative;z-index:1;
+  height:100vh;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  padding:40px 24px;
+  animation:pageIn 0.8s ease both;
+}
+@keyframes pageIn{from{opacity:0;}to{opacity:1;}}
+
+/* Logo */
+.logo{
+  display:flex;align-items:center;gap:12px;
+  position:absolute;top:28px;left:40px;
+  text-decoration:none;
+  animation:slideDown 0.6s ease both;
+}
+@keyframes slideDown{from{opacity:0;transform:translateY(-12px);}to{opacity:1;transform:translateY(0);}}
+.logo-icon{width:34px;height:34px;background:rgba(200,169,110,0.1);border-radius:9px;display:flex;align-items:center;justify-content:center;border:1px solid var(--border);}
+.logo-icon svg{width:17px;height:17px;}
+.logo-name{font-family:'Cormorant Garamond',serif;font-size:15px;font-weight:600;color:var(--white);letter-spacing:2.5px;text-transform:uppercase;}
+
+/* Back link top-right */
+.top-back{
+  position:absolute;top:32px;right:40px;
+  display:flex;align-items:center;gap:8px;
+  font-size:12.5px;color:var(--text-muted);text-decoration:none;
+  transition:color 0.2s;padding:7px 14px;border-radius:8px;
+  border:1px solid rgba(200,169,110,0.12);
+  animation:slideDown 0.6s ease 0.1s both;
+}
+.top-back:hover{color:var(--gold-light);border-color:var(--border);}
+.top-back svg{width:13px;height:13px;}
+
+/* 404 numeral */
+.numeral-wrap{position:relative;margin-bottom:8px;}
+.numeral{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(140px,22vw,220px);
+  font-weight:300;line-height:1;letter-spacing:-8px;
+  color:transparent;
+  -webkit-text-stroke:1px rgba(200,169,110,0.3);
+  position:relative;z-index:1;
+  animation:numeralIn 0.9s ease 0.2s both;
+  user-select:none;
+}
+@keyframes numeralIn{from{opacity:0;transform:scale(0.85);}to{opacity:1;transform:scale(1);}}
+
+/* Pulse ring behind 404 */
+.numeral-ring{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:260px;height:260px;border-radius:50%;
+  border:1px solid rgba(200,169,110,0.08);
+  animation:ringPulse 3s ease-in-out infinite;
+}
+.numeral-ring:nth-child(2){width:360px;height:360px;animation-delay:0.5s;border-color:rgba(200,169,110,0.05);}
+.numeral-ring:nth-child(3){width:460px;height:460px;animation-delay:1s;border-color:rgba(200,169,110,0.03);}
+@keyframes ringPulse{0%,100%{opacity:1;}50%{opacity:0.3;}}
+
+/* Gold accent line */
+.accent-line{
+  width:60px;height:1px;background:var(--gold);margin:0 auto 28px;
+  animation:lineIn 0.6s ease 0.5s both;
+}
+@keyframes lineIn{from{width:0;opacity:0;}to{width:60px;opacity:1;}}
+
+/* Tag */
+.tag{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(200,169,110,0.08);border:1px solid var(--border);
+  border-radius:40px;padding:5px 16px;margin-bottom:22px;
+  animation:fadeUp 0.5s ease 0.4s both;
+}
+.tag-dot{width:5px;height:5px;border-radius:50%;background:var(--gold);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.3;}}
+.tag span{font-size:10.5px;letter-spacing:2px;text-transform:uppercase;color:var(--gold-light);font-weight:500;}
+
+/* Heading */
+.heading{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(24px,4vw,38px);font-weight:400;
+  color:var(--white);letter-spacing:-0.3px;margin-bottom:14px;text-align:center;
+  animation:fadeUp 0.5s ease 0.5s both;
+}
+.heading em{font-style:italic;color:var(--gold-light);}
+
+/* Subtext */
+.subtext{
+  font-size:15px;font-weight:300;color:var(--text-muted);
+  line-height:1.8;text-align:center;max-width:400px;margin-bottom:40px;
+  animation:fadeUp 0.5s ease 0.6s both;
+}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+
+/* Actions */
+.actions{
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:center;
+  animation:fadeUp 0.5s ease 0.7s both;
+}
+.btn-primary{
+  height:48px;padding:0 28px;
+  background:var(--gold);color:var(--navy);border:none;
+  border-radius:10px;font-size:13px;font-weight:500;
+  letter-spacing:0.8px;text-transform:uppercase;cursor:pointer;
+  font-family:'DM Sans',sans-serif;text-decoration:none;
+  display:inline-flex;align-items:center;gap:8px;
+  transition:all 0.25s;
+}
+.btn-primary:hover{background:var(--gold-light);transform:translateY(-2px);box-shadow:0 10px 28px rgba(200,169,110,0.25);}
+.btn-primary svg{width:15px;height:15px;}
+.btn-ghost{
+  height:48px;padding:0 24px;
+  background:transparent;border:1.5px solid rgba(200,169,110,0.2);
+  color:var(--text-muted);border-radius:10px;
+  font-size:13px;font-weight:400;cursor:pointer;
+  font-family:'DM Sans',sans-serif;text-decoration:none;
+  display:inline-flex;align-items:center;gap:8px;
+  transition:all 0.25s;
+}
+.btn-ghost:hover{border-color:var(--gold);color:var(--gold-light);}
+.btn-ghost svg{width:14px;height:14px;}
+
+/* Quick links */
+.quick-links{
+  display:flex;align-items:center;gap:6px;margin-top:36px;flex-wrap:wrap;justify-content:center;
+  animation:fadeUp 0.5s ease 0.85s both;
+}
+.ql-label{font-size:11.5px;color:rgba(138,155,181,0.5);letter-spacing:0.5px;}
+.ql-sep{color:rgba(138,155,181,0.2);font-size:12px;}
+.ql-link{
+  font-size:12px;color:rgba(138,155,181,0.6);text-decoration:none;
+  transition:color 0.2s;padding:4px 8px;border-radius:6px;
+}
+.ql-link:hover{color:var(--gold-light);background:rgba(200,169,110,0.05);}
+
+/* Medical cross decoration */
+.med-cross{
+  position:absolute;opacity:0.04;pointer-events:none;
+}
+.med-cross svg{width:100%;height:100%;}
+.mc1{width:200px;height:200px;top:10%;right:8%;animation:rotateSlow 40s linear infinite;}
+.mc2{width:120px;height:120px;bottom:15%;left:6%;animation:rotateSlow 28s linear infinite reverse;}
+@keyframes rotateSlow{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+
+/* ECG line decoration */
+.ecg-wrap{
+  position:absolute;bottom:0;left:0;right:0;height:60px;
+  overflow:hidden;opacity:0.06;pointer-events:none;
+}
+.ecg-path{
+  stroke:var(--gold);stroke-width:1.5;fill:none;
+  stroke-dasharray:1200;stroke-dashoffset:1200;
+  animation:ecgDraw 3s ease 1s forwards;
+}
+@keyframes ecgDraw{to{stroke-dashoffset:0;}}
+</style>
+</head>
+<body>
+
+<!-- BG -->
+<div class="bg">
+  <div class="bg-grid"></div>
+  <div class="bg-glow"></div>
+
+  <!-- Corner ornaments -->
+  <div class="corner tl"><svg viewBox="0 0 100 100" fill="none"><path d="M10 90V10h80" stroke="#C8A96E" stroke-width="1"/><path d="M10 10l8 8M10 10l8 0M10 10l0 8" stroke="#C8A96E" stroke-width="1"/><rect x="30" y="30" width="20" height="20" stroke="#C8A96E" stroke-width="0.5" opacity="0.5"/></svg></div>
+  <div class="corner tr"><svg viewBox="0 0 100 100" fill="none"><path d="M10 90V10h80" stroke="#C8A96E" stroke-width="1"/><path d="M10 10l8 8M10 10l8 0M10 10l0 8" stroke="#C8A96E" stroke-width="1"/><rect x="30" y="30" width="20" height="20" stroke="#C8A96E" stroke-width="0.5" opacity="0.5"/></svg></div>
+  <div class="corner bl"><svg viewBox="0 0 100 100" fill="none"><path d="M10 90V10h80" stroke="#C8A96E" stroke-width="1"/><path d="M10 10l8 8M10 10l8 0M10 10l0 8" stroke="#C8A96E" stroke-width="1"/><rect x="30" y="30" width="20" height="20" stroke="#C8A96E" stroke-width="0.5" opacity="0.5"/></svg></div>
+  <div class="corner br"><svg viewBox="0 0 100 100" fill="none"><path d="M10 90V10h80" stroke="#C8A96E" stroke-width="1"/><path d="M10 10l8 8M10 10l8 0M10 10l0 8" stroke="#C8A96E" stroke-width="1"/><rect x="30" y="30" width="20" height="20" stroke="#C8A96E" stroke-width="0.5" opacity="0.5"/></svg></div>
+
+  <!-- Particles -->
+  <div class="particles" id="particles"></div>
+
+  <!-- Medical cross decorations -->
+  <div class="med-cross mc1"><svg viewBox="0 0 100 100" fill="none"><path d="M35 5h30v30h30v30H65v30H35V65H5V35h30V5z" stroke="#C8A96E" stroke-width="1.5"/></svg></div>
+  <div class="med-cross mc2"><svg viewBox="0 0 100 100" fill="none"><path d="M35 5h30v30h30v30H65v30H35V65H5V35h30V5z" stroke="#C8A96E" stroke-width="1.5"/></svg></div>
+
+  <!-- ECG line -->
+  <div class="ecg-wrap">
+    <svg width="100%" height="60" viewBox="0 0 1440 60" preserveAspectRatio="none">
+      <path class="ecg-path" d="M0 30 L120 30 L150 30 L165 10 L180 50 L195 5 L210 55 L225 30 L255 30 L380 30 L410 30 L425 10 L440 50 L455 5 L470 55 L485 30 L510 30 L640 30 L670 30 L685 10 L700 50 L715 5 L730 55 L745 30 L770 30 L900 30 L930 30 L945 10 L960 50 L975 5 L990 55 L1005 30 L1030 30 L1160 30 L1190 30 L1205 10 L1220 50 L1235 5 L1250 55 L1265 30 L1290 30 L1440 30"/>
+    </svg>
+  </div>
+</div>
+
+<!-- CONTENT -->
+<div class="page">
+
+  <!-- Logo -->
+  <a href="landing.html" class="logo">
+    <div class="logo-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M12 4v16M4 12h16" stroke="#C8A96E" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="12" r="9" stroke="#C8A96E" stroke-width="1.5" opacity="0.4"/></svg></div>
+    <span class="logo-name">Lys Medical</span>
+  </a>
+
+  <!-- Top back -->
+  <a href="javascript:history.back()" class="top-back">
+    <svg viewBox="0 0 16 16" fill="none"><path d="M10 3L5 8l5 5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    Page précédente
+  </a>
+
+  <!-- 404 numeral -->
+  <div class="numeral-wrap">
+    <div class="numeral-ring"></div>
+    <div class="numeral-ring"></div>
+    <div class="numeral-ring"></div>
+    <div class="numeral">404</div>
+  </div>
+
+  <div class="accent-line"></div>
+
+  <div class="tag">
+    <span class="tag-dot"></span>
+    <span>Page introuvable</span>
+  </div>
+
+  <h1 class="heading">Cette page <em>n'existe pas</em></h1>
+
+  <p class="subtext">
+    La page que vous recherchez a peut-être été déplacée, supprimée,
+    ou n'a jamais existé. Vérifiez l'adresse ou revenez à l'accueil.
+  </p>
+
+  <div class="actions">
+    <a href="landing.html" class="btn-primary">
+      <svg viewBox="0 0 16 16" fill="none"><path d="M2 8h12M8 3l5 5-5 5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Accueil
+    </a>
+    <a href="lys-medical-dashboard.html" class="btn-ghost">
+      <svg viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.1"/><rect x="9" y="1" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.1"/><rect x="1" y="9" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.1"/><rect x="9" y="9" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.1"/></svg>
+      Tableau de bord
+    </a>
+    <a href="login.html" class="btn-ghost">
+      <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="6" r="3" stroke="currentColor" stroke-width="1.1"/><path d="M2 14c0-3 2.7-5 6-5s6 2 6 5" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>
+      Connexion
+    </a>
+  </div>
+
+  <div class="quick-links">
+    <span class="ql-label">Accès rapide</span>
+    <span class="ql-sep">·</span>
+    <a href="lys-medical-rdv.html" class="ql-link">Rendez-vous</a>
+    <span class="ql-sep">·</span>
+    <a href="lys-medical-patient.html" class="ql-link">Fiche patient</a>
+    <span class="ql-sep">·</span>
+    <a href="lys-medical-politique.html" class="ql-link">Politique & mentions</a>
+    <span class="ql-sep">·</span>
+    <a href="lys-medical-ordonnance.html" class="ql-link">Ordonnances</a>
+  </div>
+
+</div>
+
+<script>
+// Floating particles
+const container = document.getElementById('particles');
+for(let i=0;i<18;i++){
+  const p = document.createElement('div');
+  p.className = 'particle';
+  const size = Math.random()*4+2;
+  p.style.cssText = `
+    width:${size}px;height:${size}px;
+    left:${Math.random()*100}%;
+    top:${40+Math.random()*50}%;
+    --dur:${7+Math.random()*8}s;
+    --delay:${Math.random()*6}s;
+    opacity:0;
+  `;
+  container.appendChild(p);
+}
+</script>
+</body>
+</html>

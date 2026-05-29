@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LYS MEDICAL — Créer un compte</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --navy:#0A1628;--navy-mid:#152238;--navy-light:#1E3150;
+  --gold:#C8A96E;--gold-light:#DFC28D;--gold-pale:#F5EDD9;
+  --white:#FAFAF8;--bg:#F2F0EA;--text-muted:#8A9BB5;
+  --border:rgba(200,169,110,0.2);
+}
+html,body{height:100%;font-family:'DM Sans',sans-serif;}
+body{
+  min-height:100vh;display:flex;
+  background:linear-gradient(135deg,#0B162C 0%,#1A2A44 100%);
+  padding:24px;align-items:flex-start;justify-content:center;
+}
+
+/* ── CARD ── */
+.card{
+  width:100%;max-width:960px;
+  background:var(--white);border-radius:24px;
+  overflow:hidden;
+  box-shadow:0 32px 80px rgba(0,0,0,0.35);
+  display:grid;grid-template-columns:1fr 1.4fr;
+  margin:auto;
+}
+
+/* ── LEFT PANEL ── */
+.left{
+  background:var(--navy);
+  padding:48px 40px;
+  display:flex;flex-direction:column;
+  justify-content:space-between;
+  position:relative;overflow:hidden;
+}
+.left::before{
+  content:'';position:absolute;
+  width:300px;height:300px;border-radius:50%;
+  background:radial-gradient(circle,rgba(200,169,110,0.08) 0%,transparent 70%);
+  top:-80px;right:-80px;pointer-events:none;
+}
+.left::after{
+  content:'';position:absolute;
+  width:200px;height:200px;border-radius:50%;
+  background:radial-gradient(circle,rgba(200,169,110,0.05) 0%,transparent 70%);
+  bottom:-40px;left:-40px;pointer-events:none;
+}
+.logo{display:flex;align-items:center;gap:12px;text-decoration:none;position:relative;z-index:1;}
+.logo-icon{
+  width:36px;height:36px;background:rgba(200,169,110,0.12);
+  border-radius:9px;display:flex;align-items:center;justify-content:center;
+  border:1px solid var(--border);flex-shrink:0;
+}
+.logo-icon svg{width:18px;height:18px;}
+.logo-name{font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:600;color:var(--white);letter-spacing:2.5px;text-transform:uppercase;}
+.logo-sub{font-size:9.5px;color:var(--text-muted);letter-spacing:1.5px;text-transform:uppercase;}
+
+.left-body{position:relative;z-index:1;}
+.left-eyebrow{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(200,169,110,0.1);border:1px solid var(--border);
+  border-radius:40px;padding:6px 14px;margin-bottom:24px;
+}
+.left-eyebrow .dot{width:5px;height:5px;border-radius:50%;background:var(--gold);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.4;}}
+.left-eyebrow span{font-size:10.5px;letter-spacing:2px;text-transform:uppercase;color:var(--gold-light);font-weight:500;}
+.left-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(30px,3.5vw,44px);font-weight:300;
+  color:var(--white);line-height:1.1;letter-spacing:-0.5px;margin-bottom:16px;
+}
+.left-title em{font-style:italic;color:var(--gold-light);}
+.left-desc{font-size:13px;font-weight:300;color:var(--text-muted);line-height:1.8;max-width:280px;}
+
+.steps{display:flex;flex-direction:column;gap:16px;position:relative;z-index:1;}
+.step{display:flex;align-items:center;gap:14px;}
+.step-num{
+  width:28px;height:28px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:500;transition:all 0.3s;
+}
+.step-num.active{background:var(--gold);color:var(--navy);}
+.step-num.done{background:rgba(61,170,112,0.2);color:#3DAA70;border:1px solid rgba(61,170,112,0.4);}
+.step-num.inactive{background:rgba(255,255,255,0.05);color:var(--text-muted);border:1px solid rgba(255,255,255,0.08);}
+.step-label{font-size:12.5px;font-weight:400;}
+.step-label.active{color:var(--white);}
+.step-label.done{color:#3DAA70;}
+.step-label.inactive{color:var(--text-muted);}
+.step-connector{width:1px;height:16px;background:rgba(200,169,110,0.15);margin-left:13px;}
+
+/* ── RIGHT PANEL ── */
+.right{padding:48px 44px;background:var(--white);overflow-y:auto;max-height:90vh;}
+
+/* Step panels */
+.step-panel{display:none;}
+.step-panel.active{display:block;animation:fadeUp 0.4s ease both;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+
+.panel-heading{
+  font-family:'Cormorant Garamond',serif;
+  font-size:30px;font-weight:400;color:var(--navy);
+  line-height:1.15;margin-bottom:6px;letter-spacing:-0.3px;
+}
+.panel-heading em{font-style:italic;color:var(--gold);}
+.panel-sub{font-size:13.5px;font-weight:300;color:var(--text-muted);margin-bottom:32px;line-height:1.5;}
+
+/* Role selector */
+.role-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:28px;}
+.role-card{
+  border:1.5px solid #E8E6E0;border-radius:14px;padding:20px 16px;
+  text-align:center;cursor:pointer;transition:all 0.25s;
+  background:#FEFEFE;
+}
+.role-card:hover{border-color:var(--gold);background:var(--gold-pale);}
+.role-card.selected{border-color:var(--gold);background:var(--gold-pale);box-shadow:0 0 0 3px rgba(200,169,110,0.15);}
+.role-icon{
+  width:44px;height:44px;border-radius:11px;
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 12px;background:rgba(10,22,40,0.06);transition:background 0.25s;
+}
+.role-card.selected .role-icon,.role-card:hover .role-icon{background:rgba(200,169,110,0.2);}
+.role-icon svg{width:20px;height:20px;color:var(--navy);}
+.role-card.selected .role-icon svg,.role-card:hover .role-icon svg{color:var(--gold);}
+.role-name{font-size:13px;font-weight:500;color:var(--navy);}
+.role-desc{font-size:11px;color:var(--text-muted);margin-top:3px;font-weight:300;}
+
+/* Form fields */
+.field-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+.field{display:flex;flex-direction:column;gap:7px;margin-bottom:16px;}
+.field.full{grid-column:1/-1;}
+.field label{font-size:10.5px;font-weight:500;color:var(--navy);letter-spacing:1.2px;text-transform:uppercase;}
+.field-wrap{position:relative;}
+.field-wrap svg.fi{
+  position:absolute;left:14px;top:50%;transform:translateY(-50%);
+  width:15px;height:15px;color:var(--text-muted);pointer-events:none;transition:color 0.2s;
+}
+.field input,.field select{
+  width:100%;height:48px;padding:0 14px 0 40px;
+  border:1.5px solid #E8E6E0;border-radius:11px;
+  font-size:13.5px;font-family:'DM Sans',sans-serif;font-weight:300;
+  color:var(--navy);background:#FEFEFE;outline:none;
+  transition:all 0.2s;-webkit-appearance:none;
+}
+.field input::placeholder{color:#C0BBAF;}
+.field input:hover,.field select:hover{border-color:#C8B99A;}
+.field input:focus,.field select:focus{
+  border-color:var(--gold);background:var(--gold-pale);
+  box-shadow:0 0 0 3px rgba(200,169,110,0.1);
+}
+.field input:focus~svg.fi,.field-wrap:focus-within svg.fi{color:var(--gold);}
+.field input.no-icon,.field select.no-icon{padding-left:14px;}
+
+/* Password strength */
+.pwd-strength{margin-top:8px;display:flex;gap:5px;align-items:center;}
+.pwd-bar{flex:1;height:3px;border-radius:3px;background:#E8E6E0;transition:background 0.3s;}
+.pwd-bar.weak{background:#E05050;}
+.pwd-bar.medium{background:#E8A030;}
+.pwd-bar.strong{background:#3DAA70;}
+.pwd-label{font-size:11px;color:var(--text-muted);min-width:48px;text-align:right;}
+
+/* Toggle eye */
+.eye-btn{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text-muted);display:flex;align-items:center;padding:3px;transition:color 0.2s;}
+.eye-btn:hover{color:var(--navy);}
+
+/* Checkbox */
+.check-wrap{display:flex;align-items:flex-start;gap:12px;margin-bottom:16px;cursor:pointer;}
+.check-wrap input[type=checkbox]{
+  width:18px;height:18px;flex-shrink:0;margin-top:1px;
+  accent-color:var(--navy);cursor:pointer;
+}
+.check-label{font-size:12.5px;color:var(--text-muted);font-weight:300;line-height:1.6;}
+.check-label a{color:var(--navy);font-weight:500;text-decoration:none;border-bottom:1px solid var(--gold);}
+
+/* Buttons */
+.btn-row{display:flex;gap:12px;margin-top:8px;}
+.btn-next{
+  flex:1;height:50px;background:var(--navy);color:var(--white);
+  border:none;border-radius:11px;font-size:13px;font-weight:500;
+  letter-spacing:1px;text-transform:uppercase;cursor:pointer;
+  font-family:'DM Sans',sans-serif;transition:all 0.2s;
+}
+.btn-next:hover{background:var(--navy-light);transform:translateY(-2px);box-shadow:0 10px 24px rgba(10,22,40,0.2);}
+.btn-back{
+  height:50px;padding:0 22px;background:transparent;
+  border:1.5px solid #E8E6E0;border-radius:11px;
+  font-size:13px;font-weight:400;color:var(--text-muted);
+  cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s;
+}
+.btn-back:hover{border-color:var(--navy);color:var(--navy);}
+
+/* Progress bar top */
+.progress-top{display:flex;gap:6px;margin-bottom:36px;}
+.pt-seg{flex:1;height:3px;border-radius:3px;background:#E8E6E0;transition:background 0.4s;}
+.pt-seg.done{background:#3DAA70;}
+.pt-seg.active{background:var(--gold);}
+
+/* Success */
+.success-wrap{text-align:center;padding:32px 0;}
+.success-icon{
+  width:72px;height:72px;border-radius:50%;
+  background:#EAF7F0;display:flex;align-items:center;justify-content:center;
+  margin:0 auto 24px;
+}
+.success-icon svg{width:32px;height:32px;color:#3DAA70;}
+.success-title{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:400;color:var(--navy);margin-bottom:12px;}
+.success-title em{font-style:italic;color:var(--gold);}
+.success-desc{font-size:14px;font-weight:300;color:var(--text-muted);line-height:1.7;max-width:360px;margin:0 auto 32px;}
+.btn-login-redirect{
+  display:inline-block;padding:14px 36px;
+  background:var(--navy);color:var(--white);
+  border-radius:11px;font-size:13px;font-weight:500;
+  letter-spacing:1px;text-transform:uppercase;
+  text-decoration:none;font-family:'DM Sans',sans-serif;
+  transition:all 0.2s;
+}
+.btn-login-redirect:hover{background:var(--navy-light);transform:translateY(-2px);box-shadow:0 10px 24px rgba(10,22,40,0.2);}
+
+/* Login link */
+.login-link{text-align:center;font-size:13.5px;color:var(--text-muted);font-weight:300;margin-top:20px;}
+.login-link a{color:var(--navy);font-weight:500;text-decoration:none;border-bottom:1px solid var(--gold);padding-bottom:1px;transition:color 0.2s;}
+.login-link a:hover{color:var(--gold);}
+
+/* Divider */
+.divider{display:flex;align-items:center;gap:12px;margin:20px 0;}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:#EAE8E2;}
+.divider span{font-size:11.5px;color:#BBBBBB;white-space:nowrap;}
+
+/* Responsive */
+@media(max-width:768px){
+  body{padding:0;}
+  .card{grid-template-columns:1fr;border-radius:0;}
+  .left{display:none;}
+  .right{padding:32px 24px;max-height:none;}
+  .role-grid{grid-template-columns:1fr 1fr;}
+  .field-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+<div class="card">
+
+  <!-- LEFT -->
+  <div class="left">
+    <a href="landing.htmll" class="logo">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M12 4v16M4 12h16" stroke="#C8A96E" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="12" r="9" stroke="#C8A96E" stroke-width="1.5" opacity="0.4"/></svg>
+      </div>
+      <div>
+        <div class="logo-name">Lys Medical</div>
+        <div class="logo-sub">Portail de gestion</div>
+      </div>
+    </a>
+
+    <div class="left-body">
+      <div class="left-eyebrow"><span class="dot"></span><span>Nouveau compte</span></div>
+      <h1 class="left-title">Rejoignez<br><em>LYS MEDICAL</em><br>en quelques étapes.</h1>
+      <p class="left-desc">Créez votre espace personnel et accédez à tous les services du cabinet médical en ligne.</p>
+    </div>
+
+    <div class="steps" id="sideSteps">
+      <div class="step"><div class="step-num active" id="sn1">1</div><span class="step-label active" id="sl1">Votre rôle</span></div>
+      <div class="step-connector"></div>
+      <div class="step"><div class="step-num inactive" id="sn2">2</div><span class="step-label inactive" id="sl2">Informations personnelles</span></div>
+      <div class="step-connector"></div>
+      <div class="step"><div class="step-num inactive" id="sn3">3</div><span class="step-label inactive" id="sl3">Sécurité du compte</span></div>
+      <div class="step-connector"></div>
+      <div class="step"><div class="step-num inactive" id="sn4">✓</div><span class="step-label inactive" id="sl4">Confirmation</span></div>
+    </div>
+  </div>
+
+  <!-- RIGHT -->
+  <div class="right">
+    <!-- Progress bar -->
+    <div class="progress-top">
+      <div class="pt-seg active" id="pg1"></div>
+      <div class="pt-seg" id="pg2"></div>
+      <div class="pt-seg" id="pg3"></div>
+      <div class="pt-seg" id="pg4"></div>
+    </div>
+
+    <!-- STEP 1 — Rôle -->
+    <div class="step-panel active" id="panel1">
+      <h2 class="panel-heading">Qui êtes-<em>vous</em> ?</h2>
+      <p class="panel-sub">Sélectionnez votre profil pour personnaliser votre espace.</p>
+      <div class="role-grid">
+        <div class="role-card" onclick="selectRole(this,'patient')" data-role="patient">
+          <div class="role-icon"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.4"/><path d="M5 20c0-3.866 3.134-7 7-7s7 3.134 7 7" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></div>
+          <div class="role-name">Patient</div>
+          <div class="role-desc">Accéder à vos rendez-vous & dossiers</div>
+        </div>
+        <div class="role-card" onclick="selectRole(this,'medecin')" data-role="medecin">
+          <div class="role-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M12 4v16M4 12h16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.4" opacity="0.5"/></svg></div>
+          <div class="role-name">Médecin</div>
+          <div class="role-desc">Gérer patients & consultations</div>
+        </div>
+        <div class="role-card" onclick="selectRole(this,'secretaire')" data-role="secretaire">
+          <div class="role-icon"><svg viewBox="0 0 24 24" fill="none"><rect x="4" y="4" width="16" height="16" rx="2" stroke="currentColor" stroke-width="1.4"/><path d="M8 9h8M8 13h5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></div>
+          <div class="role-name">Secrétaire</div>
+          <div class="role-desc">Planification & administration</div>
+        </div>
+      </div>
+      <p style="font-size:12px;color:var(--text-muted);font-weight:300;margin-bottom:28px;">
+        <svg style="width:13px;height:13px;vertical-align:middle;margin-right:5px;color:var(--gold);" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.2"/><path d="M8 7v5M8 5v.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+        Les comptes Médecin et Secrétaire nécessitent une validation par l'administrateur du cabinet.
+      </p>
+      <button class="btn-next" onclick="goStep(2)">Continuer →</button>
+      <div class="login-link" style="margin-top:24px;">Déjà inscrit ? <a href="login.html">Se connecter</a></div>
+    </div>
+
+    <!-- STEP 2 — Infos personnelles -->
+    <div class="step-panel" id="panel2">
+      <h2 class="panel-heading">Vos <em>informations</em></h2>
+      <p class="panel-sub">Renseignez vos coordonnées personnelles.</p>
+      <div class="field-grid">
+        <div class="field">
+          <label>Prénom</label>
+          <div class="field-wrap">
+            <input type="text" placeholder="Ex : Amina">
+            <svg class="fi" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="7" r="3.5" stroke="currentColor" stroke-width="1.3"/><path d="M3 17c0-3.314 3.134-6 7-6s7 2.686 7 6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+          </div>
+        </div>
+        <div class="field">
+          <label>Nom de famille</label>
+          <div class="field-wrap">
+            <input type="text" placeholder="Ex : Bensalem">
+            <svg class="fi" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="7" r="3.5" stroke="currentColor" stroke-width="1.3"/><path d="M3 17c0-3.314 3.134-6 7-6s7 2.686 7 6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+          </div>
+        </div>
+      </div>
+      <div class="field">
+        <label>Adresse e-mail</label>
+        <div class="field-wrap">
+          <input type="email" placeholder="vous@email.com">
+          <svg class="fi" viewBox="0 0 20 20" fill="none"><path d="M2 5h16v10a1 1 0 01-1 1H3a1 1 0 01-1-1V5z" stroke="currentColor" stroke-width="1.25"/><path d="M2 5l8 7 8-7" stroke="currentColor" stroke-width="1.25"/></svg>
+        </div>
+      </div>
+      <div class="field-grid">
+        <div class="field">
+          <label>Téléphone</label>
+          <div class="field-wrap">
+            <input type="tel" placeholder="+213 0XX XXX XXX">
+            <svg class="fi" viewBox="0 0 20 20" fill="none"><path d="M4 4.5C4 3.7 4.7 3 5.5 3h2l1.5 4-1.5 1.5c.9 1.8 2.2 3.1 4 4L13 11l4 1.5v2c0 .8-.7 1.5-1.5 1.5C7.8 16 4 8.2 4 4.5z" stroke="currentColor" stroke-width="1.25"/></svg>
+          </div>
+        </div>
+        <div class="field">
+          <label>Date de naissance</label>
+          <div class="field-wrap">
+            <input type="date" class="no-icon" style="padding-left:14px;">
+          </div>
+        </div>
+      </div>
+      <div class="field">
+        <label>Sexe</label>
+        <div class="field-wrap">
+          <select class="no-icon" style="padding-left:14px;">
+            <option value="">Sélectionner…</option>
+            <option>Homme</option>
+            <option>Femme</option>
+          </select>
+        </div>
+      </div>
+      <!-- Champ spécifique médecin (caché par défaut) -->
+      <div class="field" id="specialiteField" style="display:none;">
+        <label>Spécialité médicale</label>
+        <div class="field-wrap">
+          <select class="no-icon" style="padding-left:14px;">
+            <option value="">Sélectionner votre spécialité…</option>
+            <option>Médecine générale</option>
+            <option>Pédiatrie</option>
+            <option>Gynécologie</option>
+            <option>Cardiologie</option>
+            <option>Dermatologie</option>
+            <option>Autre</option>
+          </select>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn-back" onclick="goStep(1)">← Retour</button>
+        <button class="btn-next" onclick="goStep(3)">Continuer →</button>
+      </div>
+    </div>
+
+    <!-- STEP 3 — Sécurité -->
+    <div class="step-panel" id="panel3">
+      <h2 class="panel-heading">Sécurisez votre <em>compte</em></h2>
+      <p class="panel-sub">Choisissez un mot de passe fort pour protéger vos données médicales.</p>
+      <div class="field">
+        <label>Mot de passe</label>
+        <div class="field-wrap">
+          <input type="password" id="pwdInput" placeholder="Minimum 8 caractères" oninput="checkPwd(this.value)">
+          <svg class="fi" viewBox="0 0 20 20" fill="none"><rect x="3" y="9" width="14" height="9" rx="2" stroke="currentColor" stroke-width="1.25"/><path d="M6.5 9V6a3.5 3.5 0 017 0v3" stroke="currentColor" stroke-width="1.25" stroke-linecap="round"/></svg>
+          <button class="eye-btn" type="button" onclick="toggleEye('pwdInput','eye1')">
+            <svg id="eye1" width="16" height="16" viewBox="0 0 20 20" fill="none"><path d="M2 10s3-6 8-6 8 6 8 6-3 6-8 6-8-6-8-6z" stroke="currentColor" stroke-width="1.25"/><circle cx="10" cy="10" r="2.5" stroke="currentColor" stroke-width="1.25"/></svg>
+          </button>
+        </div>
+        <div class="pwd-strength">
+          <div class="pwd-bar" id="pb1"></div>
+          <div class="pwd-bar" id="pb2"></div>
+          <div class="pwd-bar" id="pb3"></div>
+          <div class="pwd-bar" id="pb4"></div>
+          <span class="pwd-label" id="pwdLbl">—</span>
+        </div>
+      </div>
+      <div class="field">
+        <label>Confirmer le mot de passe</label>
+        <div class="field-wrap">
+          <input type="password" id="pwdInput2" placeholder="Répétez votre mot de passe">
+          <svg class="fi" viewBox="0 0 20 20" fill="none"><rect x="3" y="9" width="14" height="9" rx="2" stroke="currentColor" stroke-width="1.25"/><path d="M6.5 9V6a3.5 3.5 0 017 0v3" stroke="currentColor" stroke-width="1.25" stroke-linecap="round"/></svg>
+          <button class="eye-btn" type="button" onclick="toggleEye('pwdInput2','eye2')">
+            <svg id="eye2" width="16" height="16" viewBox="0 0 20 20" fill="none"><path d="M2 10s3-6 8-6 8 6 8 6-3 6-8 6-8-6-8-6z" stroke="currentColor" stroke-width="1.25"/><circle cx="10" cy="10" r="2.5" stroke="currentColor" stroke-width="1.25"/></svg>
+          </button>
+        </div>
+      </div>
+      <div style="background:var(--gold-pale);border:1px solid var(--border);border-radius:11px;padding:14px 16px;margin-bottom:20px;">
+        <p style="font-size:12px;color:#8A6030;font-weight:400;line-height:1.7;">
+          Votre mot de passe doit contenir au moins :<br>
+          • 8 caractères · 1 majuscule · 1 chiffre · 1 caractère spécial
+        </p>
+      </div>
+      <label class="check-wrap">
+        <input type="checkbox">
+        <span class="check-label">J'accepte les <a href="#">Conditions d'utilisation</a> et la <a href="#">Politique de confidentialité</a> de LYS MEDICAL.</span>
+      </label>
+      <label class="check-wrap">
+        <input type="checkbox">
+        <span class="check-label">J'accepte de recevoir des rappels de rendez-vous par SMS ou e-mail.</span>
+      </label>
+      <div class="btn-row">
+        <button class="btn-back" onclick="goStep(2)">← Retour</button>
+        <button class="btn-next" onclick="goStep(4)">Créer mon compte →</button>
+      </div>
+    </div>
+
+    <!-- STEP 4 — Succès -->
+    <div class="step-panel" id="panel4">
+      <div class="success-wrap">
+        <div class="success-icon">
+          <svg viewBox="0 0 32 32" fill="none"><path d="M6 16l7 7 13-13" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <h2 class="success-title">Compte <em>créé</em> !</h2>
+        <p class="success-desc">Votre inscription a été enregistrée avec succès. Vérifiez votre boîte e-mail pour activer votre compte avant de vous connecter.</p>
+        <a href="login.html" class="btn-login-redirect">Se connecter maintenant →</a>
+        <p style="margin-top:20px;font-size:12px;color:var(--text-muted);font-weight:300;">Un e-mail de confirmation a été envoyé à votre adresse.</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+let currentStep=1;
+let selectedRole='patient';
+
+function selectRole(el,role){
+  document.querySelectorAll('.role-card').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedRole=role;
+  document.getElementById('specialiteField').style.display=role==='medecin'?'flex':'none';
+}
+// default selection
+document.querySelector('.role-card').classList.add('selected');
+
+function goStep(n){
+  document.getElementById('panel'+currentStep).classList.remove('active');
+  document.getElementById('panel'+n).classList.add('active');
+  currentStep=n;
+  updateProgress(n);
+}
+
+function updateProgress(n){
+  [1,2,3,4].forEach(i=>{
+    const seg=document.getElementById('pg'+i);
+    const num=document.getElementById('sn'+i);
+    const lbl=document.getElementById('sl'+i);
+    if(i<n){
+      seg.className='pt-seg done';
+      num.className='step-num done';
+      num.textContent='✓';
+      lbl.className='step-label done';
+    } else if(i===n){
+      seg.className='pt-seg active';
+      num.className='step-num active';
+      num.textContent=i;
+      lbl.className='step-label active';
+    } else {
+      seg.className='pt-seg';
+      num.className='step-num inactive';
+      num.textContent=i;
+      lbl.className='step-label inactive';
+    }
+  });
+}
+
+function checkPwd(v){
+  let score=0;
+  if(v.length>=8) score++;
+  if(/[A-Z]/.test(v)) score++;
+  if(/[0-9]/.test(v)) score++;
+  if(/[^A-Za-z0-9]/.test(v)) score++;
+  const bars=['pb1','pb2','pb3','pb4'];
+  const labels=['Faible','Moyen','Bon','Fort'];
+  const cls=['weak','medium','strong','strong'];
+  bars.forEach((b,i)=>{
+    const el=document.getElementById(b);
+    el.className='pwd-bar'+(i<score?' '+cls[Math.min(score-1,2)]:'');
+  });
+  document.getElementById('pwdLbl').textContent=score>0?labels[score-1]:'—';
+}
+
+function toggleEye(inputId,iconId){
+  const inp=document.getElementById(inputId);
+  const icon=document.getElementById(iconId);
+  const show=inp.type==='password';
+  inp.type=show?'text':'password';
+  icon.innerHTML=show
+    ?'<path d="M3 3l14 14M8.5 8.6A3 3 0 0011.4 11.5M6 6.1C4 7.3 2.6 9 2 10c1.5 3 4.5 6 8 6a8 8 0 004-1.1M14 14a6.7 6.7 0 002.5-2.5C18 9 15.5 4 10 4a6.8 6.8 0 00-2.5.5" stroke="currentColor" stroke-width="1.25" stroke-linecap="round"/>'
+    :'<path d="M2 10s3-6 8-6 8 6 8 6-3 6-8 6-8-6-8-6z" stroke="currentColor" stroke-width="1.25"/><circle cx="10" cy="10" r="2.5" stroke="currentColor" stroke-width="1.25"/>';
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LYS MEDICAL — Mes Ordonnances · Patient</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --navy:#0A1628;--navy-mid:#152238;--navy-light:#1E3150;
+  --gold:#C8A96E;--gold-light:#DFC28D;--gold-pale:#F5EDD9;
+  --white:#FAFAF8;--bg:#F2F0EA;--surface:#FFFFFF;
+  --text:#2C3A4A;--muted:#8A9BB5;
+  --green:#3DAA70;--green-bg:#EAF7F0;
+  --red:#E05050;--red-bg:#FBE9E9;
+  --blue:#378ADD;--blue-bg:#E8F3FB;
+  --sidebar-w:260px;
+}
+html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);}
+.app{display:flex;height:100vh;overflow:hidden;}
+
+/* ── SIDEBAR ── */
+.sidebar{width:var(--sidebar-w);min-width:var(--sidebar-w);background:var(--navy);display:flex;flex-direction:column;overflow:hidden;}
+.sb-logo{display:flex;align-items:center;gap:12px;padding:28px 24px 24px;border-bottom:1px solid rgba(200,169,110,0.1);}
+.sb-logo-icon{width:34px;height:34px;background:rgba(200,169,110,0.12);border-radius:9px;display:flex;align-items:center;justify-content:center;}
+.sb-logo-name{font-family:'Cormorant Garamond',serif;font-size:15px;font-weight:600;color:var(--white);letter-spacing:2px;text-transform:uppercase;}
+.sb-logo-sub{font-size:9.5px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;}
+.sb-role-badge{margin:14px 16px;background:rgba(55,138,221,0.12);border:1px solid rgba(55,138,221,0.2);border-radius:10px;padding:10px 14px;display:flex;align-items:center;gap:10px;}
+.srb-dot{width:8px;height:8px;border-radius:50%;background:var(--blue);flex-shrink:0;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.4;}}
+.srb-text{font-size:12px;color:#7EC8E3;font-weight:500;}
+.sb-section-label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(138,155,181,0.5);padding:16px 24px 8px;}
+.sb-nav{display:flex;flex-direction:column;gap:2px;padding:0 12px;}
+.nav-item{display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:10px;cursor:pointer;transition:all 0.2s;color:var(--muted);font-size:13.5px;font-weight:400;text-decoration:none;position:relative;}
+.nav-item svg{width:16px;height:16px;flex-shrink:0;opacity:0.7;}
+.nav-item:hover{background:rgba(255,255,255,0.05);color:var(--white);}
+.nav-item.active{background:rgba(55,138,221,0.15);color:#7EC8E3;}
+.nav-item.active svg{opacity:1;color:var(--blue);}
+.nav-item.active::before{content:'';position:absolute;left:0;top:25%;bottom:25%;width:3px;border-radius:0 3px 3px 0;background:var(--blue);}
+.nav-badge{margin-left:auto;font-size:10px;font-weight:500;background:var(--blue);color:var(--white);padding:2px 7px;border-radius:20px;}
+.sb-bottom{margin-top:auto;padding:16px 12px 24px;}
+.sb-user{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:10px;background:rgba(255,255,255,0.05);}
+.avatar{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;background:rgba(55,138,221,0.2);color:#7EC8E3;}
+.sb-user-name{font-size:13px;font-weight:500;color:var(--white);}
+.sb-user-role{font-size:11px;color:var(--muted);}
+
+/* ── MAIN ── */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+.topbar{background:var(--surface);border-bottom:1px solid rgba(0,0,0,0.06);padding:0 28px;height:64px;display:flex;align-items:center;gap:14px;flex-shrink:0;}
+.topbar-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:500;color:var(--navy);flex:1;}
+.topbar-title em{font-style:italic;color:var(--blue);}
+.tb-icon{width:38px;height:38px;border-radius:10px;background:var(--bg);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--muted);transition:all 0.2s;text-decoration:none;}
+.tb-icon:hover{background:var(--blue-bg);color:var(--blue);}
+
+/* ── CONTENT ── */
+.content{flex:1;display:grid;grid-template-columns:300px 1fr;overflow:hidden;}
+
+/* ── LEFT PANEL — LISTE ORDONNANCES ── */
+.list-panel{background:var(--surface);border-right:1px solid rgba(0,0,0,0.07);display:flex;flex-direction:column;overflow:hidden;}
+.lp-head{padding:18px 20px 14px;border-bottom:1px solid rgba(0,0,0,0.05);}
+.lp-title{font-size:13px;font-weight:500;color:var(--navy);margin-bottom:10px;}
+.lp-search{display:flex;align-items:center;gap:8px;background:var(--bg);border:1.5px solid transparent;border-radius:9px;padding:0 12px;height:34px;transition:border-color 0.2s;}
+.lp-search:focus-within{border-color:var(--blue);}
+.lp-search svg{width:12px;height:12px;color:var(--muted);}
+.lp-search input{border:none;background:transparent;font-size:12.5px;font-family:'DM Sans',sans-serif;color:var(--navy);outline:none;width:100%;}
+.ord-list{flex:1;overflow-y:auto;padding:8px;}
+.ord-list::-webkit-scrollbar{width:4px;}
+.ord-list::-webkit-scrollbar-thumb{background:#D5D0C8;border-radius:10px;}
+.ord-item{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:10px;cursor:pointer;transition:all 0.15s;border:1.5px solid transparent;margin-bottom:4px;}
+.ord-item:hover{background:var(--bg);}
+.ord-item.active{background:var(--blue-bg);border-color:rgba(55,138,221,0.2);}
+.ord-item-icon{width:38px;height:38px;border-radius:10px;background:var(--gold-pale);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.ord-item.active .ord-item-icon{background:rgba(55,138,221,0.12);}
+.ord-item-icon svg{width:16px;height:16px;color:var(--gold);}
+.ord-item.active .ord-item-icon svg{color:var(--blue);}
+.ord-item-info{flex:1;min-width:0;}
+.ord-item-name{font-size:12.5px;font-weight:500;color:var(--navy);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.ord-item-date{font-size:11px;color:var(--muted);margin-top:1px;}
+.badge{font-size:10px;padding:2px 8px;border-radius:20px;font-weight:500;flex-shrink:0;}
+.b-green{background:var(--green-bg);color:var(--green);}
+.b-amber{background:#FFF4E0;color:#C27D1A;}
+.b-grey{background:#F0F0F0;color:#888;}
+.b-blue{background:var(--blue-bg);color:var(--blue);}
+
+/* ── RIGHT PANEL — APERÇU ── */
+.preview-panel{background:#E8E4DC;overflow-y:auto;display:flex;flex-direction:column;align-items:center;padding:24px 24px 40px;}
+.preview-panel::-webkit-scrollbar{width:5px;}
+.preview-panel::-webkit-scrollbar-thumb{background:#C8C4BC;border-radius:10px;}
+
+/* Topbar du preview */
+.preview-bar{width:100%;max-width:560px;display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;}
+.preview-bar-title{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#9A9490;display:flex;align-items:center;gap:8px;}
+.preview-bar-title::before{content:'';display:inline-block;width:24px;height:1px;background:rgba(0,0,0,0.15);}
+.preview-actions{display:flex;gap:8px;}
+.pv-btn{height:34px;padding:0 14px;border-radius:8px;font-size:12px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;display:flex;align-items:center;gap:7px;transition:all 0.2s;border:none;}
+.pv-btn svg{width:13px;height:13px;}
+.pv-btn.print{background:var(--navy);color:var(--white);}
+.pv-btn.print:hover{background:var(--navy-light);box-shadow:0 4px 12px rgba(10,22,40,0.25);}
+.pv-btn.dl{background:rgba(255,255,255,0.6);color:var(--navy);border:1px solid rgba(0,0,0,0.1);}
+.pv-btn.dl:hover{background:var(--white);}
+
+/* EMPTY STATE */
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;text-align:center;opacity:0.5;}
+.empty-state svg{width:48px;height:48px;color:var(--muted);margin-bottom:12px;}
+.empty-state p{font-size:13px;color:var(--muted);}
+
+/* ── ORDONNANCE DOCUMENT ── */
+.rx-doc{
+  width:100%;max-width:560px;
+  background:var(--white);
+  border-radius:4px;
+  box-shadow:0 8px 40px rgba(0,0,0,0.15),0 2px 8px rgba(0,0,0,0.08);
+  overflow:hidden;
+  position:relative;
+}
+.rx-doc::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:4px;
+  background:linear-gradient(90deg,var(--navy),var(--gold),var(--navy));
+}
+.rx-watermark{
+  position:absolute;bottom:60px;right:32px;
+  font-family:'Cormorant Garamond',serif;font-size:80px;
+  font-weight:600;color:rgba(10,22,40,0.04);
+  transform:rotate(-20deg);pointer-events:none;line-height:1;
+  letter-spacing:-2px;text-transform:uppercase;
+}
+/* READ-ONLY banner */
+.rx-readonly-badge{
+  display:flex;align-items:center;gap:8px;
+  background:rgba(55,138,221,0.06);
+  border-bottom:1px solid rgba(55,138,221,0.12);
+  padding:9px 20px;
+  font-size:11.5px;color:var(--blue);font-weight:500;
+}
+.rx-readonly-badge svg{width:13px;height:13px;flex-shrink:0;}
+
+.rx-head{padding:26px 32px 18px;display:flex;align-items:flex-start;justify-content:space-between;border-bottom:1px solid #ECEAE4;}
+.rx-cabinet-name{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:var(--navy);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;}
+.rx-cabinet-sub{font-size:10.5px;color:var(--muted);font-weight:300;line-height:1.7;}
+.rx-qr{width:52px;height:52px;background:var(--bg);border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;border:1px solid rgba(0,0,0,0.07);}
+.rx-qr svg{width:36px;height:36px;opacity:0.4;}
+
+.rx-meta{padding:11px 32px;background:var(--bg);display:flex;align-items:center;gap:22px;border-bottom:1px solid #ECEAE4;flex-wrap:wrap;}
+.rx-meta-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted);}
+.rx-meta-item svg{width:11px;height:11px;color:var(--gold);}
+.rx-meta-item strong{color:var(--navy);font-weight:500;}
+
+.rx-body{padding:22px 32px;}
+.rx-pat-block{padding:13px 16px;border-radius:8px;background:rgba(10,22,40,0.03);border:1px solid rgba(10,22,40,0.07);margin-bottom:20px;}
+.rx-pat-label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:500;margin-bottom:5px;}
+.rx-pat-name{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:500;color:var(--navy);margin-bottom:3px;}
+.rx-pat-info{font-size:11.5px;color:var(--muted);font-weight:300;display:flex;gap:14px;flex-wrap:wrap;}
+.rx-pat-allergy{display:inline-block;background:var(--red-bg);border:1px solid rgba(224,80,80,0.2);color:var(--red);font-size:10px;font-weight:500;padding:2px 8px;border-radius:20px;margin-top:5px;}
+
+.rx-symbol{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:600;color:var(--navy);opacity:0.15;margin-bottom:12px;line-height:1;}
+
+.rx-drug-entry{margin-bottom:18px;padding-bottom:18px;border-bottom:1px dashed #ECEAE4;}
+.rx-drug-entry:last-child{border-bottom:none;margin-bottom:0;}
+.rx-d-num{display:inline-block;width:20px;height:20px;background:var(--navy);color:var(--white);border-radius:4px;text-align:center;line-height:20px;font-size:11px;font-weight:500;margin-right:8px;flex-shrink:0;}
+.rx-d-name{font-size:15px;font-weight:500;color:var(--navy);margin-bottom:5px;display:flex;align-items:center;}
+.rx-d-posologie{font-size:13px;color:var(--text);font-weight:300;margin-left:28px;line-height:1.6;}
+.rx-d-note{font-size:12px;color:var(--muted);font-style:italic;margin-left:28px;margin-top:3px;}
+
+.rx-conseils{margin-top:18px;padding:14px 16px;border-radius:8px;background:rgba(200,169,110,0.06);border:1px solid rgba(200,169,110,0.15);}
+.rx-conseils-label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);font-weight:500;margin-bottom:8px;}
+.rx-conseil-item{font-size:12px;font-weight:300;color:var(--text);display:flex;gap:7px;margin-bottom:4px;}
+.rx-conseil-item::before{content:'•';color:var(--gold);font-size:14px;line-height:1.3;}
+
+.rx-renew{margin-top:14px;font-size:11.5px;color:var(--muted);font-weight:300;}
+
+.rx-foot{padding:18px 32px 22px;border-top:1px solid #ECEAE4;display:flex;align-items:flex-end;justify-content:space-between;}
+.rx-foot-info{font-size:11px;color:var(--muted);font-weight:300;line-height:1.7;}
+.rx-foot-info strong{color:var(--navy);font-weight:500;display:block;font-size:12px;margin-bottom:2px;}
+.rx-signature{text-align:right;}
+.rx-sig-label{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:26px;}
+.rx-sig-line{width:120px;border-top:1px solid var(--navy);margin-left:auto;}
+.rx-sig-name{font-size:11px;color:var(--navy);font-weight:500;text-align:right;margin-top:4px;}
+.rx-num{font-size:10px;color:#C0BBAF;margin-top:8px;letter-spacing:0.5px;}
+
+/* SIGNED stamp */
+.rx-stamp{
+  position:absolute;top:50%;right:24px;transform:translateY(-50%) rotate(-12deg);
+  border:3px solid var(--green);border-radius:8px;
+  padding:4px 10px;
+  font-family:'Cormorant Garamond',serif;
+  font-size:16px;font-weight:600;color:var(--green);
+  opacity:0.18;pointer-events:none;letter-spacing:2px;
+  text-transform:uppercase;
+}
+
+/* Animations */
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+.rx-doc{animation:fadeUp 0.3s ease both;}
+
+/* ── PRINT ── */
+@media print{
+  body{overflow:visible;background:white;}
+  .app{display:block;height:auto;}
+  .sidebar,.topbar,.list-panel,.preview-bar,.rx-readonly-badge{display:none !important;}
+  .content{display:block;}
+  .preview-panel{background:white;padding:0;display:block;}
+  .rx-doc{max-width:100%;box-shadow:none;border-radius:0;animation:none;}
+  .rx-watermark{display:none;}
+  .rx-stamp{display:none;}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sb-logo">
+      <div class="sb-logo-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M12 4v16M4 12h16" stroke="#C8A96E" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="12" r="9" stroke="#C8A96E" stroke-width="1.5" opacity="0.4"/></svg></div>
+      <div><div class="sb-logo-name">Lys Medical</div><div class="sb-logo-sub">Portail patient</div></div>
+    </div>
+    <div class="sb-role-badge"><span class="srb-dot"></span><span class="srb-text">👤 Espace Patient</span></div>
+    <div class="sb-section-label">Mon espace</div>
+    <nav class="sb-nav">
+      <a href="dashboard-patient.html" class="nav-item">
+        <svg viewBox="0 0 20 20" fill="none"><rect x="2" y="2" width="7" height="7" rx="2" stroke="currentColor" stroke-width="1.3"/><rect x="11" y="2" width="7" height="7" rx="2" stroke="currentColor" stroke-width="1.3"/><rect x="2" y="11" width="7" height="7" rx="2" stroke="currentColor" stroke-width="1.3"/><rect x="11" y="11" width="7" height="7" rx="2" stroke="currentColor" stroke-width="1.3"/></svg>
+        Tableau de bord
+      </a>
+      <a href="rdv-patient.html" class="nav-item">
+        <svg viewBox="0 0 20 20" fill="none"><rect x="3" y="4" width="14" height="14" rx="2" stroke="currentColor" stroke-width="1.3"/><path d="M7 2v4M13 2v4M3 9h14" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        Mes rendez-vous <span class="nav-badge">1</span>
+      </a>
+      
+      <a href="ordonnance-patient.html" class="nav-item active">
+        <svg viewBox="0 0 20 20" fill="none"><path d="M5 2h10a1 1 0 011 1v14a1 1 0 01-1 1H5a1 1 0 01-1-1V3a1 1 0 011-1z" stroke="currentColor" stroke-width="1.3"/><path d="M7 7h6M7 10h6M7 13h4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        Mes ordonnances <span class="nav-badge">3</span>
+      </a>
+      <a href="notifications-patient.html" class="nav-item">
+        <svg viewBox="0 0 20 20" fill="none"><path d="M10 2a6 6 0 016 6c0 4 2 5 2 5H2s2-1 2-5a6 6 0 016-6z" stroke="currentColor" stroke-width="1.3"/><path d="M8 17a2 2 0 004 0" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        Notifications <span class="nav-badge">2</span>
+      </a>
+    </nav>
+    <div class="sb-section-label">Compte</div>
+    <nav class="sb-nav">
+      <a href="dashboard-patient.html" class="nav-item">
+        <svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="8" r="3.5" stroke="currentColor" stroke-width="1.3"/><path d="M3 18c0-3.314 3.134-6 7-6s7 2.686 7 6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        Mon profil
+      </a>
+      <a href="login.html" class="nav-item" style="color:#E05050;">
+        <svg viewBox="0 0 20 20" fill="none"><path d="M9 3H4a1 1 0 00-1 1v12a1 1 0 001 1h12a1 1 0 001-1v-5" stroke="currentColor" stroke-width="1.3"/><path d="M17 3l-8 8M13 3h4v4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Déconnexion
+      </a>
+    </nav>
+    <div class="sb-bottom">
+      <div class="sb-user">
+        <div class="avatar">SB</div>
+        <div><div class="sb-user-name">Sara Benlahcen</div><div class="sb-user-role">Patient</div></div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-title">Mes Ordonnances — <em>Patient</em></div>
+      <a href="notifications-patient.html" class="tb-icon">
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="none"><path d="M10 2a6 6 0 016 6v3l1.5 2.5H2.5L4 11V8a6 6 0 016-6z" stroke="currentColor" stroke-width="1.3"/><path d="M8 16.5a2 2 0 004 0" stroke="currentColor" stroke-width="1.3"/></svg>
+      </a>
+      <a href="dashboard-patient.html" class="tb-icon">
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="8" r="3.5" stroke="currentColor" stroke-width="1.3"/><path d="M3 18c0-3.314 3.134-6 7-6s7 2.686 7 6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+      </a>
+    </div>
+
+    <!-- SPLIT CONTENT -->
+    <div class="content">
+
+      <!-- ── LISTE ORDONNANCES ── -->
+      <div class="list-panel">
+        <div class="lp-head">
+          <div class="lp-title">Mes ordonnances (3)</div>
+          <div class="lp-search">
+            <svg viewBox="0 0 20 20" fill="none"><circle cx="9" cy="9" r="5.5" stroke="currentColor" stroke-width="1.3"/><path d="M13.5 13.5L17 17" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+            <input type="text" placeholder="Rechercher…" oninput="searchOrds(this.value)">
+          </div>
+        </div>
+        <div class="ord-list" id="ordList">
+
+          <div class="ord-item active" onclick="showOrd(0)" id="ord-0">
+            <div class="ord-item-icon">
+              <svg viewBox="0 0 20 20" fill="none"><path d="M5 2h10a1 1 0 011 1v14a1 1 0 01-1 1H5a1 1 0 01-1-1V3a1 1 0 011-1z" stroke="currentColor" stroke-width="1.3"/><path d="M7 7h6M7 10h6M7 13h4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+            </div>
+            <div class="ord-item-info">
+              <div class="ord-item-name">Vitamines prénatales</div>
+              <div class="ord-item-date">Dr. Dridi · 10 mars 2026</div>
+            </div>
+            <span class="badge b-green">Active</span>
+          </div>
+
+          <div class="ord-item" onclick="showOrd(1)" id="ord-1">
+            <div class="ord-item-icon">
+              <svg viewBox="0 0 20 20" fill="none"><path d="M5 2h10a1 1 0 011 1v14a1 1 0 01-1 1H5a1 1 0 01-1-1V3a1 1 0 011-1z" stroke="currentColor" stroke-width="1.3"/><path d="M7 7h6M7 10h6M7 13h4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+            </div>
+            <div class="ord-item-info">
+              <div class="ord-item-name">Antibiotiques — Rhume</div>
+              <div class="ord-item-date">Dr. Dridi · 20 jan 2026</div>
+            </div>
+            <span class="badge b-amber">À renouveler</span>
+          </div>
+
+          <div class="ord-item" onclick="showOrd(2)" id="ord-2">
+            <div class="ord-item-icon">
+              <svg viewBox="0 0 20 20" fill="none"><path d="M5 2h10a1 1 0 011 1v14a1 1 0 01-1 1H5a1 1 0 01-1-1V3a1 1 0 011-1z" stroke="currentColor" stroke-width="1.3"/><path d="M7 7h6M7 10h6M7 13h4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+            </div>
+            <div class="ord-item-info">
+              <div class="ord-item-name">Antalgiques — Lombalgie</div>
+              <div class="ord-item-date">Dr. Saidi · 5 déc 2025</div>
+            </div>
+            <span class="badge b-grey">Expirée</span>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ── APERÇU ORDONNANCE ── -->
+      <div class="preview-panel" id="previewPanel">
+
+        <div class="preview-bar" id="previewBar">
+          <span class="preview-bar-title">Aperçu ordonnance</span>
+          <div class="preview-actions">
+            <button class="pv-btn dl" onclick="mockDownload()">
+              <svg viewBox="0 0 16 16" fill="none"><path d="M8 2v8M5 7l3 3 3-3M3 13h10" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Télécharger PDF
+            </button>
+            <button class="pv-btn print" onclick="window.print()">
+              <svg viewBox="0 0 16 16" fill="none"><rect x="3" y="6" width="10" height="7" rx="1" stroke="currentColor" stroke-width="1.1"/><path d="M5 6V3h6v3M5 10h6M5 12h4" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>
+              Imprimer
+            </button>
+          </div>
+        </div>
+
+        <!-- DOCUMENT -->
+        <div class="rx-doc" id="rxDoc"><!-- rendered by JS --></div>
+
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /app -->
+
+<!-- TOAST -->
+<div id="toast" style="position:fixed;bottom:24px;right:24px;background:var(--navy);color:var(--white);padding:11px 18px;border-radius:10px;font-size:13px;z-index:999;opacity:0;transform:translateY(16px);transition:all 0.3s;pointer-events:none;border-left:3px solid var(--blue);"></div>
+
+<script>
+// ── SESSION & AUTH ──
+const ALLOWED_ROLES = ['patient', 'admin'];
+const ROLE_REDIRECTS = {
+  admin: 'admin.html',
+  secretaire: 'dashboard-secretaire.html',
+  medecin: 'dashboard-medecin.html',
+  patient: 'dashboard-patient.html'
+};
+
+async function checkSession(){
+  try{
+    const res = await fetch('backend/check_session.php', { credentials: 'same-origin' });
+    const data = await res.json();
+
+    if(!data.logged || !data.user){
+      window.location.href = 'login.html';
+      return;
+    }
+
+    const role = String(data.user.role || '').toLowerCase();
+    if(!ALLOWED_ROLES.includes(role)){
+      window.location.href = ROLE_REDIRECTS[role] || 'login.html';
+      return;
+    }
+
+    // Load patient profile for sidebar
+    await loadPatientProfile();
+    // Load ordonnances
+    await loadOrdonnances();
+  }catch(e){
+    window.location.href = 'login.html';
+  }
+}
+
+async function loadPatientProfile(){
+  try{
+    const res = await fetch('backend/patients/get_my_profile.php', { credentials: 'same-origin' });
+    const data = await res.json();
+
+    if(!data.success || !data.profile){
+      console.warn('Failed to load patient profile');
+      return;
+    }
+
+    const profile = data.profile;
+
+    // Update sidebar user name
+    const sbUserName = document.querySelector('.sb-user-name');
+    if(sbUserName){
+      sbUserName.textContent = profile.nom + ' ' + profile.prenom;
+    }
+
+    // Update avatar initials
+    const avatar = document.querySelector('.sb-user .avatar');
+    if(avatar){
+      const initials = (profile.prenom[0] + profile.nom[0]).toUpperCase();
+      avatar.textContent = initials;
+    }
+
+  }catch(e){
+    console.error('Error loading patient profile:', e);
+  }
+}
+
+// ── ORDONNANCES DATA ──
+let ORDS = [];
+let currentOrd = 0;
+
+async function loadOrdonnances(){
+  try{
+    const res = await fetch('backend/ordonnance/get_my_ordonnances_patient.php', { credentials: 'same-origin' });
+    const data = await res.json();
+
+    if(!data.success || !Array.isArray(data.ordonnances)){
+      showToast('Erreur de chargement des ordonnances', 'error');
+      return;
+    }
+
+    const ordonnances = data.ordonnances;
+
+    // Transform to match existing format
+    ORDS = ordonnances.map((ord, index) => ({
+      id: index,
+      num: ord.idOrdonnance,
+      date: ord.date || '—',
+      type: ord.typeOrdonnance || null,
+      validite: '3 mois',
+      statut: ord.statut ?? null,
+      medecin: ord.medecin_name || 'Médecin inconnu',
+      specialite: null,
+      cnom: 'ALG-31-00412',
+      cabinet: 'Cabinet LYS Médical · 12 Rue Krim Belkacem, Oran 31000',
+      patient: ord.patient_prenom && ord.patient_nom ? `${ord.patient_prenom} ${ord.patient_nom}` : null,
+      age: null,
+      sexe: null,
+      naissance: null,
+      groupe: null,
+      allergies: null,
+      drugs: [],
+      conseils: [],
+      renew: 'Non renouvelable',
+      signed: true,
+    }));
+
+    // Update count in header
+    const countEl = document.querySelector('.lp-title');
+    if(countEl){
+      countEl.textContent = `Mes ordonnances (${ORDS.length})`;
+    }
+
+    // Update badge in sidebar
+    const badgeEl = document.querySelector('.nav-item.active .nav-badge');
+    if(badgeEl){
+      badgeEl.textContent = ORDS.length;
+    }
+
+    // Render ordonnance list
+    renderOrdonnanceList();
+
+    // Load first ordonnance details if available
+    if(ORDS.length > 0){
+      await loadOrdonnanceDetails(0);
+    } else {
+      // Show empty state
+      showEmptyState();
+    }
+
+  }catch(e){
+    console.error('Error loading ordonnances:', e);
+    showToast('Erreur de chargement', 'error');
+  }
+}
+
+async function loadOrdonnanceDetails(index){
+  if(!ORDS[index]) return;
+
+  try{
+    const ordId = ORDS[index].num;
+    const res = await fetch(`backend/ordonnance/get_one_patient.php?id=${ordId}`, { credentials: 'same-origin' });
+    const data = await res.json();
+
+    if(!data.success || !data.ordonnance){
+      showToast('Erreur de chargement des détails', 'error');
+      return;
+    }
+
+    const details = data.ordonnance;
+
+    // Update ORDS with details
+    ORDS[index] = {
+      ...ORDS[index],
+      ...details
+    };
+
+    // Render the ordonnance
+    renderOrd(index);
+
+  }catch(e){
+    console.error('Error loading ordonnance details:', e);
+    showToast('Erreur de chargement des détails', 'error');
+  }
+}
+
+function renderOrdonnanceList(){
+  const ordList = document.getElementById('ordList');
+
+  if(ORDS.length === 0){
+    ordList.innerHTML = '<div style="text-align:center;padding:20px;color:var(--muted);">Aucune ordonnance trouvée</div>';
+    return;
+  }
+
+  ordList.innerHTML = ORDS.map((ord, index) => {
+    const statusKey = ord.statut || 'non-defini';
+    const statusBadge = {
+      active: 'b-green',
+      renew: 'b-amber',
+      expired: 'b-grey',
+      'non-defini': 'b-grey'
+    }[statusKey] || 'b-grey';
+
+    const statusText = {
+      active: 'Active',
+      renew: 'À renouveler',
+      expired: 'Expirée',
+      'non-defini': 'Non défini'
+    }[statusKey] || 'Inconnue';
+
+    return `
+      <div class="ord-item ${index === currentOrd ? 'active' : ''}" onclick="showOrd(${index})">
+        <div class="ord-item-icon">
+          <svg viewBox="0 0 20 20" fill="none"><path d="M5 2h10a1 1 0 011 1v14a1 1 0 01-1 1H5a1 1 0 01-1-1V3a1 1 0 011-1z" stroke="currentColor" stroke-width="1.3"/><path d="M7 7h6M7 10h6M7 13h4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        </div>
+        <div class="ord-item-info">
+          <div class="ord-item-name">Ordonnance #${ord.num || '—'}</div>
+          <div class="ord-item-date">${ord.medecin} · ${ord.date || '—'}</div>
+        </div>
+        <span class="badge ${statusBadge}">${statusText}</span>
+      </div>
+    `;
+  }).join('');
+}
+
+function showEmptyState(){
+  const previewPanel = document.getElementById('previewPanel');
+  previewPanel.innerHTML = `
+    <div class="empty-state">
+      <svg viewBox="0 0 48 48" fill="none"><path d="M5 2h10a1 1 0 011 1v14a1 1 0 01-1 1H5a1 1 0 01-1-1V3a1 1 0 011-1z" stroke="currentColor" stroke-width="1.5"/><path d="M9 7h6M9 10h6M9 13h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M19 2h10a1 1 0 011 1v14a1 1 0 01-1 1H19a1 1 0 01-1-1V3a1 1 0 011-1z" stroke="currentColor" stroke-width="1.5"/><path d="M23 7h6M23 10h6M23 13h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M5 20h10a1 1 0 011 1v14a1 1 0 01-1 1H5a1 1 0 01-1-1V21a1 1 0 011-1z" stroke="currentColor" stroke-width="1.5"/><path d="M9 25h6M9 28h6M9 31h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M19 20h10a1 1 0 011 1v14a1 1 0 01-1 1H19a1 1 0 01-1-1V21a1 1 0 011-1z" stroke="currentColor" stroke-width="1.5"/><path d="M23 25h6M23 28h6M23 31h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      <p>Aucune ordonnance disponible</p>
+    </div>
+  `;
+}
+
+function showOrd(idx) {
+  currentOrd = idx;
+
+  // Load details if not already loaded
+  if(!ORDS[idx].drugs || ORDS[idx].drugs.length === 0){
+    loadOrdonnanceDetails(idx);
+  } else {
+    renderOrd(idx);
+  }
+
+  // update list selection
+  document.querySelectorAll('.ord-item').forEach((el, i) => {
+    el.classList.toggle('active', i === idx);
+  });
+}
+
+function renderOrd(idx) {
+  const o = ORDS[idx];
+  const medecinName = o.medecin || 'Médecin inconnu';
+  const patientName = o.patient || 'Patient inconnu';
+  const dateValue = o.date || '—';
+  const ordNumber = o.num || '—';
+  const groupText = o.groupe ? `<span>Groupe ${o.groupe}</span>` : '';
+
+  const drugsHTML = o.drugs && o.drugs.length > 0
+    ? o.drugs.map((d, i) => `
+      <div class="rx-drug-entry">
+        <div class="rx-d-name"><span class="rx-d-num">${i+1}</span>${d.name || '—'}</div>
+        <div class="rx-d-posologie">${[d.dose, d.freq, d.dur].filter(Boolean).join(' — ') || '—'}</div>
+        ${d.note ? `<div class="rx-d-note">${d.note}</div>` : ''}
+      </div>
+    `).join('')
+    : '<div style="padding:16px 0;color:var(--muted);">Aucun médicament prescrit</div>';
+
+  const stampHTML = o.signed
+    ? `<div class="rx-stamp">SIGNÉ</div>`
+    : '';
+
+  const statusKey = o.statut || 'non-defini';
+  const statusBadge = {
+    active: `<span style="background:var(--green-bg);color:var(--green);font-size:10px;padding:2px 8px;border-radius:20px;font-weight:500;">Active</span>`,
+    renew: `<span style="background:#FFF4E0;color:#C27D1A;font-size:10px;padding:2px 8px;border-radius:20px;font-weight:500;">À renouveler</span>`,
+    expired: `<span style="background:#F0F0F0;color:#888;font-size:10px;padding:2px 8px;border-radius:20px;font-weight:500;">Expirée</span>`,
+    'non-defini': `<span style="background:#F0F0F0;color:#888;font-size:10px;padding:2px 8px;border-radius:20px;font-weight:500;">Non défini</span>`
+  }[statusKey];
+
+  const statusText = {
+    active: 'Active',
+    renew: 'À renouveler',
+    expired: 'Expirée',
+    'non-defini': 'Non défini'
+  }[statusKey] || 'Non défini';
+
+  document.getElementById('rxDoc').innerHTML = `
+    <div class="rx-watermark">Rx</div>
+    ${stampHTML}
+
+    <!-- READ-ONLY BANNER -->
+    <div class="rx-readonly-badge">
+      <svg viewBox="0 0 16 16" fill="none"><path d="M8 1a3 3 0 100 6 3 3 0 000-6zM2.5 10.5A5.5 5.5 0 0113.5 10.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M1 13l2-2 1 1-2 2-1-1zM12 5l2 2-4 4-2-2 4-4z" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Ordonnance en lecture seule · Délivrée par ${medecinName} le ${dateValue} · ${statusText}
+    </div>
+
+    <!-- EN-TÊTE -->
+    <div class="rx-head">
+      <div class="rx-cabinet">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+          <div style="width:34px;height:34px;border-radius:9px;background:rgba(200,169,110,0.12);border:1px solid rgba(200,169,110,0.25);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M5 4v5a5 5 0 0010 0V4" stroke="#C8A96E" stroke-width="1.4" stroke-linecap="round"/><path d="M5 4H3M5 4h2M15 4h-2M15 4h2" stroke="#C8A96E" stroke-width="1.4" stroke-linecap="round"/><path d="M10 13v2a2.5 2.5 0 005 0v-.5" stroke="#C8A96E" stroke-width="1.4" stroke-linecap="round"/><circle cx="15" cy="14.5" r="1.2" fill="#C8A96E"/></svg>
+          </div>
+          <div class="rx-cabinet-name">Lys Medical</div>
+        </div>
+        <div class="rx-cabinet-sub">
+          Cabinet médical · 12 Rue Krim Belkacem, Oran 31000<br>
+          Tél : +213 (0) 41 XX XX XX · contact@lysmedical.dz<br>
+          ${o.type || 'Ordonnance'}
+        </div>
+      </div>
+      <div class="rx-qr">
+        <svg viewBox="0 0 36 36" fill="none">
+          <rect x="2" y="2" width="14" height="14" rx="1" stroke="currentColor" stroke-width="2"/>
+          <rect x="5" y="5" width="8" height="8" fill="currentColor" opacity="0.3"/>
+          <rect x="20" y="2" width="14" height="14" rx="1" stroke="currentColor" stroke-width="2"/>
+          <rect x="23" y="5" width="8" height="8" fill="currentColor" opacity="0.3"/>
+          <rect x="2" y="20" width="14" height="14" rx="1" stroke="currentColor" stroke-width="2"/>
+          <rect x="5" y="23" width="8" height="8" fill="currentColor" opacity="0.3"/>
+          <rect x="20" y="20" width="4" height="4" fill="currentColor" opacity="0.5"/>
+          <rect x="26" y="20" width="4" height="4" fill="currentColor" opacity="0.5"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- CORPS -->
+    <div class="rx-body">
+      <div class="rx-pat-block">
+        <div class="rx-pat-label">Patient</div>
+        <div class="rx-pat-name">${patientName}</div>
+        <div class="rx-pat-info">
+          <span>${o.age || '—'} · ${o.sexe || '—'}</span>
+          <span>Né(e) le ${o.naissance || '—'}</span>
+          ${groupText}
+        </div>
+        ${o.allergies ? `<div class="rx-pat-allergy">⚠ Allergie ${o.allergies}</div>` : ''}
+      </div>
+
+      <div class="rx-symbol">℞</div>
+      ${drugsHTML}
+
+      <div class="rx-conseils">
+        <div class="rx-conseils-label">Conseils &amp; recommandations</div>
+        ${o.conseils.map(c=>`<div class="rx-conseil-item">${c}</div>`).join('')}
+      </div>
+
+      <div class="rx-renew">${o.renew}</div>
+    </div>
+
+    <!-- PIED -->
+    <div class="rx-foot">
+      <div class="rx-foot-info">
+        <strong>${medecinName}</strong>
+        ${o.specialite || 'Médecin'}<br>
+        N° CNOM : ${o.cnom || '—'}<br>
+        +213 (0) 41 XX XX XX
+        <div class="rx-num">N° ordonnance : ${ordNumber}</div>
+      </div>
+      <div class="rx-signature">
+        <div class="rx-sig-label">Signature &amp; cachet</div>
+        <div class="rx-sig-line"></div>
+        <div class="rx-sig-name">${medecinName.replace('Dr. ','Dr. ').split(' ').map((w,i)=>i===0?w:w[0]+'.').join(' ')}</div>
+      </div>
+    </div>
+  `;
+}
+
+
+function searchOrds(q) {
+  const items = document.querySelectorAll('.ord-item');
+  items.forEach((item, i) => {
+    const text = item.textContent.toLowerCase();
+    item.style.display = !q || text.includes(q.toLowerCase()) ? '' : 'none';
+  });
+}
+
+function mockDownload() {
+  showToast('📄 Téléchargement PDF en cours…');
+  setTimeout(() => showToast('✓ Ordonnance_' + ORDS[currentOrd].num + '.pdf téléchargée', 'success'), 1200);
+}
+
+function showToast(msg, type='info') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.borderLeftColor = type==='success'?'var(--green)':type==='error'?'var(--red)':'var(--blue)';
+  t.style.opacity='1'; t.style.transform='translateY(0)';
+  clearTimeout(t._t);
+  t._t = setTimeout(()=>{t.style.opacity='0';t.style.transform='translateY(16px)';},2800);
+}
+
+// ── INIT ──
+window.addEventListener('DOMContentLoaded', checkSession);
+</script>
+</body>
+</html>

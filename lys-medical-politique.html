@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LYS MEDICAL — Politique de confidentialité & Mentions légales</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --navy:#0A1628;--navy-mid:#152238;--navy-light:#1E3150;
+  --gold:#C8A96E;--gold-light:#DFC28D;--gold-pale:#F5EDD9;
+  --white:#FAFAF8;--bg:#F2F0EA;
+  --text:#2C3A4A;--text-muted:#8A9BB5;
+  --border:rgba(200,169,110,0.2);
+  --sidebar-w:280px;
+}
+html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+
+/* ── TOPBAR ── */
+.topbar{
+  position:sticky;top:0;z-index:50;
+  background:rgba(10,22,40,0.97);
+  backdrop-filter:blur(12px);
+  height:64px;padding:0 48px;
+  display:flex;align-items:center;justify-content:space-between;
+  border-bottom:1px solid rgba(200,169,110,0.1);
+}
+.tb-logo{display:flex;align-items:center;gap:12px;text-decoration:none;}
+.tb-logo-icon{width:32px;height:32px;background:rgba(200,169,110,0.12);border-radius:8px;display:flex;align-items:center;justify-content:center;border:1px solid var(--border);}
+.tb-logo-icon svg{width:16px;height:16px;}
+.tb-logo-name{font-family:'Cormorant Garamond',serif;font-size:15px;font-weight:600;color:var(--white);letter-spacing:2.5px;text-transform:uppercase;}
+.tb-logo-sub{font-size:9px;color:var(--text-muted);letter-spacing:1.5px;text-transform:uppercase;}
+.tb-right{display:flex;align-items:center;gap:20px;}
+.tb-back{
+  font-size:12.5px;color:var(--text-muted);text-decoration:none;
+  display:flex;align-items:center;gap:7px;
+  transition:color 0.2s;font-weight:400;letter-spacing:0.3px;
+}
+.tb-back svg{width:14px;height:14px;}
+.tb-back:hover{color:var(--gold-light);}
+.tb-date{font-size:11px;color:rgba(138,155,181,0.5);letter-spacing:0.5px;}
+
+/* ── LAYOUT ── */
+.layout{display:flex;max-width:1200px;margin:0 auto;padding:0 24px;}
+
+/* ── SIDEBAR ── */
+.sidebar{
+  width:var(--sidebar-w);min-width:var(--sidebar-w);
+  padding:40px 0 40px 0;
+  position:sticky;top:64px;height:calc(100vh - 64px);
+  overflow-y:auto;
+}
+.sidebar::-webkit-scrollbar{width:3px;}
+.sidebar::-webkit-scrollbar-thumb{background:#D5D0C8;border-radius:10px;}
+
+.sb-section{margin-bottom:32px;}
+.sb-section-label{
+  font-size:9.5px;letter-spacing:2px;text-transform:uppercase;
+  color:var(--text-muted);font-weight:500;
+  padding:0 24px;margin-bottom:10px;
+}
+.sb-link{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 24px;font-size:13px;font-weight:400;
+  color:#5A6A7A;text-decoration:none;cursor:pointer;
+  border-left:2px solid transparent;
+  transition:all 0.2s;line-height:1.4;
+}
+.sb-link:hover{color:var(--navy);background:rgba(200,169,110,0.05);border-left-color:rgba(200,169,110,0.3);}
+.sb-link.active{color:var(--navy);font-weight:500;border-left-color:var(--gold);background:rgba(200,169,110,0.06);}
+.sb-link svg{width:13px;height:13px;flex-shrink:0;opacity:0.6;}
+.sb-link.active svg{opacity:1;color:var(--gold);}
+
+.sb-tab-btns{display:flex;gap:0;margin:24px;border-radius:10px;overflow:hidden;border:1px solid rgba(0,0,0,0.08);background:var(--white);}
+.sb-tab-btn{
+  flex:1;padding:9px 0;font-size:11px;font-weight:500;
+  text-align:center;cursor:pointer;border:none;
+  background:transparent;font-family:'DM Sans',sans-serif;
+  color:var(--text-muted);transition:all 0.2s;letter-spacing:0.5px;
+}
+.sb-tab-btn.active{background:var(--navy);color:var(--white);}
+.sb-tab-btn:hover:not(.active){background:var(--bg);}
+
+/* ── CONTENT ── */
+.content{
+  flex:1;padding:40px 0 80px 56px;
+  min-width:0;
+}
+
+/* Hero header */
+.doc-hero{
+  background:var(--navy);border-radius:20px;
+  padding:36px 40px;margin-bottom:40px;
+  position:relative;overflow:hidden;
+}
+.doc-hero::before{
+  content:'';position:absolute;right:-60px;top:-60px;
+  width:240px;height:240px;border-radius:50%;
+  background:radial-gradient(circle,rgba(200,169,110,0.1) 0%,transparent 70%);
+}
+.doc-hero-tag{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(200,169,110,0.1);border:1px solid var(--border);
+  border-radius:40px;padding:5px 14px;margin-bottom:18px;
+}
+.doc-hero-tag span{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold-light);font-weight:500;}
+.doc-hero h1{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(28px,3.5vw,40px);font-weight:400;
+  color:var(--white);line-height:1.15;letter-spacing:-0.3px;margin-bottom:12px;
+}
+.doc-hero h1 em{font-style:italic;color:var(--gold-light);}
+.doc-hero p{font-size:13.5px;color:var(--text-muted);font-weight:300;line-height:1.7;max-width:500px;}
+.doc-hero-meta{
+  display:flex;gap:24px;margin-top:24px;padding-top:20px;
+  border-top:1px solid rgba(200,169,110,0.12);
+}
+.meta-item{display:flex;align-items:center;gap:8px;}
+.meta-item svg{width:13px;height:13px;color:var(--gold);flex-shrink:0;}
+.meta-item span{font-size:11.5px;color:var(--text-muted);font-weight:300;}
+
+/* Tab content areas */
+.tab-content{display:none;}
+.tab-content.active{display:block;animation:fadeIn 0.3s ease both;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+/* Section */
+.doc-section{
+  background:var(--white);border-radius:16px;
+  border:1px solid rgba(0,0,0,0.05);
+  margin-bottom:20px;overflow:hidden;
+}
+.section-header{
+  padding:22px 28px;cursor:pointer;
+  display:flex;align-items:center;justify-content:space-between;
+  transition:background 0.2s;user-select:none;
+}
+.section-header:hover{background:rgba(200,169,110,0.03);}
+.sh-left{display:flex;align-items:center;gap:16px;}
+.sh-num{
+  width:32px;height:32px;border-radius:8px;
+  background:var(--navy);color:var(--gold);
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:500;letter-spacing:0.5px;
+  flex-shrink:0;font-family:'Cormorant Garamond',serif;font-size:14px;
+}
+.sh-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:18px;font-weight:500;color:var(--navy);letter-spacing:-0.2px;
+}
+.sh-arrow{
+  width:28px;height:28px;border-radius:8px;
+  background:var(--bg);display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;transition:all 0.3s;
+}
+.sh-arrow svg{width:14px;height:14px;color:var(--text-muted);transition:transform 0.3s;}
+.doc-section.open .sh-arrow{background:var(--gold-pale);}
+.doc-section.open .sh-arrow svg{transform:rotate(180deg);color:var(--gold);}
+
+.section-body{
+  display:none;padding:0 28px 26px;
+  border-top:1px solid rgba(0,0,0,0.05);
+}
+.doc-section.open .section-body{display:block;animation:bodyIn 0.25s ease;}
+@keyframes bodyIn{from{opacity:0;}to{opacity:1;}}
+
+/* Prose */
+.prose{font-size:14px;font-weight:300;color:#3A4A5A;line-height:1.85;padding-top:20px;}
+.prose h4{
+  font-family:'Cormorant Garamond',serif;
+  font-size:17px;font-weight:500;color:var(--navy);
+  margin:22px 0 8px;letter-spacing:-0.2px;
+}
+.prose h4:first-child{margin-top:0;}
+.prose p{margin-bottom:14px;}
+.prose ul,.prose ol{margin:10px 0 16px 20px;display:flex;flex-direction:column;gap:6px;}
+.prose li{font-size:14px;font-weight:300;color:#3A4A5A;line-height:1.7;}
+.prose strong{font-weight:500;color:var(--navy);}
+.prose a{color:var(--gold);text-decoration:none;border-bottom:1px solid var(--border);}
+.prose a:hover{color:var(--navy);}
+
+/* Highlight box */
+.highlight-box{
+  background:var(--gold-pale);border:1px solid var(--border);
+  border-radius:12px;padding:16px 20px;margin:16px 0;
+  display:flex;gap:14px;align-items:flex-start;
+}
+.hb-icon{width:20px;height:20px;flex-shrink:0;color:var(--gold);margin-top:1px;}
+.hb-icon svg{width:18px;height:18px;}
+.hb-text{font-size:13px;font-weight:300;color:#8A6030;line-height:1.7;}
+.hb-text strong{font-weight:500;}
+
+.info-box{
+  background:#E8F3FB;border:1px solid rgba(55,138,221,0.2);
+  border-radius:12px;padding:16px 20px;margin:16px 0;
+  display:flex;gap:14px;align-items:flex-start;
+}
+.info-box .hb-icon{color:#378ADD;}
+.info-box .hb-text{color:#1A4A7A;}
+
+.warning-box{
+  background:#FBE9E9;border:1px solid rgba(224,80,80,0.2);
+  border-radius:12px;padding:16px 20px;margin:16px 0;
+  display:flex;gap:14px;align-items:flex-start;
+}
+.warning-box .hb-icon{color:#E05050;}
+.warning-box .hb-text{color:#7A1A1A;}
+
+/* Table */
+.data-table{width:100%;border-collapse:collapse;margin:16px 0;font-size:13px;}
+.data-table th{
+  background:var(--bg);padding:10px 14px;text-align:left;
+  font-size:10.5px;letter-spacing:1px;text-transform:uppercase;
+  color:var(--text-muted);font-weight:500;
+  border-bottom:1px solid rgba(0,0,0,0.06);
+}
+.data-table td{
+  padding:12px 14px;border-bottom:1px solid rgba(0,0,0,0.04);
+  color:#3A4A5A;font-weight:300;line-height:1.5;vertical-align:top;
+}
+.data-table tr:last-child td{border-bottom:none;}
+.data-table tr:hover td{background:rgba(200,169,110,0.02);}
+
+/* Contact card */
+.contact-card{
+  background:var(--navy);border-radius:14px;
+  padding:24px 28px;margin-top:20px;
+  display:flex;align-items:center;justify-content:space-between;gap:20px;
+  flex-wrap:wrap;
+}
+.cc-text h4{
+  font-family:'Cormorant Garamond',serif;
+  font-size:20px;font-weight:400;color:var(--white);margin-bottom:6px;
+}
+.cc-text p{font-size:13px;color:var(--text-muted);font-weight:300;}
+.cc-btn{
+  padding:11px 24px;background:var(--gold);color:var(--navy);
+  border:none;border-radius:9px;font-size:12.5px;font-weight:500;
+  letter-spacing:0.8px;text-transform:uppercase;cursor:pointer;
+  font-family:'DM Sans',sans-serif;white-space:nowrap;
+  text-decoration:none;display:inline-block;transition:all 0.2s;
+}
+.cc-btn:hover{background:var(--gold-light);transform:translateY(-1px);}
+
+/* Reading progress */
+.reading-progress{
+  position:fixed;top:64px;left:0;right:0;height:2px;
+  background:transparent;z-index:40;
+}
+.rp-bar{height:100%;background:var(--gold);width:0%;transition:width 0.1s;}
+
+/* Print badge */
+.print-btn{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:9px 18px;background:var(--bg);border:1px solid rgba(0,0,0,0.08);
+  border-radius:9px;font-size:12px;font-weight:400;color:var(--text-muted);
+  cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s;
+  margin-top:8px;
+}
+.print-btn:hover{background:var(--white);color:var(--navy);border-color:rgba(0,0,0,0.15);}
+.print-btn svg{width:13px;height:13px;}
+
+/* Responsive */
+@media(max-width:960px){
+  .sidebar{display:none;}
+  .content{padding:32px 0 60px;}
+  .layout{padding:0 20px;}
+}
+@media(max-width:600px){
+  .topbar{padding:0 20px;}
+  .doc-hero{padding:24px 22px;}
+  .section-header{padding:18px 20px;}
+  .section-body{padding:0 20px 22px;}
+}
+@media print{
+  .topbar,.sidebar,.reading-progress{display:none;}
+  .content{padding:0;}
+  .doc-section{break-inside:avoid;}
+  .section-body{display:block!important;}
+}
+</style>
+</head>
+<body>
+
+<!-- Reading progress -->
+<div class="reading-progress"><div class="rp-bar" id="rpBar"></div></div>
+
+<!-- TOPBAR -->
+<nav class="topbar">
+  <a href="landing.html" class="tb-logo">
+    <div class="tb-logo-icon">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M12 4v16M4 12h16" stroke="#C8A96E" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="12" r="9" stroke="#C8A96E" stroke-width="1.5" opacity="0.4"/></svg>
+    </div>
+    <div>
+      <div class="tb-logo-name">Lys Medical</div>
+      <div class="tb-logo-sub">Portail de gestion</div>
+    </div>
+  </a>
+  <div class="tb-right">
+    <span class="tb-date">Dernière mise à jour : Mars 2026</span>
+    <a href="landing -6.html" class="tb-back">
+      <svg viewBox="0 0 16 16" fill="none"><path d="M10 3L5 8l5 5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Retour au site
+    </a>
+  </div>
+</nav>
+
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sb-tab-btns">
+      <button class="sb-tab-btn active" onclick="switchTab('confidentialite',this)">Confidentialité</button>
+      <button class="sb-tab-btn" onclick="switchTab('mentions',this)">Mentions</button>
+    </div>
+
+    <!-- Confidentialité nav -->
+    <div id="nav-confidentialite" class="sb-section">
+      <div class="sb-section-label">Sections</div>
+      <a class="sb-link active" onclick="scrollTo('c1')" href="#c1">
+        <svg viewBox="0 0 16 16" fill="none"><path d="M8 2l2 4.5h4.5l-3.5 2.5 1.5 4L8 11 4.5 13l1.5-4L2.5 6.5H7L8 2z" stroke="currentColor" stroke-width="1.1"/></svg>
+        Collecte des données
+      </a>
+      <a class="sb-link" onclick="scrollTo('c2')" href="#c2">
+        <svg viewBox="0 0 16 16" fill="none"><rect x="2" y="7" width="12" height="8" rx="1.5" stroke="currentColor" stroke-width="1.1"/><path d="M5 7V5a3 3 0 016 0v2" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>
+        Utilisation & finalités
+      </a>
+      <a class="sb-link" onclick="scrollTo('c3')" href="#c3">
+        <svg viewBox="0 0 16 16" fill="none"><path d="M8 2C5 2 3 4 3 7c0 4 5 7 5 7s5-3 5-7c0-3-2-5-5-5z" stroke="currentColor" stroke-width="1.1"/></svg>
+        Partage des données
+      </a>
+      <a class="sb-link" onclick="scrollTo('c4')" href="#c4">
+        <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.1"/><path d="M8 5v4M8 10v1" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        Vos droits
+      </a>
+      <a class="sb-link" onclick="scrollTo('c5')" href="#c5">
+        <svg viewBox="0 0 16 16" fill="none"><path d="M8 2C5 2 2.5 3.5 2.5 7v5l5.5 2 5.5-2V7C13.5 3.5 11 2 8 2z" stroke="currentColor" stroke-width="1.1"/></svg>
+        Sécurité
+      </a>
+      <a class="sb-link" onclick="scrollTo('c6')" href="#c6">
+        <svg viewBox="0 0 16 16" fill="none"><path d="M3 3h10v8H3z" stroke="currentColor" stroke-width="1.1"/><path d="M6 11v3M10 11v3M4 14h8" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>
+        Cookies
+      </a>
+      <a class="sb-link" onclick="scrollTo('c7')" href="#c7">
+        <svg viewBox="0 0 16 16" fill="none"><path d="M2 4h12v8a1 1 0 01-1 1H3a1 1 0 01-1-1V4z" stroke="currentColor" stroke-width="1.1"/><path d="M2 4l6 5 6-5" stroke="currentColor" stroke-width="1.1"/></svg>
+        Nous contacter
+      </a>
+    </div>
+
+    <!-- Mentions nav -->
+    <div id="nav-mentions" class="sb-section" style="display:none;">
+      <div class="sb-section-label">Sections</div>
+      <a class="sb-link active" onclick="scrollTo('m1')" href="#m1">
+        <svg viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.1"/><path d="M5 8h6M5 5h6M5 11h4" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>
+        Éditeur du site
+      </a>
+      <a class="sb-link" onclick="scrollTo('m2')" href="#m2">
+        <svg viewBox="0 0 16 16" fill="none"><path d="M8 1v14M1 8h14" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.1" opacity="0.4"/></svg>
+        Hébergement
+      </a>
+      <a class="sb-link" onclick="scrollTo('m3')" href="#m3">
+        <svg viewBox="0 0 16 16" fill="none"><path d="M8 14s-6-3.5-6-7.5A6 6 0 018 2a6 6 0 016 4.5C14 10.5 8 14 8 14z" stroke="currentColor" stroke-width="1.1"/><circle cx="8" cy="6.5" r="1.5" stroke="currentColor" stroke-width="1.1"/></svg>
+        Propriété intellectuelle
+      </a>
+      <a class="sb-link" onclick="scrollTo('m4')" href="#m4">
+        <svg viewBox="0 0 16 16" fill="none"><path d="M2 12l4-4 3 3 5-7" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Responsabilité
+      </a>
+      <a class="sb-link" onclick="scrollTo('m5')" href="#m5">
+        <svg viewBox="0 0 16 16" fill="none"><rect x="1" y="3" width="14" height="10" rx="1.5" stroke="currentColor" stroke-width="1.1"/><path d="M1 6h14" stroke="currentColor" stroke-width="1.1"/><path d="M5 10h2M10 10h1" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        Droit applicable
+      </a>
+    </div>
+    <div style="padding:16px 24px 0;">
+      <button class="print-btn" onclick="window.print()">
+        <svg viewBox="0 0 16 16" fill="none"><rect x="3" y="6" width="10" height="7" rx="1" stroke="currentColor" stroke-width="1.1"/><path d="M5 6V3h6v3" stroke="currentColor" stroke-width="1.1"/><path d="M5 10h6M5 12h4" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>
+        Imprimer / PDF
+      </button>
+    </div>
+  </aside>
+
+  <!-- CONTENT -->
+  <main class="content">
+
+    <!-- ══ CONFIDENTIALITÉ ══ -->
+    <div class="tab-content active" id="tab-confidentialite">
+
+      <div class="doc-hero">
+        <div class="doc-hero-tag"><span>Document officiel</span></div>
+        <h1>Politique de <em>confidentialité</em></h1>
+        <p>LYS MEDICAL s'engage à protéger la vie privée de ses patients et utilisateurs. Ce document décrit comment nous collectons, utilisons et protégeons vos données personnelles et médicales.</p>
+        <div class="doc-hero-meta">
+          <div class="meta-item"><svg viewBox="0 0 16 16" fill="none"><rect x="2" y="3" width="12" height="12" rx="1.5" stroke="currentColor" stroke-width="1.1"/><path d="M5 1v4M11 1v4M2 7h12" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg><span>Version 2.1 — Mars 2026</span></div>
+          <div class="meta-item"><svg viewBox="0 0 16 16" fill="none"><path d="M8 1C4.5 1 2 3.5 2 7c0 4 6 8 6 8s6-4 6-8c0-3.5-2.5-6-6-6z" stroke="currentColor" stroke-width="1.1"/></svg><span>Applicable en Algérie</span></div>
+          <div class="meta-item"><svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.1"/><path d="M8 5v3l2 2" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg><span>Durée de conservation : 5 ans</span></div>
+        </div>
+      </div>
+
+      <!-- Section 1 -->
+      <div class="doc-section open" id="c1">
+        <div class="section-header" onclick="toggleSection(this)">
+          <div class="sh-left"><div class="sh-num">01</div><div class="sh-title">Collecte des données personnelles</div></div>
+          <div class="sh-arrow"><svg viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></div>
+        </div>
+        <div class="section-body">
+          <div class="prose">
+            <h4>Données que nous collectons</h4>
+            <p>Dans le cadre de la gestion de notre cabinet médical et de la relation patient, LYS MEDICAL collecte les catégories de données suivantes :</p>
+            <table class="data-table">
+              <thead><tr><th>Catégorie</th><th>Exemples</th><th>Caractère</th></tr></thead>
+              <tbody>
+                <tr><td><strong>Identité</strong></td><td>Nom, prénom, date et lieu de naissance, sexe</td><td>Obligatoire</td></tr>
+                <tr><td><strong>Contact</strong></td><td>Adresse postale, e-mail, numéro de téléphone</td><td>Obligatoire</td></tr>
+                <tr><td><strong>Médicales</strong></td><td>Antécédents, traitements, ordonnances, résultats d'analyses</td><td>Obligatoire</td></tr>
+                <tr><td><strong>Administratives</strong></td><td>Numéro de sécurité sociale, assurance, mutuelle</td><td>Selon situation</td></tr>
+                <tr><td><strong>Connexion</strong></td><td>Identifiants, adresse IP, journaux d'accès</td><td>Automatique</td></tr>
+              </tbody>
+            </table>
+            <div class="highlight-box">
+              <div class="hb-icon"><svg viewBox="0 0 20 20" fill="none"><path d="M10 2C7 2 4 5 4 9c0 5 6 9 6 9s6-4 6-9c0-4-3-7-6-7z" stroke="currentColor" stroke-width="1.3"/><circle cx="10" cy="9" r="2" stroke="currentColor" stroke-width="1.3"/></svg></div>
+              <div class="hb-text"><strong>Données sensibles :</strong> Les données médicales constituent des données à caractère sensible au sens de la loi algérienne n°18-07 du 10 juin 2018. Leur traitement est encadré par des mesures de sécurité renforcées.</div>
+            </div>
+            <h4>Base légale du traitement</h4>
+            <p>Le traitement de vos données repose sur les bases légales suivantes : l'exécution du contrat de soin, le consentement explicite pour les données sensibles, et les obligations légales incombant aux professionnels de santé.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 2 -->
+      <div class="doc-section" id="c2">
+        <div class="section-header" onclick="toggleSection(this)">
+          <div class="sh-left"><div class="sh-num">02</div><div class="sh-title">Utilisation & finalités du traitement</div></div>
+          <div class="sh-arrow"><svg viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></div>
+        </div>
+        <div class="section-body">
+          <div class="prose">
+            <p>Vos données personnelles sont collectées et traitées exclusivement pour les finalités suivantes :</p>
+            <ul>
+              <li><strong>Prise en charge médicale</strong> — Suivi médical, établissement de diagnostics, prescription de traitements et ordonnances, gestion du dossier patient.</li>
+              <li><strong>Gestion administrative</strong> — Prise et gestion de rendez-vous, facturation, remboursements, communication avec les organismes de sécurité sociale.</li>
+              <li><strong>Communication</strong> — Envoi de rappels de rendez-vous, résultats d'analyses, informations de santé personnalisées par e-mail ou SMS (avec consentement).</li>
+              <li><strong>Amélioration des services</strong> — Statistiques anonymisées d'utilisation du portail pour améliorer l'expérience utilisateur.</li>
+              <li><strong>Obligations légales</strong> — Respect des obligations comptables, fiscales et réglementaires en vigueur en Algérie.</li>
+            </ul>
+            <div class="info-box">
+              <div class="hb-icon"><svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7.5" stroke="currentColor" stroke-width="1.3"/><path d="M10 9v5M10 7v.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></div>
+              <div class="hb-text">Vos données ne sont jamais utilisées à des fins commerciales, publicitaires ou de prospection non sollicitée.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 3 -->
+      <div class="doc-section" id="c3">
+        <div class="section-header" onclick="toggleSection(this)">
+          <div class="sh-left"><div class="sh-num">03</div><div class="sh-title">Partage et transmission des données</div></div>
+          <div class="sh-arrow"><svg viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></div>
+        </div>
+        <div class="section-body">
+          <div class="prose">
+            <h4>Destinataires des données</h4>
+            <p>Vos données peuvent être transmises aux destinataires suivants, dans le strict respect du secret médical :</p>
+            <ul>
+              <li><strong>Équipe médicale interne</strong> — Médecins et professionnels de santé du cabinet, dans le cadre du suivi médical et avec votre accord.</li>
+              <li><strong>Spécialistes partenaires</strong> — En cas d'orientation vers un médecin spécialiste, avec votre consentement préalable.</li>
+              <li><strong>Organismes de remboursement</strong> — Caisse nationale d'assurance maladie (CNAS/CASNOS) pour le traitement des remboursements.</li>
+              <li><strong>Prestataires techniques</strong> — Hébergeur agréé, éditeur du logiciel médical, sous contrat de confidentialité strict.</li>
+            </ul>
+            <div class="warning-box">
+              <div class="hb-icon"><svg viewBox="0 0 20 20" fill="none"><path d="M10 3l8 14H2L10 3z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M10 9v4M10 14.5v.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></div>
+              <div class="hb-text"><strong>Aucune vente de données :</strong> LYS MEDICAL ne vend, ne loue et ne cède jamais vos données personnelles à des tiers à des fins commerciales.</div>
+            </div>
+            <h4>Transferts hors Algérie</h4>
+            <p>En principe, vos données sont hébergées et traitées en Algérie. Si un transfert vers l'étranger s'avérait nécessaire, il serait réalisé dans le strict respect de la loi 18-07 et avec votre information préalable.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 4 -->
+      <div class="doc-section" id="c4">
+        <div class="section-header" onclick="toggleSection(this)">
+          <div class="sh-left"><div class="sh-num">04</div><div class="sh-title">Vos droits sur vos données</div></div>
+          <div class="sh-arrow"><svg viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></div>
+        </div>
+        <div class="section-body">
+          <div class="prose">
+            <p>Conformément à la loi algérienne n°18-07 relative à la protection des personnes physiques dans le traitement des données à caractère personnel, vous disposez des droits suivants :</p>
+            <table class="data-table">
+              <thead><tr><th>Droit</th><th>Description</th><th>Délai de réponse</th></tr></thead>
+              <tbody>
+                <tr><td><strong>Accès</strong></td><td>Obtenir une copie de toutes vos données traitées par le cabinet</td><td>30 jours</td></tr>
+                <tr><td><strong>Rectification</strong></td><td>Corriger des données inexactes ou incomplètes</td><td>15 jours</td></tr>
+                <tr><td><strong>Suppression</strong></td><td>Demander l'effacement de vos données (sous conditions légales)</td><td>30 jours</td></tr>
+                <tr><td><strong>Opposition</strong></td><td>Vous opposer à un traitement spécifique de vos données</td><td>15 jours</td></tr>
+                <tr><td><strong>Portabilité</strong></td><td>Recevoir vos données dans un format structuré et lisible</td><td>30 jours</td></tr>
+                <tr><td><strong>Limitation</strong></td><td>Demander la suspension temporaire du traitement</td><td>15 jours</td></tr>
+              </tbody>
+            </table>
+            <div class="highlight-box">
+              <div class="hb-icon"><svg viewBox="0 0 20 20" fill="none"><path d="M10 2C7 2 4 5 4 9c0 5 6 9 6 9s6-4 6-9c0-4-3-7-6-7z" stroke="currentColor" stroke-width="1.3"/><circle cx="10" cy="9" r="2" stroke="currentColor" stroke-width="1.3"/></svg></div>
+              <div class="hb-text">Pour exercer vos droits, adressez une demande écrite accompagnée d'une copie de votre pièce d'identité à : <strong>dpo@lysmedical.dz</strong> ou par courrier au cabinet.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 5 -->
+      <div class="doc-section" id="c5">
+        <div class="section-header" onclick="toggleSection(this)">
+          <div class="sh-left"><div class="sh-num">05</div><div class="sh-title">Sécurité des données</div></div>
+          <div class="sh-arrow"><svg viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></div>
+        </div>
+        <div class="section-body">
+          <div class="prose">
+            <p>LYS MEDICAL met en œuvre des mesures techniques et organisationnelles appropriées pour protéger vos données contre tout accès non autorisé, perte, destruction ou altération :</p>
+            <ul>
+              <li><strong>Chiffrement des données</strong> — Toutes les données médicales sont chiffrées au repos (AES-256) et en transit (TLS 1.3).</li>
+              <li><strong>Contrôle d'accès</strong> — Authentification à double facteur, gestion stricte des droits par rôle (médecin, secrétaire, patient).</li>
+              <li><strong>Hébergement sécurisé</strong> — Données hébergées dans un datacenter certifié avec sauvegardes quotidiennes chiffrées.</li>
+              <li><strong>Journalisation</strong> — Traçabilité complète de tous les accès aux dossiers médicaux.</li>
+              <li><strong>Formation</strong> — Sensibilisation régulière du personnel aux bonnes pratiques de sécurité informatique.</li>
+              <li><strong>Audit</strong> — Tests de sécurité et audits réguliers réalisés par des tiers indépendants.</li>
+            </ul>
+            <p>En cas de violation de données susceptible d'affecter vos droits et libertés, vous en serez notifié dans les meilleurs délais conformément aux obligations légales.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 6 -->
+      <div class="doc-section" id="c6">
+        <div class="section-header" onclick="toggleSection(this)">
+          <div class="sh-left"><div class="sh-num">06</div><div class="sh-title">Politique relative aux cookies</div></div>
+          <div class="sh-arrow"><svg viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></div>
+        </div>
+        <div class="section-body">
+          <div class="prose">
+            <h4>Types de cookies utilisés</h4>
+            <table class="data-table">
+              <thead><tr><th>Type</th><th>Finalité</th><th>Durée</th><th>Obligatoire</th></tr></thead>
+              <tbody>
+                <tr><td><strong>Session</strong></td><td>Maintenir votre connexion active et sécurisée</td><td>Session</td><td>Oui</td></tr>
+                <tr><td><strong>Préférences</strong></td><td>Mémoriser vos paramètres d'affichage et de langue</td><td>1 an</td><td>Non</td></tr>
+                <tr><td><strong>Sécurité</strong></td><td>Protection contre les tentatives de fraude CSRF</td><td>Session</td><td>Oui</td></tr>
+                <tr><td><strong>Analytique</strong></td><td>Statistiques d'utilisation anonymisées</td><td>6 mois</td><td>Non</td></tr>
+              </tbody>
+            </table>
+            <p>Vous pouvez gérer vos préférences en matière de cookies depuis les paramètres de votre navigateur. La désactivation des cookies non essentiels n'affecte pas les fonctionnalités médicales du portail.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 7 -->
+      <div class="doc-section" id="c7">
+        <div class="section-header" onclick="toggleSection(this)">
+          <div class="sh-left"><div class="sh-num">07</div><div class="sh-title">Nous contacter — DPO</div></div>
+          <div class="sh-arrow"><svg viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></div>
+        </div>
+        <div class="section-body">
+          <div class="prose">
+            <p>Pour toute question relative à la protection de vos données personnelles ou pour exercer vos droits, vous pouvez contacter notre Délégué à la Protection des Données (DPO) :</p>
+            <div class="contact-card">
+              <div class="cc-text">
+                <h4>Délégué à la Protection des Données</h4>
+                <p>LYS MEDICAL · 12 Rue des Frères Bouadou, Oran 31000<br>dpo@lysmedical.dz · +213 (0) 41 XX XX XX</p>
+              </div>
+              <a href="landing.html#contact" class="cc-btn">Nous écrire →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /confidentialite -->
+
+    <!-- ══ MENTIONS LÉGALES ══ -->
+    <div class="tab-content" id="tab-mentions">
+
+      <div class="doc-hero">
+        <div class="doc-hero-tag"><span>Document officiel</span></div>
+        <h1>Mentions <em>légales</em></h1>
+        <p>Informations légales obligatoires relatives à l'éditeur du site, à l'hébergement et aux conditions d'utilisation du portail LYS MEDICAL.</p>
+        <div class="doc-hero-meta">
+          <div class="meta-item"><svg viewBox="0 0 16 16" fill="none"><rect x="2" y="3" width="12" height="12" rx="1.5" stroke="currentColor" stroke-width="1.1"/><path d="M5 1v4M11 1v4M2 7h12" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg><span>Mise à jour : Mars 2026</span></div>
+          <div class="meta-item"><svg viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.1"/><path d="M5 8h6M5 5h4M5 11h3" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg><span>Conformité loi algérienne</span></div>
+        </div>
+      </div>
+
+      <!-- M1 -->
+      <div class="doc-section open" id="m1">
+        <div class="section-header" onclick="toggleSection(this)">
+          <div class="sh-left"><div class="sh-num">01</div><div class="sh-title">Éditeur du site</div></div>
+          <div class="sh-arrow"><svg viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></div>
+        </div>
+        <div class="section-body">
+          <div class="prose">
+            <table class="data-table">
+              <tbody>
+                <tr><td><strong>Raison sociale</strong></td><td>LYS MEDICAL — Cabinet Médical</td></tr>
+                <tr><td><strong>Forme juridique</strong></td><td>Société à Responsabilité Limitée (SARL)</td></tr>
+                <tr><td><strong>Numéro de registre</strong></td><td>RC N° 09-B-XXXXXXX — Oran</td></tr>
+                <tr><td><strong>Numéro d'identification fiscale</strong></td><td>NIF : XXXXXXXXXXXXXXX</td></tr>
+                <tr><td><strong>Siège social</strong></td><td>12 Rue des Frères Bouadou, Oran 31000, Algérie</td></tr>
+                <tr><td><strong>Directeur de la publication</strong></td><td>Dr. Karim Dridi — Médecin généraliste</td></tr>
+                <tr><td><strong>N° d'ordre médical</strong></td><td>CNOM N° XXXXX — Conseil de l'Ordre des Médecins d'Oran</td></tr>
+                <tr><td><strong>Contact</strong></td><td>contact@lysmedical.dz · +213 (0) 41 XX XX XX</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- M2 -->
+      <div class="doc-section" id="m2">
+        <div class="section-header" onclick="toggleSection(this)">
+          <div class="sh-left"><div class="sh-num">02</div><div class="sh-title">Hébergement du site</div></div>
+          <div class="sh-arrow"><svg viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></div>
+        </div>
+        <div class="section-body">
+          <div class="prose">
+            <p>Le site et le portail LYS MEDICAL sont hébergés par :</p>
+            <table class="data-table">
+              <tbody>
+                <tr><td><strong>Hébergeur</strong></td><td>Prestataire d'hébergement agréé HDS (Hébergeur de Données de Santé)</td></tr>
+                <tr><td><strong>Localisation des serveurs</strong></td><td>Algérie — Datacenter certifié ISO 27001</td></tr>
+                <tr><td><strong>Infrastructure</strong></td><td>Serveurs dédiés avec haute disponibilité (99,9% SLA)</td></tr>
+                <tr><td><strong>Sauvegardes</strong></td><td>Quotidiennes, chiffrées, répliquées sur site secondaire</td></tr>
+              </tbody>
+            </table>
+            <div class="info-box">
+              <div class="hb-icon"><svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7.5" stroke="currentColor" stroke-width="1.3"/><path d="M10 9v5M10 7v.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></div>
+              <div class="hb-text">L'hébergement des données médicales est réalisé conformément aux exigences réglementaires algériennes relatives aux systèmes d'information de santé.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- M3 -->
+      <div class="doc-section" id="m3">
+        <div class="section-header" onclick="toggleSection(this)">
+          <div class="sh-left"><div class="sh-num">03</div><div class="sh-title">Propriété intellectuelle</div></div>
+          <div class="sh-arrow"><svg viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></div>
+        </div>
+        <div class="section-body">
+          <div class="prose">
+            <p>L'ensemble des éléments constituant le portail LYS MEDICAL (structure, textes, logos, images, charte graphique, logiciels, bases de données) est protégé par les lois algériennes et internationales relatives à la propriété intellectuelle.</p>
+            <ul>
+              <li>La marque <strong>LYS MEDICAL</strong> et son logo sont des marques déposées. Toute reproduction est interdite sans autorisation écrite préalable.</li>
+              <li>Le contenu médical informatif diffusé sur le site est rédigé et validé par l'équipe médicale du cabinet. Il est fourni à titre informatif uniquement et ne constitue pas un acte médical.</li>
+              <li>Toute reproduction, représentation, modification, publication, transmission ou utilisation du contenu du site, par quelque moyen que ce soit, est interdite sans autorisation écrite préalable de LYS MEDICAL.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- M4 -->
+      <div class="doc-section" id="m4">
+        <div class="section-header" onclick="toggleSection(this)">
+          <div class="sh-left"><div class="sh-num">04</div><div class="sh-title">Limitation de responsabilité</div></div>
+          <div class="sh-arrow"><svg viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></div>
+        </div>
+        <div class="section-body">
+          <div class="prose">
+            <div class="warning-box">
+              <div class="hb-icon"><svg viewBox="0 0 20 20" fill="none"><path d="M10 3l8 14H2L10 3z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M10 9v4M10 14.5v.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></div>
+              <div class="hb-text"><strong>Important :</strong> Le contenu de ce site est fourni à titre informatif. Il ne remplace en aucun cas une consultation médicale professionnelle. En cas d'urgence, appelez le SAMU (15) ou les urgences médicales de votre région.</div>
+            </div>
+            <p>LYS MEDICAL s'efforce d'assurer l'exactitude et la mise à jour des informations diffusées sur ce site. Toutefois, sa responsabilité ne peut être engagée en cas d'omission ou d'erreur dans le contenu informatif, d'interruption temporaire d'accès au portail pour maintenance ou incident technique, ou de dommages résultant de l'utilisation frauduleuse ou abusive du portail par un tiers.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- M5 -->
+      <div class="doc-section" id="m5">
+        <div class="section-header" onclick="toggleSection(this)">
+          <div class="sh-left"><div class="sh-num">05</div><div class="sh-title">Droit applicable & juridiction</div></div>
+          <div class="sh-arrow"><svg viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></div>
+        </div>
+        <div class="section-body">
+          <div class="prose">
+            <p>Les présentes mentions légales et la politique de confidentialité sont régies par le droit algérien, notamment :</p>
+            <ul>
+              <li><strong>Loi n°18-07</strong> du 10 juin 2018 relative à la protection des personnes physiques dans le traitement des données à caractère personnel.</li>
+              <li><strong>Ordonnance n°06-03</strong> du 15 juillet 2006 relative aux associations.</li>
+              <li><strong>Code de déontologie médicale</strong> algérien et textes réglementaires relatifs à l'exercice de la médecine.</li>
+              <li><strong>Loi n°04-15</strong> du 10 novembre 2004 relative aux règles générales applicables aux opérations d'importation et d'exportation de marchandises.</li>
+            </ul>
+            <p>Tout litige relatif à l'utilisation du site sera soumis à la juridiction compétente du tribunal d'Oran, Algérie, après tentative amiable de résolution.</p>
+            <div class="contact-card">
+              <div class="cc-text">
+                <h4>Une question juridique ?</h4>
+                <p>Contactez notre équipe pour toute demande relative aux mentions légales.</p>
+              </div>
+              <a href="landing.html #contact" class="cc-btn">Nous contacter →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /mentions -->
+
+  </main>
+</div>
+
+<script>
+// Tab switching
+function switchTab(tab, btn){
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.sb-tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+tab).classList.add('active');
+  btn.classList.add('active');
+  document.getElementById('nav-confidentialite').style.display=tab==='confidentialite'?'block':'none';
+  document.getElementById('nav-mentions').style.display=tab==='mentions'?'block':'none';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// Accordion toggle
+function toggleSection(header){
+  const section=header.parentElement;
+  section.classList.toggle('open');
+}
+
+// Sidebar active link on scroll
+window.addEventListener('scroll',()=>{
+  // Reading progress
+  const total=document.documentElement.scrollHeight-window.innerHeight;
+  document.getElementById('rpBar').style.width=(window.scrollY/total*100)+'%';
+
+  // Active nav
+  const sections=document.querySelectorAll('.doc-section');
+  sections.forEach(s=>{
+    const rect=s.getBoundingClientRect();
+    if(rect.top<=120 && rect.bottom>120){
+      const id=s.id;
+      document.querySelectorAll('.sb-link').forEach(l=>{
+        l.classList.toggle('active',l.getAttribute('href')==='#'+id);
+      });
+    }
+  });
+});
+
+// Smooth scroll for sidebar links
+document.querySelectorAll('.sb-link').forEach(link=>{
+  link.addEventListener('click',e=>{
+    e.preventDefault();
+    const target=link.getAttribute('href').replace('#','');
+    const el=document.getElementById(target);
+    if(el){
+      el.scrollIntoView({behavior:'smooth',block:'start'});
+      // Open section if closed
+      if(!el.classList.contains('open')) el.querySelector('.section-header').click();
+    }
+  });
+});
+
+// Show/hide nav sections based on active tab
+document.getElementById('nav-confidentialite').style.display='block';
+document.getElementById('nav-mentions').style.display='none';
+</script>
+</body>
+</html>

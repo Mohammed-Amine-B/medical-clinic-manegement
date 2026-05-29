@@ -1,0 +1,1242 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LYS MEDICAL — Administration</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --navy:#0A1628;--navy-mid:#152238;--navy-light:#1E3150;
+  --gold:#C8A96E;--gold-light:#DFC28D;--gold-pale:#F5EDD9;
+  --white:#FAFAF8;--bg:#F2F0EA;--text:#2C3A4A;--muted:#8A9BB5;
+  --surface:#FFFFFF;--sidebar-w:260px;
+  --green:#3DAA70;--green-bg:#EAF7F0;
+  --red:#E05050;--red-bg:#FBE9E9;
+  --blue:#378ADD;--blue-bg:#E8F3FB;
+  --teal:#2DAA8A;--teal-bg:#E0F5F0;
+  --amber:#C27D1A;--amber-bg:#FFF4E0;
+  --purple:#7B5EA7;--purple-bg:#F0EBF8;
+}
+html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);}
+.app{display:flex;height:100vh;overflow:hidden;}
+
+/* SIDEBAR */
+.sidebar{width:var(--sidebar-w);min-width:var(--sidebar-w);background:var(--navy);display:flex;flex-direction:column;overflow-y:auto;overflow-x:hidden;}
+.sidebar::-webkit-scrollbar{width:4px;}
+.sidebar::-webkit-scrollbar-thumb{background:rgba(200,169,110,0.2);border-radius:4px;}
+.sb-logo{display:flex;align-items:center;gap:12px;padding:28px 24px 24px;border-bottom:1px solid rgba(200,169,110,0.1);}
+.sb-logo a{display:flex;align-items:center;gap:12px;text-decoration:none;}
+.sb-logo-icon{width:34px;height:34px;background:rgba(200,169,110,0.12);border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.sb-logo-icon svg{width:18px;height:18px;}
+.sb-logo-name{font-family:'Cormorant Garamond',serif;font-size:15px;font-weight:600;color:var(--white);letter-spacing:2px;text-transform:uppercase;line-height:1;}
+.sb-logo-sub{font-size:9.5px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-top:2px;}
+.sb-role-badge{margin:14px 16px 0;background:rgba(224,80,80,0.1);border:1px solid rgba(224,80,80,0.2);border-radius:10px;padding:10px 14px;display:flex;align-items:center;gap:10px;}
+.srb-dot{width:8px;height:8px;border-radius:50%;background:var(--red);flex-shrink:0;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.4;}}
+.srb-text{font-size:12px;color:#F08080;font-weight:500;}
+.sb-section-label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(138,155,181,0.5);padding:18px 24px 8px;}
+.sb-nav{display:flex;flex-direction:column;gap:2px;padding:0 12px;}
+.nav-item{display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:10px;cursor:pointer;transition:all 0.2s;color:var(--muted);font-size:13.5px;font-weight:400;text-decoration:none;position:relative;}
+.nav-item svg{width:16px;height:16px;flex-shrink:0;opacity:0.7;}
+.nav-item:hover{background:rgba(255,255,255,0.05);color:var(--white);}
+.nav-item:hover svg{opacity:1;}
+.nav-item.active{background:rgba(224,80,80,0.12);color:#F08080;}
+.nav-item.active svg{opacity:1;color:var(--red);}
+.nav-item.active::before{content:'';position:absolute;left:0;top:25%;bottom:25%;width:3px;border-radius:0 3px 3px 0;background:var(--red);}
+.nav-badge{margin-left:auto;font-size:10px;font-weight:500;background:var(--red);color:var(--white);padding:2px 7px;border-radius:20px;}
+.nav-badge.teal{background:var(--teal);}
+.nav-badge.gold{background:var(--gold);color:var(--navy);}
+.nav-badge.blue{background:var(--blue);}
+.sb-bottom{padding:16px 12px 24px;border-top:1px solid rgba(200,169,110,0.08);margin-top:auto;}
+.sb-user{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:10px;background:rgba(255,255,255,0.05);cursor:pointer;text-decoration:none;transition:background .2s;}
+.sb-user:hover{background:rgba(255,255,255,0.08);}
+.av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;flex-shrink:0;}
+.sb-user-name{font-size:13px;font-weight:500;color:var(--white);}
+.sb-user-role{font-size:11px;color:var(--red);}
+
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+.topbar{background:var(--surface);border-bottom:1px solid rgba(0,0,0,0.06);padding:0 28px;height:64px;display:flex;align-items:center;gap:12px;flex-shrink:0;}
+.topbar-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:500;color:var(--navy);flex:1;}
+.topbar-title em{font-style:italic;color:var(--red);}
+.tb-search{display:flex;align-items:center;gap:8px;background:var(--bg);border:1.5px solid transparent;border-radius:10px;padding:0 14px;height:38px;width:220px;transition:border-color 0.2s;}
+.tb-search:focus-within{border-color:var(--red);}
+.tb-search svg{width:13px;height:13px;color:var(--muted);}
+.tb-search input{border:none;background:transparent;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--navy);outline:none;width:100%;}
+.tb-icon{width:38px;height:38px;border-radius:10px;background:var(--bg);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--muted);transition:all 0.2s;text-decoration:none;position:relative;}
+.tb-icon:hover{background:var(--red-bg);color:var(--red);}
+.tb-icon.notif::after{content:'3';position:absolute;top:6px;right:6px;width:14px;height:14px;border-radius:50%;background:var(--red);color:var(--white);font-size:8px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+.tb-btn{display:flex;align-items:center;gap:7px;padding:0 16px;height:38px;border-radius:10px;font-size:13px;font-weight:500;cursor:pointer;transition:all 0.2s;border:none;font-family:'DM Sans',sans-serif;}
+.tb-btn.primary{background:var(--red);color:#fff;box-shadow:0 4px 12px rgba(224,80,80,0.25);}
+.tb-btn.primary:hover{background:#c84040;transform:translateY(-1px);}
+.tb-btn.ghost{background:transparent;color:var(--muted);border:1.5px solid rgba(0,0,0,0.1);}
+.tb-btn.ghost:hover{border-color:var(--red);color:var(--red);}
+.tb-btn svg{width:14px;height:14px;}
+
+/* CONTENT */
+.content{flex:1;overflow-y:auto;padding:28px;}
+.content::-webkit-scrollbar{width:5px;}
+.content::-webkit-scrollbar-thumb{background:#D5D0C8;border-radius:10px;}
+
+/* WELCOME BAND */
+.welcome-band{background:linear-gradient(135deg,var(--navy) 0%,#0F2535 100%);border-radius:16px;padding:26px 30px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;position:relative;overflow:hidden;}
+.welcome-band::before{content:'';position:absolute;right:-40px;top:-40px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(224,80,80,0.12) 0%,transparent 70%);}
+.wb-text h2{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:400;color:var(--white);margin-bottom:4px;}
+.wb-text h2 em{color:#F08080;font-style:italic;}
+.wb-text p{font-size:13px;color:var(--muted);font-weight:300;}
+.wb-right{display:flex;gap:24px;align-items:center;flex-shrink:0;}
+.wb-stat{text-align:center;}
+.wb-stat strong{display:block;font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:400;color:#F08080;line-height:1;}
+.wb-stat span{font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;}
+.wb-sep{width:1px;height:32px;background:rgba(200,169,110,0.15);}
+
+/* KPI GRID */
+.stats-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin-bottom:24px;}
+.stat-card{background:var(--surface);border-radius:13px;padding:18px 20px;border:1px solid rgba(0,0,0,0.05);transition:transform 0.2s,box-shadow 0.2s;}
+.stat-card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,0.07);}
+.sc-icon{float:right;width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;}
+.sc-icon svg{width:17px;height:17px;}
+.sc-icon.red{background:var(--red-bg);} .sc-icon.red svg{color:var(--red);}
+.sc-icon.teal{background:var(--teal-bg);} .sc-icon.teal svg{color:var(--teal);}
+.sc-icon.blue{background:var(--blue-bg);} .sc-icon.blue svg{color:var(--blue);}
+.sc-icon.green{background:var(--green-bg);} .sc-icon.green svg{color:var(--green);}
+.sc-icon.amber{background:var(--amber-bg);} .sc-icon.amber svg{color:var(--amber);}
+.sc-label{font-size:11px;color:var(--muted);letter-spacing:0.8px;text-transform:uppercase;margin-bottom:8px;}
+.sc-value{font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:500;color:var(--navy);line-height:1;margin-bottom:4px;}
+.sc-delta{font-size:11px;}
+.sc-delta.up{color:var(--green);}
+.sc-delta.down{color:var(--red);}
+.sc-delta.neu{color:var(--muted);}
+
+/* QUICK LINKS */
+.section-label{font-size:12px;font-weight:500;color:var(--navy);margin-bottom:12px;display:flex;align-items:center;gap:8px;text-transform:uppercase;letter-spacing:.8px;}
+.section-label::before{content:'';width:3px;height:14px;background:var(--red);border-radius:2px;display:inline-block;}
+.links-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:24px;}
+.link-card{background:var(--surface);border:1px solid rgba(0,0,0,0.05);border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:12px;text-decoration:none;transition:all .2s;}
+.link-card:hover{border-color:rgba(224,80,80,0.2);box-shadow:0 4px 14px rgba(0,0,0,0.07);transform:translateY(-1px);}
+.lc-icon{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.lc-icon svg{width:16px;height:16px;}
+.lc-icon.red{background:var(--red-bg);} .lc-icon.red svg{color:var(--red);}
+.lc-icon.teal{background:var(--teal-bg);} .lc-icon.teal svg{color:var(--teal);}
+.lc-icon.blue{background:var(--blue-bg);} .lc-icon.blue svg{color:var(--blue);}
+.lc-icon.green{background:var(--green-bg);} .lc-icon.green svg{color:var(--green);}
+.lc-icon.amber{background:var(--amber-bg);} .lc-icon.amber svg{color:var(--amber);}
+.lc-icon.gold{background:var(--gold-pale);} .lc-icon.gold svg{color:var(--gold);}
+.lc-icon.purple{background:var(--purple-bg);} .lc-icon.purple svg{color:var(--purple);}
+.lc-label{font-size:12.5px;font-weight:500;color:var(--navy);}
+.lc-sub{font-size:11px;color:var(--muted);font-weight:300;}
+
+/* CARDS */
+.two-col{display:grid;grid-template-columns:1.4fr 1fr;gap:18px;margin-bottom:24px;}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;margin-bottom:24px;}
+.card{background:var(--surface);border-radius:13px;border:1px solid rgba(0,0,0,0.05);overflow:hidden;}
+.card-head{display:flex;align-items:center;justify-content:space-between;padding:16px 20px 12px;border-bottom:1px solid rgba(0,0,0,0.05);}
+.card-title{font-size:13px;font-weight:500;color:var(--navy);}
+.card-action{font-size:12px;color:var(--red);cursor:pointer;background:none;border:none;font-family:'DM Sans',sans-serif;text-decoration:none;transition:color .2s;}
+.card-action:hover{color:var(--navy);}
+
+/* TABLES */
+.ptable{width:100%;border-collapse:collapse;}
+.ptable th{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);font-weight:500;padding:9px 20px;text-align:left;border-bottom:1px solid rgba(0,0,0,0.05);}
+.ptable td{padding:12px 20px;font-size:13px;color:var(--navy);border-bottom:1px solid rgba(0,0,0,0.04);vertical-align:middle;}
+.ptable tr:last-child td{border-bottom:none;}
+.ptable tr:hover td{background:rgba(224,80,80,0.02);}
+.p-name{font-weight:500;}
+.td-user{display:flex;align-items:center;gap:10px;}
+
+/* BADGES */
+.badge{font-size:10.5px;padding:3px 9px;border-radius:20px;font-weight:500;display:inline-flex;align-items:center;gap:4px;white-space:nowrap;}
+.badge .dot{width:5px;height:5px;border-radius:50%;background:currentColor;}
+.b-green{background:var(--green-bg);color:var(--green);}
+.b-amber{background:var(--amber-bg);color:var(--amber);}
+.b-red{background:var(--red-bg);color:var(--red);}
+.b-grey{background:#F0F0F0;color:#888;}
+.b-teal{background:var(--teal-bg);color:var(--teal);}
+.b-blue{background:var(--blue-bg);color:var(--blue);}
+.b-navy{background:rgba(10,22,40,0.08);color:var(--navy);}
+.b-gold{background:var(--gold-pale);color:#96700A;}
+.b-purple{background:var(--purple-bg);color:var(--purple);}
+
+/* ACTION BUTTONS */
+.action-btn{padding:5px 12px;border-radius:7px;font-size:11px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s;border:none;}
+.action-btn.confirm{background:var(--green-bg);color:var(--green);}
+.action-btn.confirm:hover{background:var(--green);color:#fff;}
+.action-btn.cancel{background:var(--red-bg);color:var(--red);}
+.action-btn.cancel:hover{background:var(--red);color:#fff;}
+.action-btn.edit{background:var(--blue-bg);color:var(--blue);}
+.action-btn.edit:hover{background:var(--blue);color:#fff;}
+.action-btn.warn{background:var(--amber-bg);color:var(--amber);}
+.action-btn.warn:hover{background:var(--amber);color:#fff;}
+
+/* LOG LIST */
+.log-list{display:flex;flex-direction:column;}
+.log-item{display:flex;align-items:flex-start;gap:12px;padding:11px 20px;border-bottom:1px solid rgba(0,0,0,0.04);transition:background .15s;}
+.log-item:last-child{border-bottom:none;}
+.log-item:hover{background:rgba(224,80,80,0.02);}
+.log-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:5px;}
+.log-dot.g{background:var(--green);}
+.log-dot.r{background:var(--red);}
+.log-dot.b{background:var(--blue);}
+.log-dot.a{background:var(--amber);}
+.log-dot.t{background:var(--teal);}
+.log-dot.m{background:var(--muted);}
+.log-msg{font-size:12.5px;color:var(--navy);font-weight:300;line-height:1.4;}
+.log-msg strong{font-weight:500;}
+.log-time{font-size:11px;color:var(--muted);margin-top:2px;}
+
+/* ROLE ITEMS */
+.role-item{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-bottom:1px solid rgba(0,0,0,0.04);transition:background .15s;cursor:pointer;}
+.role-item:last-child{border-bottom:none;}
+.role-item:hover{background:rgba(224,80,80,0.02);}
+.role-left{display:flex;align-items:center;gap:12px;}
+.ri-icon{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;}
+.ri-icon svg{width:15px;height:15px;}
+.ri-icon.red{background:var(--red-bg);} .ri-icon.red svg{color:var(--red);}
+.ri-icon.blue{background:var(--blue-bg);} .ri-icon.blue svg{color:var(--blue);}
+.ri-icon.amber{background:var(--amber-bg);} .ri-icon.amber svg{color:var(--amber);}
+.ri-icon.teal{background:var(--teal-bg);} .ri-icon.teal svg{color:var(--teal);}
+.r-name{font-size:13px;font-weight:500;color:var(--navy);}
+.r-count{font-size:11px;color:var(--muted);margin-top:1px;}
+
+/* SYS ITEMS */
+.sys-item{padding:11px 20px;border-bottom:1px solid rgba(0,0,0,0.04);display:flex;align-items:center;gap:14px;}
+.sys-item:last-child{border-bottom:none;}
+.sys-label{font-size:13px;color:var(--navy);flex:1;}
+.sys-bar-wrap{width:90px;height:5px;background:rgba(0,0,0,0.06);border-radius:3px;overflow:hidden;flex-shrink:0;}
+.sys-bar-fill{height:100%;border-radius:3px;transition:width 1.2s cubic-bezier(.4,0,.2,1);}
+.ok{background:var(--green);}
+.warn{background:var(--amber);}
+.crit{background:var(--red);}
+.sys-val{font-size:12px;font-weight:500;min-width:44px;text-align:right;flex-shrink:0;}
+
+/* MATRIX */
+.mc{color:var(--green);font-weight:600;}
+.mx{color:var(--red);}
+.mp{color:var(--amber);}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(10,22,40,0.45);z-index:500;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s;}
+.modal-overlay.open{opacity:1;pointer-events:all;}
+.modal{background:var(--surface);border-radius:16px;padding:32px;width:90%;max-width:460px;position:relative;box-shadow:0 24px 64px rgba(0,0,0,0.18);transform:translateY(14px);transition:transform .3s;}
+.modal-overlay.open .modal{transform:translateY(0);}
+.modal-title{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:500;color:var(--navy);margin-bottom:4px;}
+.modal-title em{font-style:italic;color:var(--red);}
+.modal-sub{font-size:13px;color:var(--muted);font-weight:300;margin-bottom:22px;}
+.modal-close{position:absolute;top:18px;right:18px;background:var(--bg);border:none;border-radius:8px;padding:7px;cursor:pointer;color:var(--muted);display:flex;align-items:center;transition:all .2s;}
+.modal-close:hover{background:var(--red-bg);color:var(--red);}
+.modal-close svg{width:14px;height:14px;}
+.field{margin-bottom:14px;}
+.field label{display:block;font-size:10.5px;font-weight:500;color:var(--navy);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:7px;}
+.field input,.field select{width:100%;padding:10px 14px;border:1.5px solid rgba(0,0,0,0.1);border-radius:10px;font-size:13px;font-family:'DM Sans',sans-serif;font-weight:300;color:var(--navy);background:var(--bg);transition:all .2s;outline:none;}
+.field input::placeholder{color:var(--muted);}
+.field input:focus,.field select:focus{border-color:var(--red);background:#fff;box-shadow:0 0 0 3px rgba(224,80,80,0.08);}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.modal-actions{display:flex;gap:10px;margin-top:18px;}
+.modal-actions .tb-btn{flex:1;justify-content:center;}
+
+/* PAGINATION */
+.pagination{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-top:1px solid rgba(0,0,0,0.05);font-size:12px;color:var(--muted);}
+.page-btns{display:flex;gap:5px;}
+.page-btn{width:28px;height:28px;border-radius:6px;border:1px solid rgba(0,0,0,0.1);background:none;font-size:12px;color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;font-family:'DM Sans',sans-serif;}
+.page-btn:hover{border-color:var(--red);color:var(--red);}
+.page-btn.active{background:var(--navy);color:#fff;border-color:var(--navy);}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+.stat-card{animation:fadeUp 0.35s ease both;}
+.stat-card:nth-child(1){animation-delay:.05s;}.stat-card:nth-child(2){animation-delay:.1s;}
+.stat-card:nth-child(3){animation-delay:.15s;}.stat-card:nth-child(4){animation-delay:.2s;}
+.stat-card:nth-child(5){animation-delay:.25s;}
+.card,.welcome-band{animation:fadeUp 0.35s ease both;}
+
+/* TOAST */
+#toast{position:fixed;bottom:24px;right:24px;z-index:9999;background:var(--navy);color:#fff;padding:11px 18px;border-radius:11px;font-size:13px;font-family:'DM Sans',sans-serif;box-shadow:0 8px 32px rgba(0,0,0,.16);transform:translateY(16px);opacity:0;transition:all .3s cubic-bezier(.4,0,.2,1);pointer-events:none;max-width:300px;}
+
+@media(max-width:1200px){.stats-grid{grid-template-columns:repeat(3,1fr);}.links-grid{grid-template-columns:repeat(3,1fr);}.three-col{grid-template-columns:1fr 1fr;}}
+@media(max-width:860px){:root{--sidebar-w:0px;}.sidebar{display:none;}.content{padding:16px;}.stats-grid{grid-template-columns:1fr 1fr;}.two-col,.three-col{grid-template-columns:1fr;}.links-grid{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:480px){.stats-grid,.links-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sb-logo">
+    <a href="landing.html">
+      <div class="sb-logo-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M12 4v16M4 12h16" stroke="#C8A96E" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="12" r="9" stroke="#C8A96E" stroke-width="1.5" opacity="0.4"/></svg></div>
+      <div><div class="sb-logo-name">Lys Medical</div><div class="sb-logo-sub">Administration</div></div>
+    </a>
+  </div>
+  <div class="sb-role-badge"><span class="srb-dot"></span><span class="srb-text">Accès Administrateur</span></div>
+
+  <div class="sb-section-label">Administration</div>
+  <nav class="sb-nav">
+    <a href="#" onclick="switchTab('overview');return false;" class="nav-item active" id="nav-overview"><svg viewBox="0 0 20 20" fill="none"><rect x="2" y="2" width="7" height="7" rx="2" stroke="currentColor" stroke-width="1.3"/><rect x="11" y="2" width="7" height="7" rx="2" stroke="currentColor" stroke-width="1.3"/><rect x="2" y="11" width="7" height="7" rx="2" stroke="currentColor" stroke-width="1.3"/><rect x="11" y="11" width="7" height="7" rx="2" stroke="currentColor" stroke-width="1.3"/></svg>Vue d'ensemble</a>
+    <a href="#" onclick="switchTab('utilisateurs');return false;" class="nav-item" id="nav-utilisateurs"><svg viewBox="0 0 20 20" fill="none"><circle cx="7" cy="7" r="3" stroke="currentColor" stroke-width="1.3"/><path d="M2 17c0-2.8 2.2-5 5-5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><circle cx="14" cy="9" r="2.5" stroke="currentColor" stroke-width="1.3"/><path d="M10 17c0-2.2 1.8-4 4-4s4 1.8 4 4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>Utilisateurs<span class="nav-badge">12</span></a>
+    <a href="#" onclick="switchTab('roles');return false;" class="nav-item" id="nav-roles"><svg viewBox="0 0 20 20" fill="none"><path d="M10 2l6 3v5c0 4-2.7 7-6 8C7 17 4 14 4 10V5l6-3z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>Rôles &amp; Permissions</a>
+    <a href="#" onclick="switchTab('logs');return false;" class="nav-item" id="nav-logs"><svg viewBox="0 0 20 20" fill="none"><rect x="3" y="4" width="14" height="13" rx="2" stroke="currentColor" stroke-width="1.3"/><path d="M7 8h6M7 11h4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>Journaux système<span class="nav-badge blue">47</span></a>
+    <a href="#" onclick="switchTab('systeme');return false;" class="nav-item" id="nav-systeme"><svg viewBox="0 0 20 20" fill="none"><rect x="2" y="3" width="16" height="12" rx="2" stroke="currentColor" stroke-width="1.3"/><path d="M7 18h6M10 15v3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>Système &amp; Serveur</a>
+  </nav>
+
+  <div class="sb-section-label">Portail médical</div>
+  <nav class="sb-nav">
+    <a href="admin.html" class="nav-item"><svg viewBox="0 0 20 20" fill="none"><rect x="2" y="2" width="7" height="7" rx="2" stroke="currentColor" stroke-width="1.3"/><rect x="11" y="2" width="7" height="7" rx="2" stroke="currentColor" stroke-width="1.3"/><rect x="2" y="11" width="7" height="7" rx="2" stroke="currentColor" stroke-width="1.3"/><rect x="11" y="11" width="7" height="7" rx="2" stroke="currentColor" stroke-width="1.3"/></svg>Dashboard principal</a>
+    <a href="dashboard-secretaire.html" class="nav-item"><svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="7" r="3.5" stroke="currentColor" stroke-width="1.3"/><path d="M3 17c0-3.3 3.1-6 7-6s7 2.7 7 6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>Patients<span class="nav-badge teal">3 241</span></a>
+    <a href="rdv-secretaire.html" class="nav-item"><svg viewBox="0 0 20 20" fill="none"><rect x="3" y="5" width="14" height="13" rx="2" stroke="currentColor" stroke-width="1.3"/><path d="M7 3v4M13 3v4M3 9h14" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>Rendez-vous</a>
+    <a href="lys-medical-ordonnance.html" class="nav-item"><svg viewBox="0 0 20 20" fill="none"><rect x="4" y="2" width="12" height="16" rx="2" stroke="currentColor" stroke-width="1.3"/><path d="M7 7h6M7 11h4M7 14h3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>Ordonnances</a>
+    <a href="lys-medical-statistiques.html" class="nav-item"><svg viewBox="0 0 20 20" fill="none"><path d="M3 15l4-5 3 3 4-6 3 3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>Statistiques &amp; Rapports</a>
+    <a href="notifications-secretaire.html" class="nav-item"><svg viewBox="0 0 20 20" fill="none"><path d="M10 2a6 6 0 00-6 6v3.5L3 13h14l-1-1.5V8a6 6 0 00-6-6z" stroke="currentColor" stroke-width="1.3"/><path d="M8.5 16a1.5 1.5 0 003 0" stroke="currentColor" stroke-width="1.3"/></svg>Notifications<span class="nav-badge">3</span></a>
+  </nav>
+
+  <div class="sb-section-label">Dashboards rôles</div>
+  <nav class="sb-nav">
+    <a href="dashboard-medecin.html" class="nav-item"><svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="7" r="3" stroke="currentColor" stroke-width="1.3"/><path d="M5 17c0-2.8 2.2-5 5-5s5 2.2 5 5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M15 5v4M13 7h4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>Dashboard Médecin</a>
+    <a href="dashboard-secretaire.html" class="nav-item"><svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="7" r="3" stroke="currentColor" stroke-width="1.3"/><path d="M5 17c0-2.8 2.2-5 5-5s5 2.2 5 5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><rect x="13" y="12" width="5" height="4" rx="1" stroke="currentColor" stroke-width="1.1"/></svg>Dashboard Secrétaire</a>
+    <a href="dashboard-patient.html" class="nav-item"><svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="7" r="3" stroke="currentColor" stroke-width="1.3"/><path d="M5 17c0-2.8 2.2-5 5-5s5 2.2 5 5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>Dashboard Patient</a>
+  </nav>
+
+  <div class="sb-section-label">Site public</div>
+  <nav class="sb-nav">
+    <a href="landing.html" class="nav-item"><svg viewBox="0 0 20 20" fill="none"><path d="M3 9.5L10 3l7 6.5V17a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>Landing page</a>
+    <a href="index.html" class="nav-item"><svg viewBox="0 0 20 20" fill="none"><path d="M2 6h16v12H2V6z" stroke="currentColor" stroke-width="1.3"/><path d="M6 6V3h8v3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>Accueil index</a>
+    <a href="lys-medical-politique.html" class="nav-item"><svg viewBox="0 0 20 20" fill="none"><path d="M10 2l6 3v5c0 4-2.7 7-6 8C7 17 4 14 4 10V5l6-3z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M7 10l2 2 4-4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>Politique &amp; CGU</a>
+    <a href="lys-medical-404.html" class="nav-item"><svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7" stroke="currentColor" stroke-width="1.3"/><path d="M10 6v5M10 14v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>Page 404</a>
+  </nav>
+
+  <div class="sb-section-label">Compte</div>
+  <nav class="sb-nav">
+    <a href="parametres.html" class="nav-item"><svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="3" stroke="currentColor" stroke-width="1.3"/><path d="M10 2v2M10 16v2M2 10h2M16 10h2M4.22 4.22l1.41 1.41M14.36 14.36l1.42 1.42M4.22 15.78l1.41-1.41M14.36 5.64l1.42-1.42" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>Paramètres</a>
+    <a href="lys-medical-signup.html" class="nav-item"><svg viewBox="0 0 20 20" fill="none"><circle cx="9" cy="8" r="3" stroke="currentColor" stroke-width="1.3"/><path d="M3 17c0-2.8 2.7-5 6-5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M14 12v6M11 15h6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>Créer un compte</a>
+    <a href="login.html" class="nav-item" style="color:#E05050;"><svg viewBox="0 0 20 20" fill="none"><path d="M9 3H4a1 1 0 00-1 1v12a1 1 0 001 1h12a1 1 0 001-1v-5" stroke="currentColor" stroke-width="1.3"/><path d="M17 3l-8 8M13 3h4v4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>Déconnexion</a>
+  </nav>
+
+  <div class="sb-bottom">
+    <a href="parametres.html" class="sb-user">
+      <div class="av" style="background:rgba(224,80,80,0.2);color:#F08080;">AD</div>
+      <div><div class="sb-user-name">Admin Système</div><div class="sb-user-role">Accès total</div></div>
+    </a>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-title">Panneau d'<em>administration</em></div>
+    <div class="tb-search">
+      <svg viewBox="0 0 20 20" fill="none"><circle cx="9" cy="9" r="5.5" stroke="currentColor" stroke-width="1.3"/><path d="M13.5 13.5L17 17" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+      <input type="text" placeholder="Rechercher…" oninput="filterUsersTable(this.value)">
+    </div>
+    <div style="display:flex;align-items:center;gap:6px;padding:0 12px;height:38px;background:var(--red-bg);border-radius:10px;border:1px solid rgba(224,80,80,0.2);flex-shrink:0;">
+      <div style="width:7px;height:7px;border-radius:50%;background:var(--red);animation:pulse 2s infinite;flex-shrink:0;"></div>
+      <span style="font-size:11.5px;color:var(--red);font-weight:500;white-space:nowrap;">Session Admin</span>
+    </div>
+    <a href="notifications-secretaire.html" class="tb-icon notif"><svg width="16" height="16" viewBox="0 0 20 20" fill="none"><path d="M10 2a6 6 0 016 6v3l1.5 2.5H2.5L4 11V8a6 6 0 016-6z" stroke="currentColor" stroke-width="1.3"/><path d="M8 16.5a2 2 0 004 0" stroke="currentColor" stroke-width="1.3"/></svg></a>
+    <a href="parametres.html" class="tb-icon"><svg width="16" height="16" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="8" r="3.5" stroke="currentColor" stroke-width="1.3"/><path d="M3 18c0-3.314 3.134-6 7-6s7 2.686 7 6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></a>
+    <button class="tb-btn ghost" onclick="showToast('Actualisation système...')">
+      <svg viewBox="0 0 16 16" fill="none"><path d="M13 8A5 5 0 112.5 5.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M2 2.5v3h3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Actualiser
+    </button>
+    <button class="tb-btn primary" onclick="openModal()">
+      <svg viewBox="0 0 16 16" fill="none"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      Nouvel utilisateur
+    </button>
+  </div>
+
+  <div class="content">
+
+    <!-- VUE D'ENSEMBLE -->
+    <div id="view-overview">
+      <div class="welcome-band">
+        <div class="wb-text">
+          <h2>Bonjour, <em>Administrateur</em></h2>
+          <p id="adminStatsSummary">Chargement des statistiques administrateur...</p>
+          <a href="login.html" style="display:inline-flex;align-items:center;gap:6px;margin-top:12px;font-size:12px;color:rgba(240,128,128,0.8);text-decoration:none;transition:color .2s;" onmouseover="this.style.color='#F08080'" onmouseout="this.style.color='rgba(240,128,128,0.8)'">
+            <svg viewBox="0 0 14 14" fill="none" width="13" height="13"><path d="M9 2H5a1 1 0 00-1 1v8a1 1 0 001 1h8a1 1 0 001-1V7" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M7 5L3 9M3 5v4h4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Retour à la page de connexion
+          </a>
+        </div>
+        <div class="wb-right">
+          <div class="wb-stat"><strong id="wbTotalUsers">--</strong><span>Utilisateurs</span></div>
+          <div class="wb-sep"></div>
+          <div class="wb-stat"><strong id="wbTotalRdv">--</strong><span>RDV</span></div>
+          <div class="wb-sep"></div>
+          <div class="wb-stat"><strong id="wbActiveUsers">--</strong><span>Actifs</span></div>
+        </div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card"><div class="sc-icon red"><svg viewBox="0 0 20 20" fill="none"><circle cx="7" cy="7" r="3" stroke="currentColor" stroke-width="1.3"/><path d="M2 17c0-2.8 2.2-5 5-5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><circle cx="14" cy="9" r="2.5" stroke="currentColor" stroke-width="1.3"/><path d="M10 17c0-2.2 1.8-4 4-4s4 1.8 4 4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></div><div class="sc-label">Total utilisateurs</div><div class="sc-value" id="statTotalUsers">--</div><span class="sc-delta neu">Base utilisateur</span></div>
+        <div class="stat-card"><div class="sc-icon blue"><svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="7" r="3" stroke="currentColor" stroke-width="1.3"/><path d="M5 17c0-2.8 2.2-5 5-5s5 2.2 5 5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M15 5v4M13 7h4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></div><div class="sc-label">Total médecins</div><div class="sc-value" id="statTotalDoctors">--</div><span class="sc-delta neu">Profils médecins</span></div>
+        <div class="stat-card"><div class="sc-icon teal"><svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="7" r="3.5" stroke="currentColor" stroke-width="1.3"/><path d="M3 17c0-3.3 3.1-6 7-6s7 2.7 7 6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></div><div class="sc-label">Total patients</div><div class="sc-value" id="statTotalPatients">--</div><span class="sc-delta neu">Dossiers patients</span></div>
+        <div class="stat-card"><div class="sc-icon amber"><svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="7" r="3" stroke="currentColor" stroke-width="1.3"/><path d="M5 17c0-2.8 2.2-5 5-5s5 2.2 5 5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><rect x="13" y="12" width="5" height="4" rx="1" stroke="currentColor" stroke-width="1.1"/></svg></div><div class="sc-label">Total secrétaires</div><div class="sc-value" id="statTotalSecretaries">--</div><span class="sc-delta neu">Profils secrétaires</span></div>
+        <div class="stat-card"><div class="sc-icon green"><svg viewBox="0 0 20 20" fill="none"><rect x="3" y="5" width="14" height="13" rx="2" stroke="currentColor" stroke-width="1.3"/><path d="M7 3v4M13 3v4M3 9h14" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></div><div class="sc-label">Total rendez-vous</div><div class="sc-value" id="statTotalRdv">--</div><span class="sc-delta neu">Tous statuts</span></div>
+        <div class="stat-card"><div class="sc-icon red"><svg viewBox="0 0 20 20" fill="none"><path d="M10 2l6 3v5c0 4-2.7 7-6 8C7 17 4 14 4 10V5l6-3z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg></div><div class="sc-label">Comptes actifs</div><div class="sc-value" id="statActiveUsers">--</div><span class="sc-delta neu" id="statActiveUsersNote">Selon statut</span></div>
+      </div>
+
+      <div class="section-label">Accès rapide — toutes les pages du site</div>
+      <div class="links-grid">
+        <a class="link-card" href="dashboard-secretaire.html"><div class="lc-icon teal"><svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="7" r="3.5" stroke="currentColor" stroke-width="1.4"/><path d="M3 17c0-3.3 3.1-6 7-6s7 2.7 7 6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></div><div><div class="lc-label">Patients</div><div class="lc-sub" id="quickPatientsCount">-- dossiers</div></div></a>
+        <a class="link-card" href="rdv-secretaire.html"><div class="lc-icon blue"><svg viewBox="0 0 20 20" fill="none"><rect x="3" y="5" width="14" height="13" rx="2" stroke="currentColor" stroke-width="1.4"/><path d="M7 3v4M13 3v4M3 9h14" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></div><div><div class="lc-label">Rendez-vous</div><div class="lc-sub" id="quickRdvCount">-- au total</div></div></a>
+        <a class="link-card" href="lys-medical-ordonnance.html"><div class="lc-icon green"><svg viewBox="0 0 20 20" fill="none"><rect x="4" y="2" width="12" height="16" rx="2" stroke="currentColor" stroke-width="1.4"/><path d="M7 7h6M7 11h4M7 14h3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></div><div><div class="lc-label">Ordonnances</div><div class="lc-sub">Gestion des ordonnances</div></div></a>
+        <a class="link-card" href="notifications-secretaire.html"><div class="lc-icon red"><svg viewBox="0 0 20 20" fill="none"><path d="M10 2a6 6 0 00-6 6v3.5L3 13h14l-1-1.5V8a6 6 0 00-6-6z" stroke="currentColor" stroke-width="1.4"/><path d="M8.5 16a1.5 1.5 0 003 0" stroke="currentColor" stroke-width="1.4"/></svg></div><div><div class="lc-label">Notifications</div><div class="lc-sub">Centre de notifications</div></div></a>
+        <a class="link-card" href="dashboard-medecin.html"><div class="lc-icon purple"><svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="7" r="3" stroke="currentColor" stroke-width="1.4"/><path d="M5 17c0-2.8 2.2-5 5-5s5 2.2 5 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M15 5v4M13 7h4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></div><div><div class="lc-label">Dashboard Médecin</div><div class="lc-sub">Espace médecin</div></div></a>
+        <a class="link-card" href="dashboard-secretaire.html"><div class="lc-icon amber"><svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="7" r="3" stroke="currentColor" stroke-width="1.4"/><path d="M5 17c0-2.8 2.2-5 5-5s5 2.2 5 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><rect x="13" y="12" width="5" height="4" rx="1" stroke="currentColor" stroke-width="1.1"/></svg></div><div><div class="lc-label">Dashboard Secrétaire</div><div class="lc-sub">Espace secrétaire</div></div></a>
+        <a class="link-card" href="dashboard-patient.html"><div class="lc-icon teal"><svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="7" r="3" stroke="currentColor" stroke-width="1.4"/><path d="M5 17c0-2.8 2.2-5 5-5s5 2.2 5 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></div><div><div class="lc-label">Dashboard Patient</div><div class="lc-sub">Espace patient</div></div></a>
+        <a class="link-card" href="login.html" style="border-color:rgba(224,80,80,0.2);"><div class="lc-icon red"><svg viewBox="0 0 20 20" fill="none"><path d="M9 3H4a1 1 0 00-1 1v12a1 1 0 001 1h5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M13 7l4 3-4 3M17 10H8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><div class="lc-label" style="color:var(--red)">Page de connexion</div><div class="lc-sub">login.html</div></div></a>
+      </div>
+
+      <div class="two-col">
+        <div class="card">
+          <div class="card-head"><span class="card-title">Dernières connexions</span><a href="#" class="card-action" onclick="switchTab('logs');return false;">Voir tout →</a></div>
+          <div class="log-list">
+            <div class="log-item"><div class="log-dot g"></div><div><div class="log-msg"><strong>Dr. Karim</strong> — connexion réussie (Chrome, Windows 11)</div><div class="log-time">Il y a 12 min · 192.168.1.14</div></div></div>
+            <div class="log-item"><div class="log-dot t"></div><div><div class="log-msg"><strong>Secrétaire Amina</strong> — consultation dossier PAT-0041</div><div class="log-time">Il y a 28 min · 192.168.1.22</div></div></div>
+            <div class="log-item"><div class="log-dot b"></div><div><div class="log-msg"><strong>Dr. Leila</strong> — ordonnance signée ORD-0087</div><div class="log-time">Il y a 1h · 192.168.1.18</div></div></div>
+            <div class="log-item"><div class="log-dot r"></div><div><div class="log-msg"><strong>Inconnu</strong> — tentative de connexion échouée × 3 — IP bloquée</div><div class="log-time">Il y a 2h · 41.200.12.88</div></div></div>
+            <div class="log-item"><div class="log-dot g"></div><div><div class="log-msg"><strong>Admin</strong> — export rapport mensuel Février 2026</div><div class="log-time">Il y a 3h · 192.168.1.5</div></div></div>
+            <div class="log-item"><div class="log-dot m"></div><div><div class="log-msg"><strong>Système</strong> — sauvegarde automatique complète (2.4 GB)</div><div class="log-time">Hier 02:00 · serveur local</div></div></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head"><span class="card-title">Statut système</span><a href="#" class="card-action" onclick="switchTab('systeme');return false;">Détails →</a></div>
+          <div class="sys-item"><span class="sys-label">CPU</span><div class="sys-bar-wrap"><div class="sys-bar-fill ok" id="bar-cpu" style="width:0"></div></div><span class="sys-val" style="color:var(--green)">23%</span></div>
+          <div class="sys-item"><span class="sys-label">RAM (5.7/8 GB)</span><div class="sys-bar-wrap"><div class="sys-bar-fill warn" id="bar-ram" style="width:0"></div></div><span class="sys-val" style="color:var(--amber)">71%</span></div>
+          <div class="sys-item"><span class="sys-label" id="overviewDiskLabel">Stockage</span><div class="sys-bar-wrap"><div class="sys-bar-fill ok" id="bar-sto" style="width:0"></div></div><span class="sys-val" id="overviewDiskValue" style="color:var(--green)">--</span></div>
+          <div class="sys-item"><span class="sys-label">Réseau (démo)</span><div class="sys-bar-wrap"><div class="sys-bar-fill ok" id="bar-net" style="width:0"></div></div><span class="sys-val" style="color:var(--green)">12 MB/s</span></div>
+          <div class="sys-item"><span class="sys-label">Base de données</span><div class="sys-bar-wrap"><div class="sys-bar-fill ok" id="overviewDbBar" style="width:0"></div></div><span class="sys-val"><span class="badge b-grey" id="overviewMysqlStatus">--</span></span></div>
+          <div class="sys-item"><span class="sys-label">SSL</span><div class="sys-bar-wrap"><div class="sys-bar-fill warn" id="bar-ssl" style="width:0"></div></div><span class="sys-val" style="color:var(--amber);font-size:11px">42j</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- UTILISATEURS -->
+    <div id="view-utilisateurs" style="display:none">
+      <div style="display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap;align-items:center;">
+        <div style="display:flex;align-items:center;gap:8px;background:var(--surface);border:1.5px solid rgba(0,0,0,0.1);border-radius:10px;padding:0 14px;height:38px;flex:1;min-width:200px;"><svg viewBox="0 0 16 16" fill="none" width="13" height="13" style="color:var(--muted);flex-shrink:0"><circle cx="7" cy="7" r="4.5" stroke="currentColor" stroke-width="1.3"/><path d="M11 11l3 3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg><input type="text" id="userSearchInput" placeholder="Rechercher un utilisateur…" style="border:none;background:transparent;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--navy);outline:none;width:100%;" oninput="filterUsersTable(this.value)"></div>
+        <select id="userRoleFilter" style="height:38px;padding:0 28px 0 14px;border-radius:10px;border:1.5px solid rgba(0,0,0,0.1);background:var(--surface);color:var(--navy);font-size:13px;font-family:'DM Sans',sans-serif;outline:none;appearance:none;" onchange="filterUsersTable()"><option value="">Tous les rôles</option><option value="medecin">Médecin</option><option value="secretaire">Secrétaire</option><option value="patient">Patient</option><option value="admin">Admin</option></select>
+        <button class="tb-btn primary" onclick="openModal()"><svg viewBox="0 0 16 16" fill="none"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>Ajouter</button>
+      </div>
+      <div class="card">
+        <table class="ptable" id="userTable">
+          <thead><tr><th>Utilisateur</th><th>Rôle</th><th>Statut</th><th>Dernière connexion</th><th>Accès</th><th>Actions</th></tr></thead>
+   <tbody id="userTableBody">
+  <tr>
+    <td colspan="6" style="text-align:center;color:var(--muted);padding:24px;">
+      Chargement...
+    </td>
+  </tr>
+</tbody>
+        </table>
+        <div class="pagination">
+          <span id="userTableInfo">Affichage 1-5 sur 12 utilisateurs</span>
+          <div class="page-btns"><button class="page-btn active">1</button><button class="page-btn" onclick="showToast('Page 2')">2</button><button class="page-btn" onclick="showToast('Suivant')">›</button></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RÔLES -->
+    <div id="view-roles" style="display:none">
+      <div class="two-col">
+        <div class="card">
+          <div class="card-head"><span class="card-title">Rôles définis</span><a href="#" class="card-action" onclick="showToast('Nouveau rôle créé');return false;">+ Nouveau rôle</a></div>
+          <div class="role-item" onclick="showToast('Édition Administrateur')"><div class="role-left"><div class="ri-icon red"><svg viewBox="0 0 20 20" fill="none"><path d="M10 2l6 3v5c0 4-2.7 7-6 8C7 17 4 14 4 10V5l6-3z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg></div><div><div class="r-name">Administrateur</div><div class="r-count">1 utilisateur · Accès complet</div></div></div><span class="badge b-red">Niveau 1</span></div>
+          <div class="role-item" onclick="showToast('Édition Médecin')"><div class="role-left"><div class="ri-icon blue"><svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="7" r="3" stroke="currentColor" stroke-width="1.3"/><path d="M5 17c0-2.8 2.2-5 5-5s5 2.2 5 5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M15 5v4M13 7h4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></div><div><div class="r-name">Médecin</div><div class="r-count">3 utilisateurs · Clinique + Stats</div></div></div><span class="badge b-blue">Niveau 2</span></div>
+          <div class="role-item" onclick="showToast('Édition Secrétaire')"><div class="role-left"><div class="ri-icon amber"><svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="7" r="3" stroke="currentColor" stroke-width="1.3"/><path d="M5 17c0-2.8 2.2-5 5-5s5 2.2 5 5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><rect x="13" y="12" width="5" height="4" rx="1" stroke="currentColor" stroke-width="1.1"/></svg></div><div><div class="r-name">Secrétaire</div><div class="r-count">2 utilisateurs · RDV + Lecture</div></div></div><span class="badge b-amber">Niveau 3</span></div>
+          <div class="role-item" onclick="showToast('Édition Patient')"><div class="role-left"><div class="ri-icon teal"><svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="7" r="3.5" stroke="currentColor" stroke-width="1.3"/><path d="M3 17c0-3.3 3.1-6 7-6s7 2.7 7 6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></div><div><div class="r-name">Patient</div><div class="r-count">6 utilisateurs · Dashboard seul</div></div></div><span class="badge b-teal">Niveau 4</span></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><span class="card-title">Matrice des accès</span></div>
+          <table class="ptable">
+            <thead><tr><th>Page</th><th>Admin</th><th>Médecin</th><th>Secrétaire</th><th>Patient</th></tr></thead>
+            <tbody>
+              <tr><td class="p-name">landing.html</td><td class="mc">✓</td><td class="mc">✓</td><td class="mc">✓</td><td class="mc">✓</td></tr>
+              <tr><td class="p-name">admin.html</td><td class="mc">✓</td><td class="mx">✕</td><td class="mx">✕</td><td class="mx">✕</td></tr>
+              <tr><td class="p-name">lys-medical-dashboard</td><td class="mc">✓</td><td class="mc">✓</td><td class="mc">✓</td><td class="mx">✕</td></tr>
+              <tr><td class="p-name">lys-medical-patient</td><td class="mc">✓</td><td class="mc">✓</td><td class="mp">Lecture</td><td class="mx">✕</td></tr>
+              <tr><td class="p-name">lys-medical-statistiques</td><td class="mc">✓</td><td class="mc">✓</td><td class="mx">✕</td><td class="mx">✕</td></tr>
+              <tr><td class="p-name">dashboard-patient</td><td class="mc">✓</td><td class="mx">✕</td><td class="mx">✕</td><td class="mc">✓</td></tr>
+              <tr><td class="p-name">dashboard-secretaire</td><td class="mc">✓</td><td class="mx">✕</td><td class="mc">✓</td><td class="mx">✕</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- LOGS -->
+    <div id="view-logs" style="display:none">
+      <div class="card">
+        <div class="card-head">
+          <span class="card-title" id="logsTitle">Journaux système</span>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <input id="logSearchInput" type="text" placeholder="Rechercher..." oninput="filterLogs()" style="height:32px;width:180px;padding:0 10px;border-radius:8px;border:1px solid rgba(0,0,0,0.1);background:var(--bg);color:var(--navy);font-size:12px;font-family:'DM Sans',sans-serif;outline:none;">
+            <select id="logRoleFilter" style="height:32px;padding:0 24px 0 10px;border-radius:8px;border:1px solid rgba(0,0,0,0.1);background:var(--bg);color:var(--navy);font-size:12px;font-family:'DM Sans',sans-serif;outline:none;appearance:none;" onchange="filterLogs()"><option value="">Tous rôles</option><option value="admin">Admin</option><option value="medecin">Médecin</option><option value="secretaire">Secrétaire</option><option value="patient">Patient</option></select>
+            <a href="#" class="card-action" onclick="loadLogs();return false;">Actualiser →</a>
+          </div>
+        </div>
+        <div class="log-list" id="systemLogList">
+          <div class="log-item"><div class="log-dot m"></div><div><div class="log-msg">Chargement des journaux...</div></div></div>
+        </div>
+        <div class="pagination"><span id="logsInfo">Affichage 0 sur 0 événements</span><div class="page-btns"><button class="page-btn active">1</button></div></div>
+      </div>
+    </div>
+
+    <!-- SYSTÈME -->
+    <div id="view-systeme" style="display:none">
+      <div class="three-col">
+        <div class="card">
+          <div class="card-head"><span class="card-title">Ressources serveur</span><span class="badge b-green" id="systemStatusBadge">Nominal</span></div>
+          <div class="sys-item"><span class="sys-label">CPU (démo)</span><div class="sys-bar-wrap"><div class="sys-bar-fill ok" id="sbar-cpu" style="width:0"></div></div><span class="sys-val" style="color:var(--green)">23%</span></div>
+          <div class="sys-item"><span class="sys-label">RAM (démo)</span><div class="sys-bar-wrap"><div class="sys-bar-fill warn" id="sbar-ram" style="width:0"></div></div><span class="sys-val" style="color:var(--amber)">71%</span></div>
+          <div class="sys-item"><span class="sys-label" id="systemDiskLabel">Stockage</span><div class="sys-bar-wrap"><div class="sys-bar-fill ok" id="sbar-sto" style="width:0"></div></div><span class="sys-val" id="systemDiskValue" style="color:var(--green)">--</span></div>
+          <div class="sys-item"><span class="sys-label">Bande passante (démo)</span><div class="sys-bar-wrap"><div class="sys-bar-fill ok" id="sbar-net" style="width:0"></div></div><span class="sys-val" style="color:var(--green)">12 MB/s</span></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><span class="card-title">Services actifs</span><a href="#" class="card-action" onclick="loadSystemStatus();return false;">Actualiser →</a></div>
+          <div class="sys-item"><span class="sys-label">Base de données MySQL</span><span class="badge b-grey" id="mysqlStatus">--</span></div>
+          <div class="sys-item"><span class="sys-label">Version MySQL</span><span class="badge b-navy" id="mysqlVersion">--</span></div>
+          <div class="sys-item"><span class="sys-label">Base utilisée</span><span class="badge b-navy" id="databaseName">--</span></div>
+          <div class="sys-item"><span class="sys-label">PHP</span><span class="badge b-blue" id="phpVersion">--</span></div>
+          <div class="sys-item"><span class="sys-label">Serveur web</span><span class="badge b-green" id="serverSoftware">--</span></div>
+          <div class="sys-item"><span class="sys-label">Heure serveur</span><span class="badge b-gold" id="serverTime">--</span></div>
+          <div class="sys-item"><span class="sys-label">Utilisateurs / Journaux</span><span class="badge b-purple" id="systemTotals">--</span></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><span class="card-title">Actions maintenance</span></div>
+          <div style="display:flex;flex-direction:column;gap:8px;padding:16px 20px;">
+            <button class="action-btn confirm" style="text-align:left;padding:9px 14px;width:100%;" onclick="showToast('Sauvegarde manuelle démarrée…')">Sauvegarde manuelle</button>
+            <button class="action-btn edit" style="text-align:left;padding:9px 14px;width:100%;" onclick="showToast('Cache vidé avec succès')">Vider le cache</button>
+            <button class="action-btn edit" style="text-align:left;padding:9px 14px;width:100%;" onclick="showToast('Rapport système généré')">Générer rapport système</button>
+            <button class="action-btn confirm" style="text-align:left;padding:9px 14px;width:100%;" onclick="showToast('v2.4.1 — Dernière version ✓')">✓ Vérifier mises à jour</button>
+            <button class="action-btn confirm" style="text-align:left;padding:9px 14px;width:100%;" onclick="showToast('Aucune menace détectée ✓')">Scan de sécurité</button>
+            <button class="action-btn cancel" style="text-align:left;padding:9px 14px;width:100%;margin-top:4px;" onclick="showToast('⚠ Action réservée aux urgences système')">⚠ Redémarrer le serveur</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<!-- MODAL NOUVEL UTILISATEUR -->
+<div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()"><svg viewBox="0 0 14 14" fill="none"><path d="M2 2l10 10M12 2L2 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button>
+    <div class="modal-title" id="userModalTitle">Nouvel <em>utilisateur</em></div>
+    <div class="modal-sub">Créer un compte et définir les droits d'accès au portail.</div>
+    <div class="field-row">
+      <div class="field"><label>Prénom</label><input type="text" id="f-prenom" placeholder="Ex : Karim"></div>
+      <div class="field"><label>Nom</label><input type="text" id="f-nom" placeholder="Ex: Dridi"></div>
+    </div>
+    <div class="field"><label>Adresse e-mail</label><input type="email" id="f-email" placeholder="utilisateur@lysmedical.dz"></div>
+      <div class="field"><label>Rôle</label>
+      <select id="f-role" onchange="toggleSpecialiteField()"><option value="">Choisir un rôle…</option><option value="medecin">Médecin</option><option value="secretaire">Secrétaire</option><option value="patient">Patient</option><option value="admin">Administrateur</option></select>
+    </div>
+    <div class="field" id="specialiteField" style="display:none">
+      <label>Spécialité</label>
+      <select id="f-specialite">
+        <option value="">Choisir une spécialité…</option>
+        <option value="Médecine générale">Médecine générale</option>
+        <option value="Cardiologie">Cardiologie</option>
+        <option value="Pédiatrie">Pédiatrie</option>
+        <option value="Gynécologie">Gynécologie</option>
+        <option value="Dermatologie">Dermatologie</option>
+        <option value="Neurologie">Neurologie</option>
+        <option value="ORL">ORL</option>
+        <option value="Ophtalmologie">Ophtalmologie</option>
+        <option value="Psychiatrie">Psychiatrie</option>
+        <option value="Radiologie">Radiologie</option>
+        <option value="Autre">Autre</option>
+      </select>
+    </div>
+    <div class="field-row">
+      <div class="field"><label>Mot de passe</label><input type="password" id="f-pass" placeholder="••••••••"></div>
+      <div class="field"><label>Confirmer</label><input type="password" id="f-pass2" placeholder="••••••••"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="tb-btn ghost" onclick="closeModal()">Annuler</button>
+      <button class="tb-btn primary" id="userSaveButton" onclick="saveUser()">Créer l'utilisateur</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+const ALLOWED_ROLE = 'admin';
+const ROLE_REDIRECTS = {
+  admin: 'admin.html',
+  secretaire: 'dashboard-secretaire.html',
+  medecin: 'dashboard-medecin.html',
+  patient: 'dashboard-patient.html'
+};
+
+async function checkSession(){
+  try{
+    const res = await fetch('backend/check_session.php', { credentials: 'same-origin' });
+    const data = await res.json();
+
+    if(!data.logged || !data.user){
+      window.location.href = 'login.html';
+      return false;
+    }
+
+    const role = String(data.user.role || '').toLowerCase();
+    if(role !== ALLOWED_ROLE){
+      window.location.href = ROLE_REDIRECTS[role] || 'login.html';
+      return false;
+    }
+    return true;
+  }catch(e){
+    window.location.href = 'login.html';
+    return false;
+  }
+}
+
+async function logout(){
+  await fetch('backend/logout.php');
+  window.location.href = 'login.html';
+}
+
+function formatAdminNumber(value) {
+  if (value === null || value === undefined || value === '') return '--';
+  var number = Number(value);
+  if (Number.isNaN(number)) return '--';
+  return new Intl.NumberFormat('fr-FR').format(number);
+}
+
+function setText(id, value) {
+  var el = document.getElementById(id);
+  if (el) el.textContent = value;
+}
+
+function applyAdminStats(stats) {
+  var totalUsers = formatAdminNumber(stats.total_utilisateurs);
+  var totalDoctors = formatAdminNumber(stats.total_medecins);
+  var totalPatients = formatAdminNumber(stats.total_patients);
+  var totalSecretaries = formatAdminNumber(stats.total_secretaires);
+  var totalRdv = formatAdminNumber(stats.total_rendez_vous);
+  var activeUsers = stats.comptes_actifs === null ? '--' : formatAdminNumber(stats.comptes_actifs);
+
+  setText('statTotalUsers', totalUsers);
+  setText('statTotalDoctors', totalDoctors);
+  setText('statTotalPatients', totalPatients);
+  setText('statTotalSecretaries', totalSecretaries);
+  setText('statTotalRdv', totalRdv);
+  setText('statActiveUsers', activeUsers);
+  setText('statActiveUsersNote', stats.comptes_actifs === null ? 'Statut absent' : 'Selon statut');
+
+  setText('wbTotalUsers', totalUsers);
+  setText('wbTotalRdv', totalRdv);
+  setText('wbActiveUsers', activeUsers);
+  setText('quickPatientsCount', totalPatients + ' dossiers');
+  setText('quickRdvCount', totalRdv + ' au total');
+
+  var summaryActive = stats.comptes_actifs === null ? 'comptes actifs non disponibles' : activeUsers + ' comptes actifs';
+  setText('adminStatsSummary', totalUsers + ' utilisateurs · ' + totalPatients + ' patients · ' + totalRdv + ' rendez-vous · ' + summaryActive);
+}
+
+async function loadAdminStats() {
+  try {
+    var res = await fetch('backend/admin/get_dashboard_stats.php', { credentials: 'same-origin' });
+    var data = await res.json();
+
+    if (!res.ok || !data.success) {
+      showToast(data.message || 'Erreur statistiques admin');
+      return;
+    }
+
+    applyAdminStats(data.stats || {});
+  } catch (e) {
+    showToast('Erreur statistiques admin');
+  }
+}
+
+window.addEventListener('DOMContentLoaded', async function() {
+  var canLoad = await checkSession();
+  if (canLoad) loadAdminStats();
+});
+
+document.addEventListener('DOMContentLoaded', function(){
+  document.querySelectorAll('.tb-btn.primary').forEach(function(btn){
+    if(btn.textContent.includes('Nouvel utilisateur') || btn.textContent.includes('Ajouter')){
+      btn.addEventListener('click', function(e){
+        e.preventDefault();
+        openModal();
+      });
+    }
+  });
+  const logoutLink = Array.from(document.querySelectorAll('a[href="login.html"]'))
+    .find(a => a.textContent.includes('Déconnexion'));
+  if(logoutLink){
+    logoutLink.href = '#';
+    logoutLink.addEventListener('click', function(e){
+      e.preventDefault();
+      logout();
+    });
+  }
+
+  var quickLinks = document.querySelectorAll('.links-grid a.link-card[href]');
+  quickLinks.forEach(function(card) {
+    card.addEventListener('click', function() {
+      var href = card.getAttribute('href');
+      if (!href || href === '#') return;
+      var before = window.location.href;
+      setTimeout(function() {
+        if (window.location.href === before) {
+          window.location.href = card.href;
+        }
+      }, 0);
+    });
+  });
+});
+
+var toastTimer;
+var usersData = [];
+var filteredUsers = [];
+var editingUserId = null;
+var userStatusSupported = false;
+var systemLogs = [];
+var filteredLogs = [];
+
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.opacity = '1';
+  t.style.transform = 'translateY(0)';
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function() {
+    t.style.opacity = '0';
+    t.style.transform = 'translateY(16px)';
+  }, 2800);
+}
+
+function switchTab(tab) {
+  var tabs = ['overview','utilisateurs','roles','logs','systeme'];
+  tabs.forEach(function(id) {
+    var view = document.getElementById('view-' + id);
+    if (view) view.style.display = 'none';
+    var nav = document.getElementById('nav-' + id);
+    if (nav) nav.classList.remove('active');
+  });
+  var activeView = document.getElementById('view-' + tab);
+  if (activeView) activeView.style.display = '';
+  var activeNav = document.getElementById('nav-' + tab);
+  if (activeNav) activeNav.classList.add('active');
+
+  if (tab === 'systeme') {
+    loadSystemStatus();
+    setTimeout(function() {
+      animateBar('sbar-cpu', 23);
+      animateBar('sbar-ram', 71);
+      animateBar('sbar-net', 30);
+    }, 100);
+  }
+  if (tab === 'logs') {
+    loadLogs();
+  }
+}
+
+function animateBar(id, pct) {
+  var el = document.getElementById(id);
+  if (el) el.style.width = pct + '%';
+}
+
+function setBadge(id, text, cls) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  el.textContent = text;
+  el.className = 'badge ' + cls;
+}
+
+function diskPercentUsed(status) {
+  var total = Number(status.diskTotalBytes || 0);
+  var free = Number(status.diskFreeBytes || 0);
+  if (!total || total <= 0) return 0;
+  return Math.max(0, Math.min(100, Math.round(((total - free) / total) * 100)));
+}
+
+function applySystemStatus(status) {
+  var mysqlOnline = status.mysqlStatus === 'connected';
+  var diskPct = diskPercentUsed(status);
+  var diskText = diskPct ? diskPct + '%' : '--';
+  var diskLabel = 'Stockage (' + (status.diskFreeSpace || 'N/A') + ' libres / ' + (status.diskTotalSpace || 'N/A') + ')';
+
+  setBadge('mysqlStatus', mysqlOnline ? 'Connecté' : 'Déconnecté', mysqlOnline ? 'b-green' : 'b-red');
+  setBadge('overviewMysqlStatus', mysqlOnline ? 'En ligne' : 'Hors ligne', mysqlOnline ? 'b-green' : 'b-red');
+  setBadge('mysqlVersion', status.mysqlVersion || 'N/A', 'b-navy');
+  setBadge('databaseName', status.databaseName || 'N/A', 'b-navy');
+  setBadge('phpVersion', 'PHP ' + (status.phpVersion || 'N/A'), 'b-blue');
+  setBadge('serverSoftware', status.serverSoftware || 'N/A', 'b-green');
+  setBadge('serverTime', status.currentServerTime || 'N/A', 'b-gold');
+  setBadge('systemTotals', (status.totalUsers || 0) + ' utilisateurs · ' + (status.totalLogs || 0) + ' logs', 'b-purple');
+  setBadge('systemStatusBadge', mysqlOnline ? 'Nominal' : 'DB hors ligne', mysqlOnline ? 'b-green' : 'b-red');
+
+  setText('systemDiskLabel', diskLabel);
+  setText('overviewDiskLabel', diskLabel);
+  setText('systemDiskValue', diskText);
+  setText('overviewDiskValue', diskText);
+  animateBar('sbar-sto', diskPct);
+  animateBar('bar-sto', diskPct);
+  animateBar('overviewDbBar', mysqlOnline ? 100 : 0);
+}
+
+async function loadSystemStatus() {
+  try {
+    var res = await fetch('backend/admin/get_system_status.php', { credentials: 'same-origin' });
+    var data = await res.json();
+
+    if (!res.ok || !data.success) {
+      showToast(data.message || 'Erreur statut système');
+      return;
+    }
+
+    applySystemStatus(data.status || {});
+  } catch (e) {
+    showToast('Erreur statut système');
+  }
+}
+
+function openModal() {
+  editingUserId = null;
+  var title = document.getElementById('userModalTitle');
+  var saveButton = document.getElementById('userSaveButton');
+  if (title) title.innerHTML = 'Nouvel <em>utilisateur</em>';
+  if (saveButton) saveButton.textContent = "Créer l'utilisateur";
+  document.getElementById('f-prenom').value = '';
+  document.getElementById('f-nom').value = '';
+  document.getElementById('f-email').value = '';
+  document.getElementById('f-role').value = '';
+  document.getElementById('f-specialite').value = '';
+  document.getElementById('f-pass').value = '';
+  document.getElementById('f-pass2').value = '';
+  toggleSpecialiteField();
+  document.getElementById('modalOverlay').classList.add('open');
+}
+
+function closeModal() {
+  editingUserId = null;
+  document.getElementById('modalOverlay').classList.remove('open');
+}
+
+function toggleSpecialiteField() {
+  var role = document.getElementById('f-role').value;
+  var field = document.getElementById('specialiteField');
+  var input = document.getElementById('f-specialite');
+  var show = role === 'medecin';
+  if (field) field.style.display = show ? '' : 'none';
+  if (!show && input) input.value = '';
+}
+
+function getRoleLabel(role) {
+  var map = {
+    admin: 'Administrateur',
+    medecin: 'Médecin',
+    secretaire: 'Secrétaire',
+    patient: 'Patient'
+  };
+  return map[role] || role;
+}
+
+function getRoleBadgeClass(role) {
+  var map = {
+    admin: 'b-red',
+    medecin: 'b-blue',
+    secretaire: 'b-amber',
+    patient: 'b-teal'
+  };
+  return map[role] || 'b-grey';
+}
+
+function getInitials(login) {
+  var value = String(login || '').trim();
+  if (!value) return 'US';
+  var parts = value.split(/[\s@._-]+/).filter(Boolean);
+  if (parts.length === 1) {
+    return parts[0].slice(0, 2).toUpperCase();
+  }
+  return (parts[0][0] + parts[1][0]).toUpperCase();
+}
+
+function normalizeUserStatus(status) {
+  var value = String(status === null || status === undefined ? '' : status).trim().toLowerCase();
+  if (value === '' || value === '1' || value === 'active') return 'actif';
+  if (value === '0' || value === 'inactive') return 'inactif';
+  return value;
+}
+
+function getStatusLabel(status) {
+  return normalizeUserStatus(status) === 'inactif' ? 'Inactif' : 'Actif';
+}
+
+function getStatusBadgeClass(status) {
+  return normalizeUserStatus(status) === 'inactif' ? 'b-grey' : 'b-green';
+}
+
+function escapeHtml(value) {
+  return String(value === null || value === undefined ? '' : value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+function renderUsers(users) {
+  var tbody = document.getElementById('userTableBody');
+  var info = document.getElementById('userTableInfo');
+  if (!tbody) return;
+
+  if (!Array.isArray(users) || users.length === 0) {
+    tbody.innerHTML = '<tr><td colspan=\"6\" style=\"text-align:center;color:var(--muted);padding:24px;\">Aucun utilisateur</td></tr>';
+    if (info) info.textContent = 'Affichage 0 sur 0 utilisateurs';
+    return;
+  }
+
+  tbody.innerHTML = users.map(function(user) {
+    var role = String(user.role || '').toLowerCase();
+    var badgeClass = getRoleBadgeClass(role);
+    var roleLabel = getRoleLabel(role);
+    var initials = getInitials(user.login);
+    var statusLabel = getStatusLabel(user.statut);
+    var statusClass = getStatusBadgeClass(user.statut);
+    var nextStatus = normalizeUserStatus(user.statut) === 'inactif' ? 'actif' : 'inactif';
+    var toggleLabel = nextStatus === 'actif' ? 'Activer' : 'Désactiver';
+    var toggleButton = userStatusSupported ? '<button class=\"action-btn warn\" onclick=\"toggleUserStatus(' + Number(user.idUtilisateur) + ', &quot;' + nextStatus + '&quot;)\">' + toggleLabel + '</button>' : '';
+    return '<tr>' +
+      '<td><div class=\"td-user\"><div class=\"av\" style=\"background:var(--red-bg);color:var(--red)\">' + escapeHtml(initials) + '</div><div><div class=\"p-name\">' + escapeHtml(user.login) + '</div><div style=\"font-size:11px;color:var(--muted)\">#' + escapeHtml(user.idUtilisateur) + '</div></div></div></td>' +
+      '<td><span class=\"badge ' + badgeClass + '\">' + roleLabel + '</span></td>' +
+      '<td><span class=\"badge ' + statusClass + '\">' + statusLabel + '</span></td>' +
+      '<td style=\"color:var(--muted)\">—</td>' +
+      '<td><span class=\"badge ' + badgeClass + '\">' + roleLabel + '</span></td>' +
+      '<td><div style=\"display:flex;gap:5px;flex-wrap:wrap;\"><button class=\"action-btn edit\" onclick=\"editUser(' + Number(user.idUtilisateur) + ')\">Éditer</button>' + toggleButton + '<button class=\"action-btn cancel\" onclick=\"deleteUser(' + Number(user.idUtilisateur) + ')\">Supprimer</button></div></td>' +
+      '</tr>';
+  }).join('');
+
+  if (info) {
+    info.textContent = 'Affichage ' + users.length + ' sur ' + usersData.length + ' utilisateurs';
+  }
+}
+
+async function loadUsers() {
+  try {
+    var res = await fetch('backend/admin/get_users.php', { credentials: 'same-origin' });
+    var data = await res.json();
+
+    if (!data.success) {
+      showToast(data.message || 'Erreur de chargement');
+      return;
+    }
+
+    userStatusSupported = data.supports_status === true;
+    usersData = Array.isArray(data.users) ? data.users : [];
+    filterUsersTable();
+  } catch (e) {
+    showToast('Erreur de chargement');
+  }
+}
+
+async function saveUser() {
+  if (editingUserId !== null) {
+    updateUser();
+    return;
+  }
+  createUser();
+}
+
+async function createUser() {
+  var prenom = document.getElementById('f-prenom').value.trim();
+  var nom = document.getElementById('f-nom').value.trim();
+  var email = document.getElementById('f-email').value.trim();
+  var role = document.getElementById('f-role').value;
+  var specialite = document.getElementById('f-specialite').value.trim();
+  var pass = document.getElementById('f-pass').value;
+  var pass2 = document.getElementById('f-pass2').value;
+
+  if (role === 'medecin' && (!prenom || !nom)) { showToast('Veuillez saisir le prénom et le nom du médecin.'); return; }
+  if (!email) { showToast('Veuillez saisir un login.'); return; }
+  if (!role) { showToast('Veuillez choisir un rôle.'); return; }
+  if (!pass || pass.length < 6) { showToast('Mot de passe trop court (min. 6 caractères).'); return; }
+  if (pass !== pass2) { showToast('Les mots de passe ne correspondent pas.'); return; }
+
+  try {
+    var res = await fetch('backend/admin/add_user.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        prenom: prenom,
+        nom: nom,
+        login: email,
+        password: pass,
+        role: role,
+        specialite: role === 'medecin' ? specialite : ''
+      })
+    });
+
+    var data = await res.json();
+
+    if (!res.ok || !data.success) {
+      showToast(data.message || 'Erreur lors de la création');
+      return;
+    }
+
+    closeModal();
+    showToast('Utilisateur créé avec succès');
+
+    document.getElementById('f-prenom').value = '';
+    document.getElementById('f-nom').value = '';
+    document.getElementById('f-email').value = '';
+    document.getElementById('f-role').value = '';
+    document.getElementById('f-specialite').value = '';
+    document.getElementById('f-pass').value = '';
+    document.getElementById('f-pass2').value = '';
+    toggleSpecialiteField();
+
+    loadUsers();
+    loadAdminStats();
+  } catch (e) {
+    showToast('Erreur serveur');
+  }
+}
+
+function editUser(id) {
+  var user = usersData.find(function(item) {
+    return Number(item.idUtilisateur) === Number(id);
+  });
+  if (!user) {
+    showToast('Utilisateur introuvable');
+    return;
+  }
+
+  editingUserId = Number(id);
+  var title = document.getElementById('userModalTitle');
+  var saveButton = document.getElementById('userSaveButton');
+  if (title) title.innerHTML = 'Modifier <em>utilisateur</em>';
+  if (saveButton) saveButton.textContent = 'Enregistrer';
+  document.getElementById('f-prenom').value = '';
+  document.getElementById('f-nom').value = '';
+  document.getElementById('f-email').value = user.login || '';
+  document.getElementById('f-role').value = String(user.role || '').toLowerCase();
+  document.getElementById('f-specialite').value = '';
+  document.getElementById('f-pass').value = '';
+  document.getElementById('f-pass2').value = '';
+  toggleSpecialiteField();
+  document.getElementById('modalOverlay').classList.add('open');
+}
+
+async function updateUser() {
+  var email = document.getElementById('f-email').value.trim();
+  var role = document.getElementById('f-role').value;
+  var user = usersData.find(function(item) {
+    return Number(item.idUtilisateur) === Number(editingUserId);
+  });
+
+  if (!email) { showToast('Veuillez saisir un login.'); return; }
+  if (!role) { showToast('Veuillez choisir un rôle.'); return; }
+
+  try {
+    var res = await fetch('backend/admin/update_user.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'same-origin',
+      body: JSON.stringify({
+        idUtilisateur: editingUserId,
+        login: email,
+        role: role,
+        statut: user ? normalizeUserStatus(user.statut) : 'actif'
+      })
+    });
+    var data = await res.json();
+
+    if (!res.ok || !data.success) {
+      showToast(data.message || 'Erreur lors de la mise à jour');
+      return;
+    }
+
+    closeModal();
+    showToast('Utilisateur mis à jour');
+    loadUsers();
+    loadAdminStats();
+  } catch (e) {
+    showToast('Erreur serveur');
+  }
+}
+
+async function toggleUserStatus(id, status) {
+  var user = usersData.find(function(item) {
+    return Number(item.idUtilisateur) === Number(id);
+  });
+  if (!user) return;
+
+  try {
+    var res = await fetch('backend/admin/update_user.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'same-origin',
+      body: JSON.stringify({
+        idUtilisateur: id,
+        login: user.login,
+        role: user.role,
+        statut: status
+      })
+    });
+    var data = await res.json();
+
+    if (!res.ok || !data.success) {
+      showToast(data.message || 'Statut non modifié');
+      return;
+    }
+
+    showToast(status === 'actif' ? 'Compte activé' : 'Compte désactivé');
+    loadUsers();
+    loadAdminStats();
+  } catch (e) {
+    showToast('Erreur serveur');
+  }
+}
+
+async function deleteUser(id) {
+  var user = usersData.find(function(item) {
+    return Number(item.idUtilisateur) === Number(id);
+  });
+  if (!user) return;
+  if (!confirm('Supprimer le compte ' + user.login + ' ?')) return;
+
+  try {
+    var res = await fetch('backend/admin/delete_user.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'same-origin',
+      body: JSON.stringify({ idUtilisateur: id })
+    });
+    var data = await res.json();
+
+    if (!res.ok || !data.success) {
+      showToast(data.message || 'Suppression impossible');
+      return;
+    }
+
+    showToast('Utilisateur supprimé');
+    loadUsers();
+    loadAdminStats();
+  } catch (e) {
+    showToast('Erreur serveur');
+  }
+}
+
+function filterUsersTable(query) {
+  var searchInput = document.getElementById('userSearchInput');
+  var roleFilter = document.getElementById('userRoleFilter');
+  var q = String(query !== undefined ? query : (searchInput ? searchInput.value : '')).toLowerCase().trim();
+  var selectedRole = roleFilter ? roleFilter.value : '';
+
+  filteredUsers = usersData.filter(function(user) {
+    var role = String(user.role || '').toLowerCase();
+    var text = [user.login, user.idUtilisateur, getRoleLabel(role), getStatusLabel(user.statut)].join(' ').toLowerCase();
+    return (!q || text.includes(q)) && (!selectedRole || role === selectedRole);
+  });
+  renderUsers(filteredUsers);
+}
+
+function getLogDotClass(role) {
+  var map = {
+    admin: 'r',
+    medecin: 'b',
+    secretaire: 'a',
+    patient: 't'
+  };
+  return map[String(role || '').toLowerCase()] || 'm';
+}
+
+function formatLogDate(value) {
+  if (!value) return '—';
+  var date = new Date(String(value).replace(' ', 'T'));
+  if (Number.isNaN(date.getTime())) return value;
+  return date.toLocaleString('fr-FR', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+}
+
+function renderLogs(logs) {
+  var list = document.getElementById('systemLogList');
+  var info = document.getElementById('logsInfo');
+  var title = document.getElementById('logsTitle');
+  if (!list) return;
+
+  if (title) title.textContent = 'Journaux système — ' + systemLogs.length + ' événements';
+  if (info) info.textContent = 'Affichage ' + logs.length + ' sur ' + systemLogs.length + ' événements';
+
+  if (!logs.length) {
+    list.innerHTML = '<div class="log-item"><div class="log-dot m"></div><div><div class="log-msg">Aucun journal trouvé</div></div></div>';
+    return;
+  }
+
+  list.innerHTML = logs.map(function(log) {
+    var role = String(log.role || 'système').toLowerCase();
+    var user = log.utilisateur || 'Système';
+    var details = log.details ? ' — ' + escapeHtml(log.details) : '';
+    return '<div class="log-item">' +
+      '<div class="log-dot ' + getLogDotClass(role) + '"></div>' +
+      '<div><div class="log-msg"><strong>[' + escapeHtml(role.toUpperCase()) + ']</strong> ' + escapeHtml(log.action) + details + '</div>' +
+      '<div class="log-time">' + escapeHtml(formatLogDate(log.dateAction)) + ' · ' + escapeHtml(user) + '</div></div>' +
+      '</div>';
+  }).join('');
+}
+
+async function loadLogs() {
+  try {
+    var res = await fetch('backend/admin/get_logs.php', { credentials: 'same-origin' });
+    var data = await res.json();
+
+    if (!res.ok || !data.success) {
+      showToast(data.message || 'Erreur chargement journaux');
+      return;
+    }
+
+    systemLogs = Array.isArray(data.logs) ? data.logs : [];
+    filterLogs();
+  } catch (e) {
+    showToast('Erreur chargement journaux');
+  }
+}
+
+function filterLogs() {
+  var searchInput = document.getElementById('logSearchInput');
+  var roleFilter = document.getElementById('logRoleFilter');
+  var search = String(searchInput ? searchInput.value : '').toLowerCase().trim();
+  var role = String(roleFilter ? roleFilter.value : '').toLowerCase();
+
+  filteredLogs = systemLogs.filter(function(log) {
+    var logRole = String(log.role || '').toLowerCase();
+    var text = [log.action, log.utilisateur, log.role, log.details, log.dateAction].join(' ').toLowerCase();
+    return (!search || text.includes(search)) && (!role || logRole === role);
+  });
+
+  renderLogs(filteredLogs);
+}
+
+window.addEventListener('load', function() {
+  loadUsers();
+  loadLogs();
+  loadSystemStatus();
+  setTimeout(function() {
+    animateBar('bar-cpu', 23);
+    animateBar('bar-ram', 71);
+    animateBar('bar-net', 30);
+    animateBar('bar-ssl', 70);
+  }, 400);
+});
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeModal();
+});
+</script>
+</body>
+</html>

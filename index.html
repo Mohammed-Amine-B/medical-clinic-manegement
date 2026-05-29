@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LYS MEDICAL — Navigation</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --navy:#0A1628;--navy-mid:#152238;--gold:#C8A96E;
+  --gold-light:#DFC28D;--gold-pale:#F5EDD9;--white:#FAFAF8;--bg:#F2F0EA;
+  --text:#2C3A4A;--muted:#8A9BB5;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--navy);color:var(--white);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;}
+
+/* ── HEADER ── */
+.header{text-align:center;margin-bottom:48px;}
+.logo{display:inline-flex;align-items:center;gap:12px;margin-bottom:16px;}
+.logo-icon{width:44px;height:44px;border-radius:12px;background:rgba(200,169,110,0.15);border:1px solid rgba(200,169,110,0.3);display:flex;align-items:center;justify-content:center;}
+.logo-icon svg{width:22px;height:22px;}
+.logo-name{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:500;letter-spacing:3px;text-transform:uppercase;color:var(--white);}
+.header-sub{font-size:12px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;}
+.header-line{width:60px;height:1px;background:rgba(200,169,110,0.3);margin:16px auto 0;}
+
+/* ── GRID ── */
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:860px;width:100%;}
+
+/* ── CARD ── */
+.card{
+  background:rgba(255,255,255,0.03);
+  border:1px solid rgba(200,169,110,0.12);
+  border-radius:16px;padding:22px 22px 18px;
+  text-decoration:none;color:inherit;
+  transition:all 0.25s;cursor:pointer;
+  position:relative;overflow:hidden;
+  display:flex;flex-direction:column;gap:12px;
+}
+.card::before{
+  content:'';position:absolute;inset:0;
+  background:rgba(200,169,110,0.05);
+  transform:translateY(100%);
+  transition:transform 0.3s cubic-bezier(0.4,0,0.2,1);
+}
+.card:hover{border-color:rgba(200,169,110,0.35);transform:translateY(-3px);box-shadow:0 16px 40px rgba(0,0,0,0.3);}
+.card:hover::before{transform:translateY(0);}
+
+.card-top{display:flex;align-items:center;justify-content:space-between;position:relative;z-index:1;}
+.card-icon{width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.card-icon svg{width:20px;height:20px;}
+.card-badge{font-size:10px;font-weight:500;padding:3px 9px;border-radius:20px;letter-spacing:0.5px;}
+
+.card-body{position:relative;z-index:1;}
+.card-num{font-family:'Cormorant Garamond',serif;font-size:11px;color:var(--gold);letter-spacing:2px;margin-bottom:4px;font-weight:500;}
+.card-title{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:500;color:var(--white);margin-bottom:4px;line-height:1.2;}
+.card-desc{font-size:11.5px;color:var(--muted);font-weight:300;line-height:1.5;}
+
+.card-footer{position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;padding-top:12px;border-top:1px solid rgba(200,169,110,0.08);}
+.card-file{font-size:10px;color:rgba(138,155,181,0.5);font-weight:300;font-family:monospace;letter-spacing:0.3px;}
+.card-arrow{width:26px;height:26px;border-radius:7px;background:rgba(200,169,110,0.1);border:1px solid rgba(200,169,110,0.15);display:flex;align-items:center;justify-content:center;transition:all 0.2s;}
+.card-arrow svg{width:12px;height:12px;color:var(--gold);}
+.card:hover .card-arrow{background:var(--gold);border-color:var(--gold);}
+.card:hover .card-arrow svg{color:var(--navy);}
+
+/* ── COULEURS PAR GROUPE ── */
+.icon-public{background:rgba(200,169,110,0.15);}  .icon-public svg{color:var(--gold);}
+.icon-auth{background:rgba(55,138,221,0.15);}     .icon-auth svg{color:#378ADD;}
+.icon-app{background:rgba(61,170,112,0.15);}      .icon-app svg{color:#3DAA70;}
+.icon-doc{background:rgba(124,92,191,0.15);}      .icon-doc svg{color:#7C5CBF;}
+.icon-sys{background:rgba(138,155,181,0.12);}     .icon-sys svg{color:var(--muted);}
+
+.badge-public{background:rgba(200,169,110,0.15);color:var(--gold);}
+.badge-auth{background:rgba(55,138,221,0.12);color:#378ADD;}
+.badge-app{background:rgba(61,170,112,0.12);color:#3DAA70;}
+.badge-doc{background:rgba(124,92,191,0.12);color:#7C5CBF;}
+.badge-sys{background:rgba(138,155,181,0.1);color:var(--muted);}
+
+/* ── SECTION LABELS ── */
+.section-label{
+  max-width:860px;width:100%;
+  font-size:9.5px;letter-spacing:2.5px;text-transform:uppercase;
+  color:rgba(138,155,181,0.4);font-weight:500;
+  margin:28px 0 10px;padding-left:4px;
+  display:flex;align-items:center;gap:10px;
+}
+.section-label::after{content:'';flex:1;height:1px;background:rgba(200,169,110,0.06);}
+
+/* ── FOOTER ── */
+.footer{margin-top:40px;text-align:center;font-size:11px;color:rgba(138,155,181,0.3);font-weight:300;}
+
+@media(max-width:700px){.grid{grid-template-columns:1fr 1fr;}}
+@media(max-width:480px){.grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="logo">
+    <div class="logo-icon">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M12 4v16M4 12h16" stroke="#C8A96E" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="12" r="9" stroke="#C8A96E" stroke-width="1.5" opacity="0.4"/></svg>
+    </div>
+    <span class="logo-name">Lys Medical</span>
+  </div>
+  <div class="header-sub">Plan de navigation — toutes les pages</div>
+  <div class="header-line"></div>
+</div>
+
+<!-- ── PAGES PUBLIQUES ── -->
+<div class="section-label">Pages publiques</div>
+<div class="grid">
+
+  <a href="landing.html" class="card">
+    <div class="card-top">
+      <div class="card-icon icon-public">
+        <svg viewBox="0 0 20 20" fill="none"><rect x="2" y="3" width="16" height="14" rx="2" stroke="currentColor" stroke-width="1.3"/><path d="M2 7h16" stroke="currentColor" stroke-width="1.3"/><circle cx="5" cy="5" r="0.8" fill="currentColor"/><circle cx="7.5" cy="5" r="0.8" fill="currentColor"/></svg>
+      </div>
+      <span class="card-badge badge-public">Accueil</span>
+    </div>
+    <div class="card-body">
+      <div class="card-num">01</div>
+      <div class="card-title">Landing Page</div>
+      <div class="card-desc">Page d'accueil publique — présentation du cabinet, services, équipe, contact.</div>
+    </div>
+    <div class="card-footer">
+      <span class="card-file">lys-medical-landing.html</span>
+      <div class="card-arrow"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6h8M6 2l4 4-4 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    </div>
+  </a>
+
+  <a href="lys-medical-politique.html" class="card">
+    <div class="card-top">
+      <div class="card-icon icon-public">
+        <svg viewBox="0 0 20 20" fill="none"><path d="M10 2L4 5v5c0 4 3 7 6 8 3-1 6-4 6-8V5l-6-3z" stroke="currentColor" stroke-width="1.3"/><path d="M7 10l2 2 4-4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <span class="card-badge badge-public">Légal</span>
+    </div>
+    <div class="card-body">
+      <div class="card-num">02</div>
+      <div class="card-title">Politique & Mentions</div>
+      <div class="card-desc">Politique de confidentialité, mentions légales, droits des patients.</div>
+    </div>
+    <div class="card-footer">
+      <span class="card-file">lys-medical-politique.html</span>
+      <div class="card-arrow"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6h8M6 2l4 4-4 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    </div>
+  </a>
+
+  <a href="lys-medical-404.html" class="card">
+    <div class="card-top">
+      <div class="card-icon icon-sys">
+        <svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7.5" stroke="currentColor" stroke-width="1.3"/><path d="M10 7v4M10 13v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+      <span class="card-badge badge-sys">Erreur</span>
+    </div>
+    <div class="card-body">
+      <div class="card-num">03</div>
+      <div class="card-title">Page 404</div>
+      <div class="card-desc">Page d'erreur animée — page introuvable avec navigation rapide.</div>
+    </div>
+    <div class="card-footer">
+      <span class="card-file">lys-medical-404.html</span>
+      <div class="card-arrow"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6h8M6 2l4 4-4 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    </div>
+  </a>
+
+</div>
+
+<!-- ── AUTHENTIFICATION ── -->
+<div class="section-label">Authentification</div>
+<div class="grid">
+
+  <a href="login.html" class="card">
+    <div class="card-top">
+      <div class="card-icon icon-auth">
+        <svg viewBox="0 0 20 20" fill="none"><rect x="4" y="8" width="12" height="10" rx="2" stroke="currentColor" stroke-width="1.3"/><path d="M7 8V6a3 3 0 016 0v2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><circle cx="10" cy="13" r="1.5" fill="currentColor" opacity="0.6"/></svg>
+      </div>
+      <span class="card-badge badge-auth">Connexion</span>
+    </div>
+    <div class="card-body">
+      <div class="card-num">04</div>
+      <div class="card-title">Login</div>
+      <div class="card-desc">Connexion sécurisée — médecin, patient ou secrétaire. Redirige vers le dashboard.</div>
+    </div>
+    <div class="card-footer">
+      <span class="card-file">lys-medical-login.html</span>
+      <div class="card-arrow"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6h8M6 2l4 4-4 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    </div>
+  </a>
+
+  <a href="lys-medical-signup.html" class="card">
+    <div class="card-top">
+      <div class="card-icon icon-auth">
+        <svg viewBox="0 0 20 20" fill="none"><circle cx="9" cy="7" r="3.5" stroke="currentColor" stroke-width="1.3"/><path d="M3 17c0-3.3 2.7-6 6-6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M15 12v6M12 15h6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+      </div>
+      <span class="card-badge badge-auth">Inscription</span>
+    </div>
+    <div class="card-body">
+      <div class="card-num">05</div>
+      <div class="card-title">Inscription</div>
+      <div class="card-desc">Création de compte en 4 étapes — rôle, informations, mot de passe, confirmation.</div>
+    </div>
+    <div class="card-footer">
+      <span class="card-file">lys-medical-signup.html</span>
+      <div class="card-arrow"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6h8M6 2l4 4-4 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    </div>
+  </a>
+
+  <a href="lys-medical-forgot.html" class="card">
+    <div class="card-top">
+      <div class="card-icon icon-auth">
+        <svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7.5" stroke="currentColor" stroke-width="1.3"/><path d="M7.5 8c0-1.4 1.1-2.5 2.5-2.5s2.5 1.1 2.5 2.5c0 1-0.6 1.8-1.5 2.2V12" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><circle cx="10" cy="14" r="0.8" fill="currentColor"/></svg>
+      </div>
+      <span class="card-badge badge-auth">Récupération</span>
+    </div>
+    <div class="card-body">
+      <div class="card-num">06</div>
+      <div class="card-title">Mot de passe oublié</div>
+      <div class="card-desc">Réinitialisation en 5 étapes — email, méthode, code OTP, nouveau mot de passe.</div>
+    </div>
+    <div class="card-footer">
+      <span class="card-file">lys-medical-forgot.html</span>
+      <div class="card-arrow"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6h8M6 2l4 4-4 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    </div>
+  </a>
+
+</div>
+
+<!-- ── APPLICATION ── -->
+<div class="section-label">Application — espace connecté</div>
+<div class="grid">
+
+  <a href="lys-medical-dashboard.html" class="card">
+    <div class="card-top">
+      <div class="card-icon icon-app">
+        <svg viewBox="0 0 20 20" fill="none"><rect x="2" y="2" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.3"/><rect x="11" y="2" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.3"/><rect x="2" y="11" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.3"/><rect x="11" y="11" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.3"/></svg>
+      </div>
+      <span class="card-badge badge-app">Principal</span>
+    </div>
+    <div class="card-body">
+      <div class="card-num">07</div>
+      <div class="card-title">Dashboard</div>
+      <div class="card-desc">Tableau de bord principal — 3 profils : médecin, patient, secrétaire. Stats, RDV, agenda.</div>
+    </div>
+    <div class="card-footer">
+      <span class="card-file">lys-medical-dashboard.html</span>
+      <div class="card-arrow"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6h8M6 2l4 4-4 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    </div>
+  </a>
+
+  <a href="lys-medical-patient.html" class="card">
+    <div class="card-top">
+      <div class="card-icon icon-app">
+        <svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="7" r="3.5" stroke="currentColor" stroke-width="1.3"/><path d="M3 17c0-3.314 3.134-6 7-6s7 2.686 7 6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+      </div>
+      <span class="card-badge badge-app">Dossier</span>
+    </div>
+    <div class="card-body">
+      <div class="card-num">08</div>
+      <div class="card-title">Fiche Patient</div>
+      <div class="card-desc">Dossier complet d'Amina Bensalem — vitales, historique, ordonnances, analyses, antécédents.</div>
+    </div>
+    <div class="card-footer">
+      <span class="card-file">lys-medical-patient.html</span>
+      <div class="card-arrow"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6h8M6 2l4 4-4 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    </div>
+  </a>
+
+  <a href="lys-medical-rdv.html" class="card">
+    <div class="card-top">
+      <div class="card-icon icon-app">
+        <svg viewBox="0 0 20 20" fill="none"><rect x="3" y="4" width="14" height="14" rx="2" stroke="currentColor" stroke-width="1.3"/><path d="M7 2v4M13 2v4M3 9h14" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M7 13h2M11 13h2M7 16h2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+      </div>
+      <span class="card-badge badge-app">Agenda</span>
+    </div>
+    <div class="card-body">
+      <div class="card-num">09</div>
+      <div class="card-title">Prise de RDV</div>
+      <div class="card-desc">Réservation en 4 étapes — motif, médecin, calendrier, créneaux, confirmation.</div>
+    </div>
+    <div class="card-footer">
+      <span class="card-file">lys-medical-rdv.html</span>
+      <div class="card-arrow"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6h8M6 2l4 4-4 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    </div>
+  </a>
+
+  <a href="lys-medical-ordonnance.html" class="card">
+    <div class="card-top">
+      <div class="card-icon icon-doc">
+        <svg viewBox="0 0 20 20" fill="none"><path d="M5 2h7l4 4v12H5V2z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M12 2v4h4" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M8 10h5M8 13h3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+      </div>
+      <span class="card-badge badge-doc">Prescription</span>
+    </div>
+    <div class="card-body">
+      <div class="card-num">10</div>
+      <div class="card-title">Ordonnance</div>
+      <div class="card-desc">Éditeur split-screen — recherche médicaments, aperçu live, signature et impression.</div>
+    </div>
+    <div class="card-footer">
+      <span class="card-file">lys-medical-ordonnance.html</span>
+      <div class="card-arrow"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6h8M6 2l4 4-4 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    </div>
+  </a>
+
+  <a href="lys-medical-notifications.html" class="card">
+    <div class="card-top">
+      <div class="card-icon icon-doc">
+        <svg viewBox="0 0 20 20" fill="none"><path d="M10 2a6 6 0 016 6c0 4 2 5 2 5H2s2-1 2-5a6 6 0 016-6z" stroke="currentColor" stroke-width="1.3"/><path d="M8 17a2 2 0 004 0" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+      </div>
+      <span class="card-badge badge-doc">Alertes</span>
+    </div>
+    <div class="card-body">
+      <div class="card-num">11</div>
+      <div class="card-title">Notifications</div>
+      <div class="card-desc">Centre de notifications — filtres, marquer lu, supprimer, préférences de réception.</div>
+    </div>
+    <div class="card-footer">
+      <span class="card-file">lys-medical-notifications.html</span>
+      <div class="card-arrow"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6h8M6 2l4 4-4 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    </div>
+  </a>
+
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  LYS MEDICAL · 11 pages · Tous fichiers dans le même dossier
+</div>
+
+</body>
+</html>

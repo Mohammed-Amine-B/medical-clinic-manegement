@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LYS MEDICAL — Paramètres · Médecin</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+:root{--navy:#0A1628;--navy-mid:#152238;--navy-light:#1E3150;--gold:#C8A96E;--gold-light:#DFC28D;--gold-pale:#F5EDD9;--white:#FAFAF8;--bg:#F2F0EA;--text:#2C3A4A;--muted:#8A9BB5;--border:rgba(200,169,110,0.2);--surface:#FFFFFF;--sidebar-w:260px;--green:#3DAA70;--green-bg:#EAF7F0;--red:#E05050;--red-bg:#FBE9E9;--blue:#378ADD;--blue-bg:#E8F3FB;--orange:#E08D3A;--orange-bg:#FEF3E8;}
+html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);}
+.app{display:flex;height:100vh;overflow:hidden;}
+.sidebar{width:var(--sidebar-w);min-width:var(--sidebar-w);background:var(--navy);display:flex;flex-direction:column;overflow:hidden;}
+.sb-logo{display:flex;align-items:center;gap:12px;padding:28px 24px 24px;border-bottom:1px solid rgba(200,169,110,0.1);}
+.sb-logo-icon{width:34px;height:34px;background:rgba(200,169,110,0.12);border-radius:9px;display:flex;align-items:center;justify-content:center;}
+.sb-logo-name{font-family:'Cormorant Garamond',serif;font-size:15px;font-weight:600;color:var(--white);letter-spacing:2px;text-transform:uppercase;}
+.sb-logo-sub{font-size:9.5px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;}
+.sb-role-badge{margin:14px 16px;background:rgba(200,169,110,0.12);border:1px solid var(--border);border-radius:10px;padding:10px 14px;display:flex;align-items:center;gap:10px;}
+.srb-dot{width:8px;height:8px;border-radius:50%;background:var(--gold);flex-shrink:0;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.4;}}
+.srb-text{font-size:12px;color:var(--gold-light);font-weight:500;}
+.sb-section-label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(138,155,181,0.5);padding:16px 24px 8px;}
+.sb-nav{display:flex;flex-direction:column;gap:2px;padding:0 12px;}
+.nav-item{display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:10px;cursor:pointer;transition:all 0.2s;color:var(--muted);font-size:13.5px;font-weight:400;text-decoration:none;position:relative;}
+.nav-item svg{width:16px;height:16px;flex-shrink:0;opacity:0.7;}
+.nav-item:hover{background:rgba(255,255,255,0.05);color:var(--white);}
+.nav-item.active{background:rgba(200,169,110,0.12);color:var(--gold-light);}
+.nav-item.active svg{opacity:1;color:var(--gold);}
+.nav-item.active::before{content:'';position:absolute;left:0;top:25%;bottom:25%;width:3px;border-radius:0 3px 3px 0;background:var(--gold);}
+.nav-badge{margin-left:auto;font-size:10px;font-weight:500;background:var(--gold);color:var(--navy);padding:2px 7px;border-radius:20px;}
+.sb-bottom{margin-top:auto;padding:16px 12px 24px;}
+.sb-user{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:10px;background:rgba(255,255,255,0.05);}
+.avatar{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;background:rgba(200,169,110,0.2);color:var(--gold-light);}
+.sb-user-name{font-size:13px;font-weight:500;color:var(--white);}
+.sb-user-role{font-size:11px;color:var(--muted);}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+.topbar{background:var(--surface);border-bottom:1px solid rgba(0,0,0,0.06);padding:0 28px;height:64px;display:flex;align-items:center;gap:14px;flex-shrink:0;}
+.topbar-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:500;color:var(--navy);flex:1;}
+.topbar-title em{font-style:italic;color:var(--gold);}
+.tb-icon{width:38px;height:38px;border-radius:10px;background:var(--bg);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--muted);transition:all 0.2s;text-decoration:none;}
+.tb-icon:hover{background:var(--gold-pale);color:var(--navy);}
+.content{flex:1;overflow-y:auto;padding:28px;}
+.content::-webkit-scrollbar{width:5px;}
+.content::-webkit-scrollbar-thumb{background:#D5D0C8;border-radius:10px;}
+.page-header{margin-bottom:24px;}
+.page-header h1{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:400;color:var(--navy);}
+.page-header h1 em{font-style:italic;color:var(--gold);}
+.page-header p{font-size:13px;color:var(--muted);margin-top:2px;}
+.params-grid{display:grid;grid-template-columns:220px 1fr;gap:22px;}
+.params-nav{background:var(--surface);border-radius:13px;padding:8px;border:1px solid rgba(0,0,0,0.05);height:fit-content;position:sticky;top:0;}
+.pnav-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:9px;cursor:pointer;font-size:13px;color:var(--muted);transition:all 0.2s;}
+.pnav-item svg{width:15px;height:15px;flex-shrink:0;}
+.pnav-item:hover{background:var(--gold-pale);color:var(--navy);}
+.pnav-item.active{background:var(--navy);color:var(--white);}
+.pnav-divider{height:1px;background:rgba(0,0,0,0.06);margin:6px 0;}
+.params-content{display:flex;flex-direction:column;gap:18px;}
+.params-section{background:var(--surface);border-radius:13px;padding:22px 24px;border:1px solid rgba(0,0,0,0.05);}
+.params-section-title{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:500;color:var(--navy);margin-bottom:4px;}
+.params-section-sub{font-size:12px;color:var(--muted);margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid rgba(0,0,0,0.05);}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
+.form-row.single{grid-template-columns:1fr;}
+.form-row.triple{grid-template-columns:1fr 1fr 1fr;}
+.form-group{display:flex;flex-direction:column;gap:5px;}
+.form-label{font-size:11.5px;font-weight:500;color:var(--text);}
+.form-label span{color:var(--red);margin-left:2px;}
+.form-input,.form-select{height:38px;border:1px solid rgba(0,0,0,0.12);border-radius:9px;padding:0 12px;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--text);background:var(--bg);transition:all 0.2s;outline:none;-webkit-appearance:none;}
+.form-input:focus,.form-select:focus{border-color:var(--gold);background:var(--white);box-shadow:0 0 0 3px rgba(200,169,110,0.12);}
+textarea.form-input{height:80px;padding:10px 12px;resize:none;}
+.avatar-edit{display:flex;align-items:center;gap:16px;margin-bottom:18px;}
+.avatar-lg{width:64px;height:64px;border-radius:50%;background:rgba(200,169,110,0.2);color:var(--gold);font-family:'Cormorant Garamond',serif;font-size:22px;display:flex;align-items:center;justify-content:center;border:2px solid var(--border);}
+.btn-sm{height:32px;padding:0 14px;border-radius:8px;border:1px solid rgba(0,0,0,0.12);background:transparent;font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif;color:var(--text);transition:all 0.2s;}
+.btn-sm:hover{border-color:var(--gold);color:var(--gold);}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:13px 0;border-bottom:1px solid rgba(0,0,0,0.05);}
+.toggle-row:last-child{border-bottom:none;}
+.toggle-info{flex:1;}
+.toggle-label{font-size:13px;font-weight:500;color:var(--text);}
+.toggle-desc{font-size:11.5px;color:var(--muted);margin-top:1px;}
+.toggle{position:relative;width:40px;height:22px;flex-shrink:0;}
+.toggle input{opacity:0;width:0;height:0;}
+.toggle-slider{position:absolute;inset:0;background:#D5D0C8;border-radius:22px;cursor:pointer;transition:0.3s;}
+.toggle-slider::before{content:'';position:absolute;left:3px;top:3px;width:16px;height:16px;border-radius:50%;background:white;transition:0.3s;box-shadow:0 1px 3px rgba(0,0,0,0.2);}
+.toggle input:checked + .toggle-slider{background:var(--green);}
+.toggle input:checked + .toggle-slider::before{transform:translateX(18px);}
+.security-item{display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid rgba(0,0,0,0.05);}
+.security-item:last-child{border-bottom:none;}
+.security-icon{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;background:var(--blue-bg);margin-right:12px;flex-shrink:0;}
+.security-icon svg{width:16px;height:16px;color:var(--blue);}
+.security-content{flex:1;}
+.security-label{font-size:13px;font-weight:500;color:var(--text);}
+.security-desc{font-size:11.5px;color:var(--muted);margin-top:1px;}
+.status-badge{font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px;}
+.status-active{background:var(--green-bg);color:var(--green);}
+.status-inactive{background:#F0F0F5;color:#888;}
+.param-section-block{display:none;}
+.param-section-block.active{display:block;}
+.save-bar{background:var(--surface);border-top:1px solid rgba(0,0,0,0.06);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.save-hint{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px;}
+.btn-primary{height:40px;padding:0 20px;background:var(--navy);color:var(--white);border:none;border-radius:10px;font-size:13px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s;display:flex;align-items:center;gap:8px;}
+.btn-primary:hover{background:var(--navy-light);}
+.btn-danger{height:40px;padding:0 20px;background:transparent;color:var(--red);border:1px solid var(--red);border-radius:10px;font-size:13px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s;}
+.btn-danger:hover{background:var(--red);color:var(--white);}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+.params-grid{animation:fadeUp 0.3s ease both;}
+#toast{position:fixed;bottom:24px;right:24px;background:var(--navy);color:var(--white);padding:12px 20px;border-radius:11px;font-size:13px;opacity:0;transform:translateY(16px);transition:all 0.3s;z-index:999;pointer-events:none;}
+#toast.success{background:var(--green);}
+#toast.error{background:var(--red);}
+.modal-backdrop{position:fixed;inset:0;background:rgba(10,22,40,0.45);display:none;align-items:center;justify-content:center;z-index:998;padding:20px;}
+.modal-backdrop.visible{display:flex;}
+.modal{width:100%;max-width:420px;background:var(--surface);border-radius:13px;border:1px solid rgba(0,0,0,0.08);padding:22px 24px;box-shadow:0 20px 60px rgba(0,0,0,0.22);}
+.modal-title{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:500;color:var(--navy);margin-bottom:14px;}
+.modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:18px;}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="sb-logo"><div class="sb-logo-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M12 4v16M4 12h16" stroke="#C8A96E" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="12" r="9" stroke="#C8A96E" stroke-width="1.5" opacity="0.4"/></svg></div><div><div class="sb-logo-name">Lys Medical</div><div class="sb-logo-sub">Portail de gestion</div></div></div>
+    <div class="sb-role-badge"><span class="srb-dot"></span><span class="srb-text">🩺 Espace Médecin</span></div>
+    <div class="sb-section-label">Menu médecin</div>
+    <nav class="sb-nav">
+      <a href="dashboard-medecin.html" class="nav-item"><svg viewBox="0 0 20 20" fill="none"><rect x="2" y="2" width="7" height="7" rx="2" stroke="currentColor" stroke-width="1.3"/><rect x="11" y="2" width="7" height="7" rx="2" stroke="currentColor" stroke-width="1.3"/><rect x="2" y="11" width="7" height="7" rx="2" stroke="currentColor" stroke-width="1.3"/><rect x="11" y="11" width="7" height="7" rx="2" stroke="currentColor" stroke-width="1.3"/></svg>Tableau de bord</a>
+      <a href="patients-medecin.html" class="nav-item"><svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="7" r="3.5" stroke="currentColor" stroke-width="1.3"/><path d="M3 17c0-3.314 3.134-6 7-6s7 2.686 7 6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>Mes patients</a>
+      <a href="rdv-medecin.html" class="nav-item"><svg viewBox="0 0 20 20" fill="none"><rect x="3" y="4" width="14" height="14" rx="2" stroke="currentColor" stroke-width="1.3"/><path d="M7 2v4M13 2v4M3 9h14" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>Mes rendez-vous <span class="nav-badge">8</span></a>
+      <a href="lys-medical-ordonnance.html" class="nav-item"><svg viewBox="0 0 20 20" fill="none"><path d="M5 2h10a1 1 0 011 1v14a1 1 0 01-1 1H5a1 1 0 01-1-1V3a1 1 0 011-1z" stroke="currentColor" stroke-width="1.3"/><path d="M7 7h6M7 10h6M7 13h4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>Ordonnances</a>
+      <a href="notifications-medecin.html" class="nav-item"><svg viewBox="0 0 20 20" fill="none"><path d="M10 2a6 6 0 016 6c0 4 2 5 2 5H2s2-1 2-5a6 6 0 016-6z" stroke="currentColor" stroke-width="1.3"/><path d="M8 17a2 2 0 004 0" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>Notifications <span class="nav-badge">4</span></a>
+      <a href="lys-medical-historique.html" class="nav-item"><svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7.5" stroke="currentColor" stroke-width="1.3"/><path d="M10 6v4l3 2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>Historique</a>
+    </nav>
+    <div class="sb-section-label">Compte</div>
+    <nav class="sb-nav">
+      <a href="parametres-medecin.html" class="nav-item active"><svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="3" stroke="currentColor" stroke-width="1.3"/><path d="M10 2v2M10 16v2M2 10h2M16 10h2M4.22 4.22l1.41 1.41M14.36 14.36l1.42 1.42M4.22 15.78l1.41-1.41M14.36 5.64l1.42-1.42" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>Paramètres</a>
+      <a href="login.html" class="nav-item" style="color:#E05050;"><svg viewBox="0 0 20 20" fill="none"><path d="M9 3H4a1 1 0 00-1 1v12a1 1 0 001 1h12a1 1 0 001-1v-5" stroke="currentColor" stroke-width="1.3"/><path d="M17 3l-8 8M13 3h4v4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>Déconnexion</a>
+    </nav>
+    <div class="sb-bottom"><div class="sb-user"><div class="avatar">DK</div><div><div class="sb-user-name">Dr. Karim Dridi</div><div class="sb-user-role">Médecin généraliste</div></div></div></div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-title">Paramètres — <em>Médecin</em></div>
+      <a href="notifications-medecin.html" class="tb-icon"><svg width="16" height="16" viewBox="0 0 20 20" fill="none"><path d="M10 2a6 6 0 016 6v3l1.5 2.5H2.5L4 11V8a6 6 0 016-6z" stroke="currentColor" stroke-width="1.3"/><path d="M8 16.5a2 2 0 004 0" stroke="currentColor" stroke-width="1.3"/></svg></a>
+      <a href="parametres-medecin.html" class="tb-icon" style="background:var(--gold-pale);"><svg width="16" height="16" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="3" stroke="var(--gold)" stroke-width="1.3"/><path d="M10 2v2M10 16v2M2 10h2M16 10h2" stroke="var(--gold)" stroke-width="1.3" stroke-linecap="round"/></svg></a>
+    </div>
+
+    <div class="content">
+      <div class="page-header"><h1>Paramètres — <em>Médecin</em></h1><p>Gérez votre profil médical, agenda et préférences du compte</p></div>
+
+      <div class="params-grid">
+        <div class="params-nav">
+          <div class="pnav-item active" onclick="switchSection('profil',this)"><svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="7" r="3.5" stroke="currentColor" stroke-width="1.3"/><path d="M3 17c0-3.314 3.134-6 7-6s7 2.686 7 6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>Profil médical</div>
+          <div class="pnav-item" onclick="switchSection('notifs',this)"><svg viewBox="0 0 20 20" fill="none"><path d="M10 2a6 6 0 016 6c0 4 2 5 2 5H2s2-1 2-5a6 6 0 016-6z" stroke="currentColor" stroke-width="1.3"/><path d="M8 17a2 2 0 004 0" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>Notifications</div>
+          <div class="pnav-item" onclick="switchSection('agenda',this)"><svg viewBox="0 0 20 20" fill="none"><rect x="3" y="4" width="14" height="14" rx="2" stroke="currentColor" stroke-width="1.3"/><path d="M7 2v4M13 2v4M3 9h14" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>Agenda & RDV</div>
+          <div class="pnav-divider"></div>
+          <div class="pnav-item" onclick="switchSection('securite',this)"><svg viewBox="0 0 20 20" fill="none"><path d="M10 2l7 3v5c0 4-3.5 7-7 8-3.5-1-7-4-7-8V5l7-3z" stroke="currentColor" stroke-width="1.3"/></svg>Sécurité</div>
+          <div class="pnav-item" onclick="switchSection('apparence',this)"><svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7.5" stroke="currentColor" stroke-width="1.3"/><path d="M7 10l2 2 4-4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>Apparence</div>
+        </div>
+
+        <div class="params-content">
+          <!-- PROFIL -->
+          <div class="param-section-block active" id="section-profil">
+            <div class="params-section">
+              <div class="params-section-title">Profil médical</div>
+              <div class="params-section-sub">Vos informations professionnelles affichées aux patients et secrétaires</div>
+              <div class="avatar-edit"><div class="avatar-lg">DK</div><div><button class="btn-sm" onclick="showToast('Changer la photo','success')">Changer la photo</button><p style="font-size:11px;color:var(--muted);margin-top:4px;">JPG, PNG — max 2 Mo</p></div></div>
+              <div class="form-row">
+                <div class="form-group"><label class="form-label">Prénom <span>*</span></label><input type="text" class="form-input" id="profilePrenom" value="Karim"></div>
+                <div class="form-group"><label class="form-label">Nom <span>*</span></label><input type="text" class="form-input" id="profileNom" value="Dridi"></div>
+              </div>
+              <div class="form-row">
+                <div class="form-group"><label class="form-label">Spécialité</label><select class="form-select" id="profileSpecialite"><option selected>Médecine générale</option><option>Cardiologie</option><option>Pédiatrie</option><option>Gynécologie</option></select></div>
+                <div class="form-group"><label class="form-label">N° RPPS</label><input type="text" class="form-input" id="profileRpps" value="10003456789"></div>
+              </div>
+              <div class="form-row">
+                <div class="form-group"><label class="form-label">Email professionnel</label><input type="email" class="form-input" id="profileEmail" value="k.dridi@lysmedical.dz"></div>
+                <div class="form-group"><label class="form-label">Téléphone cabinet</label><input type="tel" class="form-input" id="profileTelephone" value="023 45 67 89"></div>
+              </div>
+              <div class="form-row single">
+                <div class="form-group"><label class="form-label">Adresse du cabinet</label><input type="text" class="form-input" id="profileAdresse" value="14 Rue Didouche Mourad, Alger 16000"></div>
+              </div>
+              <div class="form-row single">
+                <div class="form-group"><label class="form-label">Bio / Présentation</label><textarea class="form-input" id="profileBio">Médecin généraliste avec 12 ans d'expérience, spécialisé dans le suivi des maladies chroniques (diabète, hypertension).</textarea></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- NOTIFICATIONS PREFS -->
+          <div class="param-section-block" id="section-notifs">
+            <div class="params-section">
+              <div class="params-section-title">Préférences de notifications</div>
+              <div class="params-section-sub">Choisissez quand et comment vous souhaitez être alerté</div>
+              <div class="toggle-row"><div class="toggle-info"><div class="toggle-label">Résultats biologiques critiques</div><div class="toggle-desc">Alerte immédiate si un résultat dépasse le seuil critique</div></div><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
+              <div class="toggle-row"><div class="toggle-info"><div class="toggle-label">Rappel de consultation (1h avant)</div><div class="toggle-desc">Notification avant chaque rendez-vous programmé</div></div><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
+              <div class="toggle-row"><div class="toggle-info"><div class="toggle-label">Annulation ou modification de RDV</div><div class="toggle-desc">Alerté dès qu'un patient modifie ou annule</div></div><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
+              <div class="toggle-row"><div class="toggle-info"><div class="toggle-label">Messages patients</div><div class="toggle-desc">Nouvelles demandes via la messagerie intégrée</div></div><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
+              <div class="toggle-row"><div class="toggle-info"><div class="toggle-label">Rapport mensuel automatique</div><div class="toggle-desc">Résumé de votre activité en début de mois</div></div><label class="toggle"><input type="checkbox"><span class="toggle-slider"></span></label></div>
+              <div class="toggle-row"><div class="toggle-info"><div class="toggle-label">Notifications par email</div><div class="toggle-desc">Réception simultanée sur votre email professionnel</div></div><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
+              <div class="toggle-row"><div class="toggle-info"><div class="toggle-label">Notifications SMS</div><div class="toggle-desc">Pour les alertes urgentes uniquement</div></div><label class="toggle"><input type="checkbox"><span class="toggle-slider"></span></label></div>
+            </div>
+          </div>
+
+          <!-- AGENDA -->
+          <div class="param-section-block" id="section-agenda">
+            <div class="params-section">
+              <div class="params-section-title">Agenda & Rendez-vous</div>
+              <div class="params-section-sub">Configurez vos horaires et règles de prise en charge</div>
+              <div class="form-row">
+                <div class="form-group"><label class="form-label">Durée par défaut d'une consultation</label><select class="form-select" id="consultationDuration"><option value="15">15 min</option><option value="20">20 min</option><option value="30" selected>30 min</option><option value="45">45 min</option></select></div>
+                <div class="form-group"><label class="form-label">Délai minimum avant RDV</label><select class="form-select"><option>Aucun</option><option selected>2h</option><option>24h</option><option>48h</option></select></div>
+              </div>
+              <div class="form-row single">
+                <div class="form-group"><label class="form-label">Jours ouvrables</label><div style="display:flex;gap:10px;flex-wrap:wrap;font-size:12px;color:var(--text);">
+                  <label><input type="checkbox" class="working-day" value="0" checked> Dim</label>
+                  <label><input type="checkbox" class="working-day" value="1" checked> Lun</label>
+                  <label><input type="checkbox" class="working-day" value="2" checked> Mar</label>
+                  <label><input type="checkbox" class="working-day" value="3" checked> Mer</label>
+                  <label><input type="checkbox" class="working-day" value="4" checked> Jeu</label>
+                  <label><input type="checkbox" class="working-day" value="5"> Ven</label>
+                  <label><input type="checkbox" class="working-day" value="6"> Sam</label>
+                </div></div>
+              </div>
+              <div class="form-row">
+                <div class="form-group"><label class="form-label">Heure début matin</label><input type="time" class="form-input" id="morningStart" value="08:00"></div>
+                <div class="form-group"><label class="form-label">Heure fin matin</label><input type="time" class="form-input" id="morningEnd" value="12:00"></div>
+              </div>
+              <div class="form-row">
+                <div class="form-group"><label class="form-label">Heure début après-midi</label><input type="time" class="form-input" id="afternoonStart" value="14:00"></div>
+                <div class="form-group"><label class="form-label">Heure fin après-midi</label><input type="time" class="form-input" id="afternoonEnd" value="18:00"></div>
+              </div>
+              <div class="toggle-row"><div class="toggle-info"><div class="toggle-label">Prise de RDV en ligne par les patients</div><div class="toggle-desc">Les patients peuvent réserver directement via leur portail</div></div><label class="toggle"><input type="checkbox" id="onlineBooking" checked><span class="toggle-slider"></span></label></div>
+              <div class="toggle-row"><div class="toggle-info"><div class="toggle-label">Validation manuelle des RDV</div><div class="toggle-desc">Vous approuvez chaque rendez-vous avant confirmation</div></div><label class="toggle"><input type="checkbox" id="manualValidation"><span class="toggle-slider"></span></label></div>
+            </div>
+          </div>
+
+          <!-- SECURITE -->
+          <div class="param-section-block" id="section-securite">
+            <div class="params-section">
+              <div class="params-section-title">Sécurité du compte</div>
+              <div class="params-section-sub">Protégez votre accès aux données médicales sensibles</div>
+              <div class="security-item"><div class="security-icon"><svg viewBox="0 0 20 20" fill="none"><rect x="5" y="9" width="10" height="8" rx="2" stroke="currentColor" stroke-width="1.3"/><path d="M7 9V7a3 3 0 016 0v2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></div><div class="security-content"><div class="security-label">Mot de passe</div><div class="security-desc">Dernière modification : il y a 32 jours</div></div><button class="btn-sm" onclick="openPasswordModal()">Modifier</button></div>
+              <div class="security-item"><div class="security-icon" style="background:var(--green-bg)"><svg viewBox="0 0 20 20" fill="none" style="color:var(--green)"><path d="M10 2l7 3v5c0 4-3.5 7-7 8-3.5-1-7-4-7-8V5l7-3z" stroke="currentColor" stroke-width="1.3"/></svg></div><div class="security-content"><div class="security-label">Double authentification (2FA)</div><div class="security-desc">Via application authentificateur</div></div><span class="status-badge status-active">Activé</span></div>
+              <div class="security-item"><div class="security-icon" style="background:var(--orange-bg)"><svg viewBox="0 0 20 20" fill="none" style="color:var(--orange)"><rect x="2" y="6" width="16" height="11" rx="2" stroke="currentColor" stroke-width="1.3"/><path d="M6 6V5a4 4 0 018 0v1" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></div><div class="security-content"><div class="security-label">Sessions actives</div><div class="security-desc">2 appareils connectés (PC cabinet, Mobile)</div></div><button class="btn-sm" onclick="showToast('Sessions révoquées','success')">Déconnecter tout</button></div>
+              <div class="security-item"><div class="security-icon"><svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7.5" stroke="currentColor" stroke-width="1.3"/><path d="M10 6v4l3 2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></div><div class="security-content"><div class="security-label">Journal d'accès</div><div class="security-desc">Historique complet des connexions</div></div><button class="btn-sm" onclick="showToast('Journal téléchargé','success')">Télécharger</button></div>
+            </div>
+          </div>
+
+          <!-- APPARENCE -->
+          <div class="param-section-block" id="section-apparence">
+            <div class="params-section">
+              <div class="params-section-title">Apparence & Interface</div>
+              <div class="params-section-sub">Personnalisez votre expérience visuelle</div>
+              <div class="form-row">
+                <div class="form-group"><label class="form-label">Langue de l'interface</label><select class="form-select"><option selected>Français</option><option>العربية</option><option>English</option></select></div>
+                <div class="form-group"><label class="form-label">Format de date</label><select class="form-select"><option selected>DD/MM/YYYY</option><option>YYYY-MM-DD</option><option>MM/DD/YYYY</option></select></div>
+              </div>
+              <div class="toggle-row"><div class="toggle-info"><div class="toggle-label">Mode sombre</div><div class="toggle-desc">Interface en thème sombre (bêta)</div></div><label class="toggle"><input type="checkbox"><span class="toggle-slider"></span></label></div>
+              <div class="toggle-row"><div class="toggle-info"><div class="toggle-label">Animations de l'interface</div><div class="toggle-desc">Transitions et effets visuels</div></div><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
+              <div class="toggle-row"><div class="toggle-info"><div class="toggle-label">Sons de notification</div><div class="toggle-desc">Alerte sonore pour les urgences</div></div><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="save-bar">
+      <div class="save-hint"><svg width="14" height="14" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7.5" stroke="currentColor" stroke-width="1.3"/><path d="M10 6v4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="10" cy="14" r="0.8" fill="currentColor"/></svg>Les modifications seront appliquées immédiatement</div>
+      <div style="display:flex;gap:10px;">
+        <button class="btn-danger" onclick="showToast('Modifications annulées','error')">Annuler</button>
+        <button class="btn-primary" onclick="saveAllSettings()"><svg viewBox="0 0 20 20" fill="none" width="14" height="14"><path d="M4 10l4 4 8-8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Sauvegarder</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="toast"></div>
+<div class="modal-backdrop" id="passwordModal">
+  <div class="modal">
+    <div class="modal-title">Modifier le mot de passe</div>
+    <form id="passwordForm">
+      <div class="form-group"><label class="form-label">Mot de passe actuel</label><input type="password" class="form-input" id="currentPassword" autocomplete="current-password"></div>
+      <div class="form-group" style="margin-top:10px;"><label class="form-label">Nouveau mot de passe</label><input type="password" class="form-input" id="newPassword" autocomplete="new-password"></div>
+      <div class="form-group" style="margin-top:10px;"><label class="form-label">Confirmer le mot de passe</label><input type="password" class="form-input" id="confirmPassword" autocomplete="new-password"></div>
+      <div class="modal-actions">
+        <button type="button" class="btn-sm" onclick="closePasswordModal()">Annuler</button>
+        <button type="submit" class="btn-primary">Enregistrer</button>
+      </div>
+    </form>
+  </div>
+</div>
+<script>
+function switchSection(s,item){document.querySelectorAll('.pnav-item').forEach(i=>i.classList.remove('active'));item.classList.add('active');document.querySelectorAll('.param-section-block').forEach(b=>b.classList.remove('active'));document.getElementById('section-'+s).classList.add('active');}
+function showToast(msg,type='info'){const t=document.getElementById('toast');t.textContent=msg;t.className=type==='success'?'success':type==='error'?'error':'';t.style.opacity='1';t.style.transform='translateY(0)';clearTimeout(t._t);t._t=setTimeout(()=>{t.style.opacity='0';t.style.transform='translateY(16px)';},2600);}
+function openPasswordModal(){document.getElementById('passwordModal').classList.add('visible');document.getElementById('currentPassword').focus();}
+function closePasswordModal(){document.getElementById('passwordModal').classList.remove('visible');document.getElementById('passwordForm').reset();}
+async function submitPasswordChange(e){
+  e.preventDefault();
+  try{
+    const res = await fetch('backend/auth/change_password.php', {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        currentPassword: document.getElementById('currentPassword').value,
+        newPassword: document.getElementById('newPassword').value,
+        confirmPassword: document.getElementById('confirmPassword').value
+      })
+    });
+    const data = await res.json();
+    if(data.success){
+      closePasswordModal();
+      showToast(data.message || 'Mot de passe mis a jour','success');
+    }else{
+      showToast(data.message || 'Erreur de modification','error');
+    }
+  }catch(error){
+    console.error('Password change error:', error);
+    showToast('Erreur reseau','error');
+  }
+}
+function getProfileData(){
+  return {
+    prenom: document.getElementById('profilePrenom').value.trim(),
+    nom: document.getElementById('profileNom').value.trim(),
+    specialite: document.getElementById('profileSpecialite').value.trim(),
+    email: document.getElementById('profileEmail').value.trim(),
+    numtelephone: document.getElementById('profileTelephone').value.trim(),
+    adresseCabinet: document.getElementById('profileAdresse').value.trim(),
+    bio: document.getElementById('profileBio').value.trim(),
+    rpps: document.getElementById('profileRpps').value.trim()
+  };
+}
+function updateDoctorIdentity(profile){
+  const prenom = String(profile.prenom || '').trim();
+  const nom = String(profile.nom || '').trim();
+  const fullName = `Dr. ${prenom} ${nom}`.trim();
+  const initials = `${prenom.charAt(0)}${nom.charAt(0)}`.toUpperCase() || 'DR';
+  const userName = document.querySelector('.sb-user-name');
+  const userRole = document.querySelector('.sb-user-role');
+  const avatar = document.querySelector('.avatar');
+  const avatarLg = document.querySelector('.avatar-lg');
+  if(userName) userName.textContent = fullName;
+  if(userRole) userRole.textContent = profile.specialite || 'Medecin';
+  if(avatar) avatar.textContent = initials;
+  if(avatarLg) avatarLg.textContent = initials;
+}
+function applyProfileData(profile, rppsEnabled){
+  const data = profile || {};
+  document.getElementById('profilePrenom').value = data.prenom || '';
+  document.getElementById('profileNom').value = data.nom || '';
+  const specialiteSelect = document.getElementById('profileSpecialite');
+  if(data.specialite && !Array.from(specialiteSelect.options).some(option => option.value === data.specialite)){
+    specialiteSelect.add(new Option(data.specialite, data.specialite));
+  }
+  specialiteSelect.value = data.specialite || '';
+  document.getElementById('profileEmail').value = data.email || '';
+  document.getElementById('profileTelephone').value = data.numtelephone || '';
+  document.getElementById('profileAdresse').value = data.adresseCabinet || '';
+  document.getElementById('profileBio').value = data.bio || '';
+  const rppsInput = document.getElementById('profileRpps');
+  if(data.rpps) rppsInput.value = data.rpps;
+  rppsInput.disabled = !rppsEnabled;
+  updateDoctorIdentity(data);
+}
+async function loadDoctorProfile(){
+  try{
+    const res = await fetch('backend/medecin/get_profile.php', { credentials: 'same-origin' });
+    const data = await res.json();
+    if(data.success) applyProfileData(data.profile, data.fields && data.fields.rpps);
+  }catch(e){
+    console.error('Doctor profile load error:', e);
+  }
+}
+async function saveDoctorProfile(){
+  const payload = getProfileData();
+  const res = await fetch('backend/medecin/update_profile.php', {
+    method: 'POST',
+    credentials: 'same-origin',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+  const data = await res.json();
+  if(!data.success) throw new Error(data.message || 'Erreur de sauvegarde du profil');
+  updateDoctorIdentity(data.profile || payload);
+  return data;
+}
+function getAgendaSettings(){
+  return {
+    workingDays: Array.from(document.querySelectorAll('.working-day:checked')).map(input => Number(input.value)),
+    morningStart: document.getElementById('morningStart').value || '08:00',
+    morningEnd: document.getElementById('morningEnd').value || '12:00',
+    afternoonStart: document.getElementById('afternoonStart').value || '14:00',
+    afternoonEnd: document.getElementById('afternoonEnd').value || '18:00',
+    consultationDuration: Number(document.getElementById('consultationDuration').value || 30),
+    onlineBooking: document.getElementById('onlineBooking').checked,
+    manualValidation: document.getElementById('manualValidation').checked
+  };
+}
+function applyAgendaSettings(settings){
+  const data = settings || {};
+  const workingDays = Array.isArray(data.workingDays) ? data.workingDays.map(Number) : [0, 1, 2, 3, 4];
+  document.querySelectorAll('.working-day').forEach(input => {
+    input.checked = workingDays.includes(Number(input.value));
+  });
+  document.getElementById('morningStart').value = data.morningStart || '08:00';
+  document.getElementById('morningEnd').value = data.morningEnd || '12:00';
+  document.getElementById('afternoonStart').value = data.afternoonStart || '14:00';
+  document.getElementById('afternoonEnd').value = data.afternoonEnd || '18:00';
+  document.getElementById('consultationDuration').value = String(data.consultationDuration || 30);
+  document.getElementById('onlineBooking').checked = data.onlineBooking !== false;
+  document.getElementById('manualValidation').checked = data.manualValidation === true;
+}
+async function loadDoctorSettings(){
+  try{
+    const res = await fetch('backend/medecin/get_settings.php', { credentials: 'same-origin' });
+    const data = await res.json();
+    if(data.success) applyAgendaSettings(data.settings);
+  }catch(e){
+    console.error('Doctor settings load error:', e);
+  }
+}
+async function saveDoctorSettings(showSuccess = true){
+  try{
+    const res = await fetch('backend/medecin/update_settings.php', {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(getAgendaSettings())
+    });
+    const data = await res.json();
+    if(!data.success) {
+      if(showSuccess) showToast(data.message || 'Erreur de sauvegarde','error');
+      throw new Error(data.message || 'Erreur de sauvegarde');
+    }
+    if(showSuccess) showToast('Parametres sauvegardes','success');
+  }catch(e){
+    console.error('Doctor settings save error:', e);
+    if(showSuccess) showToast('Erreur reseau','error');
+    throw e;
+  }
+}
+async function saveAllSettings(){
+  try{
+    await saveDoctorProfile();
+    await saveDoctorSettings(false);
+    showToast('Parametres sauvegardes','success');
+  }catch(e){
+    console.error('Settings save error:', e);
+    showToast(e.message || 'Erreur de sauvegarde','error');
+  }
+}
+document.addEventListener('DOMContentLoaded', () => {
+  loadDoctorProfile();
+  loadDoctorSettings();
+  document.getElementById('passwordForm').addEventListener('submit', submitPasswordChange);
+});
+</script>
+</body>
+</html>
