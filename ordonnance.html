@@ -126,7 +126,7 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
 
 <script>
 const params = new URLSearchParams(window.location.search);
-const id = params.get('id');
+const id = params.get('id') || params.get('idOrdonnance');
 
 function escapeHtml(value) {
   return String(value ?? '')
@@ -148,19 +148,28 @@ function patientName(patient) {
   return [patient?.prenom, patient?.nom].filter(Boolean).join(' ').trim() || 'Patient';
 }
 
+function medecinName(medecin) {
+  const name = [medecin?.prenom, medecin?.nom].filter(Boolean).join(' ').trim();
+  return name ? `Dr. ${name}` : 'Médecin';
+}
+
 function renderOrdonnance(data) {
   if (!data || !data.success) {
-    showToast(data?.message || 'Erreur chargement ordonnance', 'error');
-    document.getElementById('rxDoc').innerHTML = '<div style="padding:40px;text-align:center;color:var(--muted);">Ordonnance introuvable</div>';
+    const message = data?.message || 'Ordonnance introuvable.';
+    showToast(message, 'error');
+    document.getElementById('rxDoc').innerHTML = `<div style="padding:40px;text-align:center;color:var(--muted);">${escapeHtml(message)}</div>`;
     return;
   }
 
   const ordonnance = data.ordonnance || {};
   const patient = data.patient || {};
+  const medecin = data.medecin || {};
   const medicaments = Array.isArray(data.medicaments) ? data.medicaments : [];
   const numero = ordonnance.numeroOrdonnance || `ORD-${ordonnance.idOrdonnance || ''}`;
   const dateLabel = formatDate(ordonnance.date);
   const type = ordonnance.typeOrdonnance || 'Ordonnance';
+  const doctorName = medecinName(medecin);
+  const doctorSpecialite = medecin.specialite || 'Médecin';
 
   const drugsHTML = medicaments.length ? medicaments.map((m, index) => {
     const posologie = [m.posologie, m.frequence, m.duree].filter(Boolean).join(' — ');
@@ -214,15 +223,15 @@ function renderOrdonnance(data) {
     </div>
     <div class="rx-foot">
       <div class="rx-foot-info">
-        <strong>Médecin</strong>
-        Lys Medical<br>
-        +213 (0) 41 XX XX XX
+        <strong>${escapeHtml(doctorName)}</strong>
+        ${escapeHtml(doctorSpecialite)}<br>
+        ${escapeHtml(medecin.telephone || '+213 (0) 41 XX XX XX')}
         <div class="rx-num">N° ordonnance : ${escapeHtml(numero)}</div>
       </div>
       <div class="rx-signature">
         <div class="rx-sig-label">Signature &amp; cachet</div>
         <div class="rx-sig-line"></div>
-        <div class="rx-sig-name">Dr.</div>
+        <div class="rx-sig-name">${escapeHtml(doctorName)}</div>
       </div>
     </div>
   `;
@@ -245,7 +254,7 @@ function showToast(msg, type='info') {
   }, 2600);
 }
 
-const ALLOWED_ROLES = ['medecin', 'admin'];
+const ALLOWED_ROLES = ['medecin', 'patient', 'admin'];
 const ROLE_REDIRECTS = {
   admin: 'admin.html',
   secretaire: 'dashboard-secretaire.html',
@@ -280,15 +289,34 @@ async function initPage(){
   const canLoad = await checkSession();
   if(!canLoad) return;
 
-  if (!id) {
-    renderOrdonnance({success:false, message:'ID ordonnance manquant'});
+  if (!id || !/^\d+$/.test(String(id))) {
+    renderOrdonnance({success:false, message:'Identifiant ordonnance manquant.'});
     return;
   }
 
-  fetch(`backend/ordonnance/get_one.php?id=${encodeURIComponent(id)}`, {credentials:'same-origin'})
-    .then(res => res.json())
-    .then(data => renderOrdonnance(data))
-    .catch(() => renderOrdonnance({success:false, message:'Erreur chargement ordonnance'}));
+  const url = `backend/ordonnance/get_one.php?id=${encodeURIComponent(id)}`;
+  try {
+    const res = await fetch(url, {credentials:'same-origin'});
+    let data;
+    try {
+      data = await res.json();
+    } catch (e) {
+      renderOrdonnance({success:false, message:'Erreur serveur.'});
+      return;
+    }
+
+    if (!res.ok || !data.success) {
+      const message = res.status === 403
+        ? 'Accès non autorisé.'
+        : (res.status === 404 ? 'Ordonnance introuvable.' : (data.message || 'Erreur serveur.'));
+      renderOrdonnance({success:false, message});
+      return;
+    }
+
+    renderOrdonnance(data);
+  } catch (e) {
+    renderOrdonnance({success:false, message:'Erreur serveur.'});
+  }
 }
 
 document.addEventListener('DOMContentLoaded', initPage);

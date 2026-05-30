@@ -657,6 +657,11 @@ let selectedPatient = null;
 let linkedRdvId = null;
 let isSavingOrdonnance = false;
 let editingItemIndex = null;
+let editingOrdonnanceId = null;
+let editingOrdonnanceStatus = 'brouillon';
+let isEditMode = false;
+let patientsLoaded = false;
+let pendingEditData = null;
 
 function escapeHtml(value) {
   return String(value ?? '').replace(/[&<>"']/g, ch => ({
@@ -740,7 +745,13 @@ async function loadMyPatients() {
     select.innerHTML = '<option value="">Erreur chargement patients</option>';
     showToast(error.message || 'Erreur chargement patients', 'error');
   }
+  patientsLoaded = true;
   handlePatientChange();
+  if (pendingEditData) {
+    const editData = pendingEditData;
+    pendingEditData = null;
+    applyOrdonnanceEditData(editData);
+  }
 }
 
 function handlePatientChange() {
@@ -934,6 +945,121 @@ function removeMedicationItem(index) {
   renderPreview();
 }
 
+function setFieldValue(id, value) {
+  const field = document.getElementById(id);
+  if (field) field.value = value ?? '';
+}
+
+function setSelectValue(id, value) {
+  const select = document.getElementById(id);
+  if (!select) return;
+
+  const normalized = value ?? '';
+  const optionExists = Array.from(select.options).some((option) => option.value === normalized);
+  if (normalized !== '' && !optionExists) {
+    const option = document.createElement('option');
+    option.value = normalized;
+    option.textContent = normalized;
+    select.appendChild(option);
+  }
+
+  select.value = normalized;
+}
+
+function normalizeOrdonnanceItems(items) {
+  return (Array.isArray(items) ? items : [])
+    .filter((item) => item && String(item.nom || '').trim() !== '')
+    .map((item) => ({
+      nom: String(item.nom || '').trim(),
+      posologie: String(item.posologie || '').trim(),
+      frequence: String(item.frequence || '').trim(),
+      duree: String(item.duree || '').trim(),
+      note: String(item.note || '').trim()
+    }));
+}
+
+function ensurePatientOption(patient) {
+  if (!patient || !patient.idPatient) return;
+
+  const select = document.getElementById('patientSelect');
+  const patientId = String(patient.idPatient);
+  if (!patients.some((item) => String(item.idPatient) === patientId)) {
+    patients.push(patient);
+  }
+
+  if (select && !Array.from(select.options).some((option) => option.value === patientId)) {
+    const option = document.createElement('option');
+    option.value = patientId;
+    option.textContent = getPatientLabel(patient);
+    select.appendChild(option);
+  }
+}
+
+function resetOrdonnanceFormForCreate() {
+  editingOrdonnanceId = null;
+  editingOrdonnanceStatus = 'brouillon';
+  isEditMode = false;
+  pendingEditData = null;
+  linkedRdvId = null;
+  ordonnanceItems = [];
+  conseils = [];
+  selectedPatient = null;
+  cancelMedicationEdit();
+  document.querySelectorAll('.conseil-chip').forEach(c => c.classList.remove('sel'));
+  setFieldValue('patientSelect', '');
+  setFieldValue('rxDate', new Date().toISOString().slice(0, 10));
+  setFieldValue('rxNum', `RX-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 9000) + 1000)}`);
+  setSelectValue('rxType', 'simple');
+  setFieldValue('renew', 'non');
+  setFieldValue('validity', '3 mois');
+  setFieldValue('delivery', 'complete');
+  setFieldValue('freeNote', '');
+  clearMedicationInputs();
+  handlePatientChange();
+  renderMedicationItems();
+  renderPreview();
+}
+
+function loadOrdonnanceForEdit(data) {
+  if (!patientsLoaded) {
+    pendingEditData = data;
+    return;
+  }
+
+  applyOrdonnanceEditData(data);
+}
+
+function applyOrdonnanceEditData(data) {
+  const ordonnance = data?.ordonnance || {};
+  const patient = data?.patient || {};
+  const idOrdonnance = ordonnance.idOrdonnance;
+
+  if (!idOrdonnance) {
+    showToast('Identifiant ordonnance manquant.', 'error');
+    return;
+  }
+
+  editingOrdonnanceId = idOrdonnance;
+  editingOrdonnanceStatus = ordonnance.statut || 'brouillon';
+  isEditMode = true;
+  linkedRdvId = ordonnance.idRDV && /^\d+$/.test(String(ordonnance.idRDV)) ? Number(ordonnance.idRDV) : null;
+  ordonnanceItems = normalizeOrdonnanceItems(data?.medicaments);
+  conseils = [];
+  cancelMedicationEdit();
+  document.querySelectorAll('.conseil-chip').forEach(c => c.classList.remove('sel'));
+
+  ensurePatientOption(patient);
+  setFieldValue('patientSelect', patient.idPatient || ordonnance.idPatient || '');
+  setFieldValue('rxDate', String(ordonnance.date || '').slice(0, 10));
+  setFieldValue('rxNum', ordonnance.numeroOrdonnance || `ORD-${String(idOrdonnance).padStart(4, '0')}`);
+  setSelectValue('rxType', ordonnance.typeOrdonnance || 'simple');
+  setFieldValue('freeNote', ordonnance.note || ordonnance.recommandations || '');
+
+  handlePatientChange();
+  renderMedicationItems();
+  renderPreview();
+}
+
 // ── CONSEILS ──
 function toggleConseil(el, text) {
   el.classList.toggle('sel');
@@ -1085,6 +1211,10 @@ function collectOrdonnancePayload(statut = 'brouillon') {
     items: ordonnanceItems
   };
 
+  if (isEditMode && editingOrdonnanceId !== null) {
+    payload.idOrdonnance = editingOrdonnanceId;
+  }
+
   if (linkedRdvId !== null) {
     payload.idRDV = linkedRdvId;
   }
@@ -1107,7 +1237,10 @@ async function saveOrdonnance(statut = 'brouillon'){
     return false;
   }
 
-  const payload = collectOrdonnancePayload(statut);
+  const effectiveStatut = isEditMode && statut === 'brouillon'
+    ? (editingOrdonnanceStatus || 'brouillon')
+    : statut;
+  const payload = collectOrdonnancePayload(effectiveStatut);
   const saveBtn = document.getElementById('saveOrdonnanceBtn');
   const signBtn = document.getElementById('signOrdonnanceBtn');
   isSavingOrdonnance = true;
@@ -1115,7 +1248,8 @@ async function saveOrdonnance(statut = 'brouillon'){
   signBtn.disabled = true;
 
   try {
-    const res = await fetch('backend/ordonnance/create.php', {
+    const endpoint = isEditMode ? 'backend/ordonnance/update_ordonnance.php' : 'backend/ordonnance/create.php';
+    const res = await fetch(endpoint, {
       method:'POST',
       headers:{'Content-Type':'application/json'},
       credentials:'same-origin',
@@ -1129,9 +1263,17 @@ async function saveOrdonnance(statut = 'brouillon'){
       return false;
     }
 
-    showToast(statut === 'validee' ? 'Ordonnance signée et validée' : 'Ordonnance enregistrée', 'success');
+    editingOrdonnanceStatus = effectiveStatut;
+    const successMessage = isEditMode
+      ? 'Ordonnance mise à jour'
+      : (statut === 'validee' ? 'Ordonnance signée et validée' : 'Ordonnance enregistrée');
+    showToast(successMessage, 'success');
     if (isEmbedded && window.parent && window.parent !== window) {
-      window.parent.postMessage({ type: 'ordonnance:saved', idOrdonnance: data.idOrdonnance }, window.location.origin);
+      window.parent.postMessage({
+        type: 'ordonnance:saved',
+        mode: isEditMode ? 'edit' : 'create',
+        idOrdonnance: data.idOrdonnance || editingOrdonnanceId
+      }, window.location.origin);
     }
     return true;
   } catch (error) {

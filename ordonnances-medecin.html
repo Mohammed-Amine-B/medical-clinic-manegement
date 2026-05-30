@@ -71,11 +71,14 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
 .ptable tr:hover td{background:rgba(200,169,110,0.03);}
 .p-name{font-weight:500;display:flex;align-items:center;gap:8px;}
 .patient-avatar{width:28px;height:28px;border-radius:50%;background:var(--gold-pale);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:var(--gold);}
-.action-btn,.view-btn,.print-btn{padding:5px 12px;border-radius:7px;font-size:11px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s;border:none;}
+.action-btn,.view-btn,.edit-btn,.print-btn{padding:5px 12px;border-radius:7px;font-size:11px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s;border:none;}
 .view-btn{background:var(--gold-pale);color:var(--navy);}
 .view-btn:hover{background:var(--gold);color:var(--white);}
+.edit-btn{background:var(--green-bg);color:var(--green);}
+.edit-btn:hover{background:var(--green);color:var(--white);}
 .print-btn{background:var(--blue-bg);color:var(--blue);}
 .print-btn:hover{background:var(--blue);color:var(--white);}
+.view-btn:disabled,.edit-btn:disabled,.print-btn:disabled{opacity:.45;cursor:not-allowed;}
 .btn-secondary{height:40px;padding:0 18px;background:transparent;color:var(--navy);border:1.5px solid #E8E6E0;border-radius:10px;font-size:13px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s;display:flex;align-items:center;gap:8px;text-decoration:none;}
 .btn-secondary:hover{border-color:var(--navy);background:var(--surface);}
 .create-header-actions{display:flex;align-items:center;justify-content:flex-end;gap:10px;flex-wrap:wrap;}
@@ -164,44 +167,44 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
 
     <div class="content">
       <div id="listView">
-      <div class="page-header">
-        <div class="page-header-left">
-          <h1>Mes <em>ordonnances</em></h1>
-          <p>Liste des ordonnances créées avec votre compte médecin</p>
+        <div class="page-header">
+          <div class="page-header-left">
+            <h1>Mes <em>ordonnances</em></h1>
+            <p>Liste des ordonnances créées avec votre compte médecin</p>
+          </div>
+          <button class="btn-primary" type="button" id="newOrdonnanceBtn">+ Nouvelle ordonnance</button>
         </div>
-        <button class="btn-primary" type="button" id="newOrdonnanceBtn">+ Nouvelle ordonnance</button>
-      </div>
 
-      <div class="patient-table-section">
-        <div class="patient-table-head">
-          <span class="patient-table-title">Ordonnances enregistrées</span>
-          <span id="ordonnanceCount" class="badge b-blue">Chargement...</span>
+        <div class="patient-table-section">
+          <div class="patient-table-head">
+            <span class="patient-table-title">Ordonnances enregistrées</span>
+            <span id="ordonnanceCount" class="badge b-blue">Chargement...</span>
+          </div>
+          <table class="ptable">
+            <thead>
+              <tr>
+                <th>N° ordonnance</th>
+                <th>Patient</th>
+                <th>Date</th>
+                <th>Type</th>
+                <th>Statut</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="ordonnancesBody">
+              <tr>
+                <td colspan="6" style="text-align:center;color:var(--muted);padding:24px 20px;">Chargement...</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
-        <table class="ptable">
-          <thead>
-            <tr>
-              <th>N° ordonnance</th>
-              <th>Patient</th>
-              <th>Date</th>
-              <th>Type</th>
-              <th>Statut</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody id="ordonnancesBody">
-            <tr>
-              <td colspan="6" style="text-align:center;color:var(--muted);padding:24px 20px;">Chargement...</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
       </div>
 
       <div id="createView" class="view-hidden">
         <div class="page-header">
           <div class="page-header-left">
-            <h1>Nouvelle <em>ordonnance</em></h1>
-            <p>Créez une ordonnance sans quitter l'espace Ordonnances</p>
+            <h1 id="createViewTitle">Nouvelle <em>ordonnance</em></h1>
+            <p id="createViewSubtitle">Créez une ordonnance sans quitter l'espace Ordonnances</p>
           </div>
           <div class="create-header-actions">
             <button class="create-action-btn ghost" type="button" id="printCreateBtn">Imprimer / PDF</button>
@@ -246,6 +249,10 @@ function getStatusClass(statut) {
   return 'b-grey';
 }
 
+function isValidOrdonnanceId(id) {
+  return id && id !== 'undefined' && id !== 'null' && /^\d+$/.test(String(id));
+}
+
 function renderOrdonnances(data) {
   const body = document.getElementById('ordonnancesBody');
   const count = document.getElementById('ordonnanceCount');
@@ -266,6 +273,8 @@ function renderOrdonnances(data) {
   }
 
   body.innerHTML = ordonnances.map((o) => {
+    const idOrdonnance = o.idOrdonnance;
+    const hasValidId = isValidOrdonnanceId(idOrdonnance);
     const patientName = getPatientName(o);
     const statut = o.statut || '—';
 
@@ -282,8 +291,9 @@ function renderOrdonnances(data) {
         <td>${escapeHtml(o.typeOrdonnance || '—')}</td>
         <td><span class="badge ${getStatusClass(statut)}">${escapeHtml(statut)}</span></td>
         <td style="display:flex;gap:6px;">
-          <button data-id="${escapeHtml(o.idOrdonnance)}" class="view-btn">Voir</button>
-          <button data-id="${escapeHtml(o.idOrdonnance)}" class="print-btn">Imprimer</button>
+          <button data-id="${escapeHtml(idOrdonnance)}" class="view-btn" ${hasValidId ? '' : 'disabled'}>Voir</button>
+          <button data-id="${escapeHtml(idOrdonnance)}" class="edit-btn" ${hasValidId ? '' : 'disabled'}>Modifier</button>
+          <button data-id="${escapeHtml(idOrdonnance)}" class="print-btn" ${hasValidId ? '' : 'disabled'}>Imprimer</button>
         </td>
       </tr>
     `;
@@ -291,13 +301,40 @@ function renderOrdonnances(data) {
 
   document.querySelectorAll('.view-btn').forEach((btn) => {
     btn.addEventListener('click', () => {
-      window.location.href = `ordonnance.html?id=${encodeURIComponent(btn.dataset.id)}`;
+      const id = btn.dataset.id;
+
+      if (!isValidOrdonnanceId(id)) {
+        showToast('ID ordonnance manquant ou invalide', 'error');
+        return;
+      }
+
+      window.location.href = `ordonnance.html?id=${encodeURIComponent(id)}`;
     });
   });
 
   document.querySelectorAll('.print-btn').forEach((btn) => {
     btn.addEventListener('click', () => {
-      window.location.href = `ordonnance.html?id=${encodeURIComponent(btn.dataset.id)}&print=1`;
+      const id = btn.dataset.id;
+
+      if (!isValidOrdonnanceId(id)) {
+        showToast('ID ordonnance manquant ou invalide', 'error');
+        return;
+      }
+
+      window.location.href = `ordonnance.html?id=${encodeURIComponent(id)}&print=1`;
+    });
+  });
+
+  document.querySelectorAll('.edit-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const id = btn.dataset.id;
+
+      if (!isValidOrdonnanceId(id)) {
+        showToast('ID ordonnance manquant ou invalide', 'error');
+        return;
+      }
+
+      openEditOrdonnance(id);
     });
   });
 }
@@ -305,11 +342,37 @@ function renderOrdonnances(data) {
 async function loadOrdonnances() {
   try {
     const res = await fetch('backend/ordonnance/get_my_ordonnances.php', { credentials:'same-origin' });
-    const data = await res.json();
+
+    let data;
+    try {
+      data = await res.json();
+    } catch (e) {
+      renderOrdonnances({
+        success:false,
+        message:'Réponse serveur invalide'
+      });
+      return;
+    }
+
     renderOrdonnances(data);
   } catch (e) {
-    renderOrdonnances({success:false, message:'Erreur chargement ordonnances'});
+    renderOrdonnances({
+      success:false,
+      message:'Erreur chargement ordonnances'
+    });
   }
+}
+
+const CREATE_FORM_URL = 'lys-medical-ordonnance.html?embedded=1';
+
+function setCreateViewMode(mode) {
+  const isEdit = mode === 'edit';
+  document.getElementById('createViewTitle').innerHTML = isEdit ? 'Modifier <em>ordonnance</em>' : 'Nouvelle <em>ordonnance</em>';
+  document.getElementById('createViewSubtitle').textContent = isEdit
+    ? 'Modifiez cette ordonnance sans quitter l’espace Ordonnances'
+    : 'Créez une ordonnance sans quitter l’espace Ordonnances';
+  document.getElementById('saveCreateBtn').textContent = isEdit ? 'Mettre à jour' : 'Enregistrer';
+  document.getElementById('createOrdonnanceFrame').title = isEdit ? 'Modifier ordonnance' : 'Nouvelle ordonnance';
 }
 
 function showListView() {
@@ -318,14 +381,83 @@ function showListView() {
   setCreateActionLoading(false);
 }
 
-function showCreateView() {
-  const frame = document.getElementById('createOrdonnanceFrame');
-  if (!frame.src) {
-    frame.src = 'lys-medical-ordonnance.html?embedded=1';
-  }
+function setCreateViewVisible() {
   document.getElementById('listView').classList.add('view-hidden');
   document.getElementById('createView').classList.remove('view-hidden');
   setCreateActionLoading(false);
+}
+
+function loadCreateFrame(reload = false) {
+  const frame = document.getElementById('createOrdonnanceFrame');
+
+  return new Promise((resolve) => {
+    const done = () => resolve(frame.contentWindow);
+
+    if (!reload && frame.getAttribute('src') && frame.contentWindow && frame.contentDocument?.readyState === 'complete') {
+      done();
+      return;
+    }
+
+    frame.onload = () => {
+      frame.onload = null;
+      done();
+    };
+
+    if (reload || !frame.getAttribute('src')) {
+      frame.src = CREATE_FORM_URL;
+    }
+  });
+}
+
+async function showCreateView() {
+  setCreateViewMode('create');
+  setCreateViewVisible();
+
+  try {
+    const frameWindow = await loadCreateFrame(true);
+    if (frameWindow && typeof frameWindow.resetOrdonnanceFormForCreate === 'function') {
+      frameWindow.resetOrdonnanceFormForCreate();
+    }
+  } catch (error) {
+    showToast('Erreur chargement formulaire ordonnance', 'error');
+  }
+}
+
+async function fetchOrdonnanceDetails(id) {
+  const res = await fetch(`backend/ordonnance/get_one.php?id=${encodeURIComponent(id)}`, { credentials:'same-origin' });
+  const data = await res.json();
+
+  if (!res.ok || !data.success) {
+    throw new Error(data.message || 'Ordonnance introuvable');
+  }
+
+  return data;
+}
+
+async function openEditOrdonnance(id) {
+  if (!isValidOrdonnanceId(id)) {
+    showToast('ID ordonnance manquant ou invalide', 'error');
+    return;
+  }
+
+  setCreateActionLoading(true);
+  try {
+    const data = await fetchOrdonnanceDetails(id);
+    setCreateViewMode('edit');
+    setCreateViewVisible();
+    const frameWindow = await loadCreateFrame(true);
+
+    if (!frameWindow || typeof frameWindow.loadOrdonnanceForEdit !== 'function') {
+      throw new Error('Le formulaire de modification est encore en chargement.');
+    }
+
+    frameWindow.loadOrdonnanceForEdit(data);
+  } catch (error) {
+    showToast(error.message || 'Erreur chargement ordonnance', 'error');
+    showListView();
+  } finally {
+    setCreateActionLoading(false);
+  }
 }
 
 function getCreateFrameWindow() {
@@ -423,6 +555,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('saveCreateBtn').addEventListener('click', () => saveCreateOrdonnance('brouillon'));
   document.getElementById('signCreateBtn').addEventListener('click', () => saveCreateOrdonnance('validee'));
   document.getElementById('printCreateBtn').addEventListener('click', printCreateOrdonnance);
+
   await loadOrdonnances();
 });
 
@@ -431,7 +564,7 @@ window.addEventListener('message', async (event) => {
     return;
   }
 
-  showToast('Ordonnance enregistrée', 'success');
+  showToast(event.data.mode === 'edit' ? 'Ordonnance mise à jour' : 'Ordonnance enregistrée', 'success');
   showListView();
   setCreateActionLoading(false);
   document.getElementById('createOrdonnanceFrame').src = '';

@@ -19,14 +19,26 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
 }
 
 require_once __DIR__ . '/../auth/guard.php';
-$currentUser = requireRole(['medecin']);
+$currentUser = requireAuth();
 
 $idOrdonnanceRaw = $_GET['id'] ?? $_GET['idOrdonnance'] ?? null;
 if ($idOrdonnanceRaw === null || $idOrdonnanceRaw === '' || !ctype_digit((string) $idOrdonnanceRaw)) {
     respond(400, [
         'success' => false,
-        'message' => 'Invalid ordonnance id'
+        'message' => 'Identifiant ordonnance manquant.'
     ]);
+}
+
+function tableColumns(PDO $pdo, string $table): array
+{
+    $stmt = $pdo->query('DESCRIBE `' . str_replace('`', '``', $table) . '`');
+    $columns = [];
+
+    foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $column) {
+        $columns[(string) $column['Field']] = true;
+    }
+
+    return $columns;
 }
 
 try {
@@ -36,19 +48,37 @@ try {
         throw new RuntimeException('Database connection is not available');
     }
 
-    $doctorStmt = $pdo->prepare(
-        'SELECT idMedecin
-         FROM medecin
-         WHERE idUtilisateur = :idUtilisateur
-         LIMIT 1'
-    );
-    $doctorStmt->execute(['idUtilisateur' => (int) $currentUser['id']]);
-    $medecin = $doctorStmt->fetch(PDO::FETCH_ASSOC);
+    $role = strtolower((string) ($currentUser['role'] ?? ''));
+    $where = 'o.idOrdonnance = :idOrdonnance';
+    $params = ['idOrdonnance' => (int) $idOrdonnanceRaw];
 
-    if (!$medecin) {
-        respond(404, [
+    if ($role === 'medecin') {
+        $idMedecin = getLoggedMedecinId();
+        $where .= ' AND o.idMedecin = :idMedecin';
+        $params['idMedecin'] = $idMedecin;
+    } elseif ($role === 'patient') {
+        $patientStmt = $pdo->prepare(
+            'SELECT idPatient
+             FROM patient
+             WHERE idUtilisateur = :idUtilisateur
+             LIMIT 1'
+        );
+        $patientStmt->execute(['idUtilisateur' => (int) $currentUser['id']]);
+        $patient = $patientStmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$patient) {
+            respond(403, [
+                'success' => false,
+                'message' => 'Accès non autorisé.'
+            ]);
+        }
+
+        $where .= ' AND o.idPatient = :idPatient';
+        $params['idPatient'] = (int) $patient['idPatient'];
+    } elseif ($role !== 'admin') {
+        respond(403, [
             'success' => false,
-            'message' => 'Medecin not found'
+            'message' => 'Accès non autorisé.'
         ]);
     }
 
@@ -58,6 +88,7 @@ try {
     $numeroSelect = isset($columns['numeroOrdonnance']) ? 'o.numeroOrdonnance' : 'NULL';
     $statutSelect = isset($columns['statut']) ? 'o.statut' : 'NULL';
     $rdvIdSelect = isset($columns['idRDV']) ? 'o.idRDV' : 'NULL';
+    $nomMedicamentSelect = isset($columns['nomMedicament']) ? 'o.nomMedicament' : 'NULL';
     $joinRdv = isset($columns['idRDV']) ? 'LEFT JOIN rdv r ON r.idRDV = o.idRDV' : '';
     $rdvDateSelect = isset($columns['idRDV']) ? 'r.dateHeure AS rdvDateHeure' : 'NULL AS rdvDateHeure';
     $rdvTypeSelect = isset($columns['idRDV']) ? 'r.typeConsultation AS rdvType' : 'NULL AS rdvType';
@@ -72,30 +103,35 @@ try {
             {$rdvIdSelect} AS idRDV,
             {$rdvDateSelect},
             {$rdvTypeSelect},
-            o.nomMedicament,
+            {$nomMedicamentSelect} AS nomMedicament,
             p.idPatient,
             p.nom AS patient_nom,
             p.prenom AS patient_prenom,
             p.telephone AS patient_telephone,
+            p.email AS patient_email,
             p.date_naissance,
-            p.sexe
+            p.sexe,
+            p.adresse AS patient_adresse,
+            m.idMedecin,
+            m.nom AS medecin_nom,
+            m.prenom AS medecin_prenom,
+            m.specialite AS medecin_specialite,
+            m.email AS medecin_email,
+            m.numtelephone AS medecin_telephone
          FROM ordonnance o
          LEFT JOIN patient p ON p.idPatient = o.idPatient
+         LEFT JOIN medecin m ON m.idMedecin = o.idMedecin
          {$joinRdv}
-         WHERE o.idOrdonnance = :idOrdonnance
-           AND o.idMedecin = :idMedecin
+         WHERE {$where}
          LIMIT 1"
     );
-    $stmt->execute([
-        'idOrdonnance' => (int) $idOrdonnanceRaw,
-        'idMedecin' => (int) $medecin['idMedecin']
-    ]);
+    $stmt->execute($params);
     $ordonnance = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if (!$ordonnance) {
         respond(404, [
             'success' => false,
-            'message' => 'Ordonnance not found'
+            'message' => 'Ordonnance introuvable.'
         ]);
     }
 
@@ -125,14 +161,32 @@ try {
 
     respond(200, [
         'success' => true,
-        'ordonnance' => $ordonnance,
+        'ordonnance' => [
+            'idOrdonnance' => (int) $ordonnance['idOrdonnance'],
+            'date' => $ordonnance['date'],
+            'numeroOrdonnance' => $ordonnance['numeroOrdonnance'],
+            'typeOrdonnance' => $ordonnance['typeOrdonnance'],
+            'statut' => $ordonnance['statut'],
+            'idRDV' => $ordonnance['idRDV'],
+            'nomMedicament' => $ordonnance['nomMedicament']
+        ],
         'patient' => [
             'idPatient' => $ordonnance['idPatient'],
             'nom' => $ordonnance['patient_nom'],
             'prenom' => $ordonnance['patient_prenom'],
             'telephone' => $ordonnance['patient_telephone'],
+            'email' => $ordonnance['patient_email'],
             'date_naissance' => $ordonnance['date_naissance'],
-            'sexe' => $ordonnance['sexe']
+            'sexe' => $ordonnance['sexe'],
+            'adresse' => $ordonnance['patient_adresse']
+        ],
+        'medecin' => [
+            'idMedecin' => $ordonnance['idMedecin'],
+            'nom' => $ordonnance['medecin_nom'],
+            'prenom' => $ordonnance['medecin_prenom'],
+            'specialite' => $ordonnance['medecin_specialite'],
+            'email' => $ordonnance['medecin_email'],
+            'telephone' => $ordonnance['medecin_telephone']
         ],
         'rdv' => isset($ordonnance['idRDV']) && $ordonnance['idRDV'] !== null ? [
             'idRDV' => (int) $ordonnance['idRDV'],
@@ -145,6 +199,6 @@ try {
     error_log('Get ordonnance error: ' . $e->getMessage());
     respond(500, [
         'success' => false,
-        'message' => 'Server error'
+        'message' => 'Erreur serveur.'
     ]);
 }
