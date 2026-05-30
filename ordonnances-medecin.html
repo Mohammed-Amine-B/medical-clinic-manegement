@@ -76,6 +76,20 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
 .view-btn:hover{background:var(--gold);color:var(--white);}
 .print-btn{background:var(--blue-bg);color:var(--blue);}
 .print-btn:hover{background:var(--blue);color:var(--white);}
+.btn-secondary{height:40px;padding:0 18px;background:transparent;color:var(--navy);border:1.5px solid #E8E6E0;border-radius:10px;font-size:13px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s;display:flex;align-items:center;gap:8px;text-decoration:none;}
+.btn-secondary:hover{border-color:var(--navy);background:var(--surface);}
+.create-header-actions{display:flex;align-items:center;justify-content:flex-end;gap:10px;flex-wrap:wrap;}
+.create-action-btn{height:40px;padding:0 16px;border-radius:10px;font-size:13px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s;border:none;display:flex;align-items:center;gap:8px;white-space:nowrap;}
+.create-action-btn:disabled{opacity:0.65;cursor:wait;transform:none;box-shadow:none;}
+.create-action-btn.gold{background:var(--gold);color:var(--navy);}
+.create-action-btn.gold:hover:not(:disabled){background:var(--gold-light);}
+.create-action-btn.navy{background:var(--navy);color:var(--white);}
+.create-action-btn.navy:hover:not(:disabled){background:var(--navy-light);box-shadow:0 6px 16px rgba(10,22,40,0.2);}
+.create-action-btn.ghost{background:transparent;border:1.5px solid #E8E6E0;color:var(--muted);}
+.create-action-btn.ghost:hover:not(:disabled){border-color:var(--navy);color:var(--navy);background:var(--surface);}
+.view-hidden{display:none !important;}
+.create-panel{background:var(--surface);border-radius:13px;border:1px solid rgba(0,0,0,0.05);overflow:hidden;animation:fadeUp 0.35s ease both;}
+.create-frame{display:block;width:100%;height:calc(100vh - 230px);min-height:640px;border:none;background:var(--bg);}
 #toast{position:fixed;bottom:24px;right:24px;background:var(--navy);color:var(--white);padding:12px 18px;border-radius:10px;font-size:13px;z-index:999;opacity:0;transform:translateY(16px);transition:all 0.3s;pointer-events:none;border-left:3px solid var(--gold);}
 #toast.success{border-left-color:var(--green);}
 #toast.error{border-left-color:var(--red);}
@@ -149,14 +163,13 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
     </div>
 
     <div class="content">
+      <div id="listView">
       <div class="page-header">
         <div class="page-header-left">
-          <h1>Mes ordonnances — <em>Historique</em></h1>
-          <p>Liste des ordonnances enregistrées dans la base de données</p>
+          <h1>Mes <em>ordonnances</em></h1>
+          <p>Liste des ordonnances créées avec votre compte médecin</p>
         </div>
-        <a class="btn-primary" href="lys-medical-ordonnance.html">
-          Nouvelle ordonnance
-        </a>
+        <button class="btn-primary" type="button" id="newOrdonnanceBtn">+ Nouvelle ordonnance</button>
       </div>
 
       <div class="patient-table-section">
@@ -167,9 +180,9 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
         <table class="ptable">
           <thead>
             <tr>
+              <th>N° ordonnance</th>
               <th>Patient</th>
               <th>Date</th>
-              <th>N° ordonnance</th>
               <th>Type</th>
               <th>Statut</th>
               <th>Actions</th>
@@ -181,6 +194,25 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
             </tr>
           </tbody>
         </table>
+      </div>
+      </div>
+
+      <div id="createView" class="view-hidden">
+        <div class="page-header">
+          <div class="page-header-left">
+            <h1>Nouvelle <em>ordonnance</em></h1>
+            <p>Créez une ordonnance sans quitter l'espace Ordonnances</p>
+          </div>
+          <div class="create-header-actions">
+            <button class="create-action-btn ghost" type="button" id="printCreateBtn">Imprimer / PDF</button>
+            <button class="create-action-btn gold" type="button" id="saveCreateBtn">Enregistrer</button>
+            <button class="create-action-btn navy" type="button" id="signCreateBtn">Signer & Valider</button>
+            <button class="btn-secondary" type="button" id="backToListBtn">← Retour à la liste</button>
+          </div>
+        </div>
+        <div class="create-panel">
+          <iframe class="create-frame" id="createOrdonnanceFrame" title="Nouvelle ordonnance"></iframe>
+        </div>
       </div>
     </div>
   </div>
@@ -239,6 +271,7 @@ function renderOrdonnances(data) {
 
     return `
       <tr>
+        <td>${escapeHtml(o.numeroOrdonnance || '—')}</td>
         <td>
           <div class="p-name">
             <div class="patient-avatar">${escapeHtml(getInitials(o))}</div>
@@ -246,7 +279,6 @@ function renderOrdonnances(data) {
           </div>
         </td>
         <td>${escapeHtml(o.date || '—')}</td>
-        <td>${escapeHtml(o.numeroOrdonnance || '—')}</td>
         <td>${escapeHtml(o.typeOrdonnance || '—')}</td>
         <td><span class="badge ${getStatusClass(statut)}">${escapeHtml(statut)}</span></td>
         <td style="display:flex;gap:6px;">
@@ -268,6 +300,74 @@ function renderOrdonnances(data) {
       window.location.href = `ordonnance.html?id=${encodeURIComponent(btn.dataset.id)}&print=1`;
     });
   });
+}
+
+async function loadOrdonnances() {
+  try {
+    const res = await fetch('backend/ordonnance/get_my_ordonnances.php', { credentials:'same-origin' });
+    const data = await res.json();
+    renderOrdonnances(data);
+  } catch (e) {
+    renderOrdonnances({success:false, message:'Erreur chargement ordonnances'});
+  }
+}
+
+function showListView() {
+  document.getElementById('createView').classList.add('view-hidden');
+  document.getElementById('listView').classList.remove('view-hidden');
+  setCreateActionLoading(false);
+}
+
+function showCreateView() {
+  const frame = document.getElementById('createOrdonnanceFrame');
+  if (!frame.src) {
+    frame.src = 'lys-medical-ordonnance.html?embedded=1';
+  }
+  document.getElementById('listView').classList.add('view-hidden');
+  document.getElementById('createView').classList.remove('view-hidden');
+  setCreateActionLoading(false);
+}
+
+function getCreateFrameWindow() {
+  const frame = document.getElementById('createOrdonnanceFrame');
+  return frame && frame.contentWindow ? frame.contentWindow : null;
+}
+
+function setCreateActionLoading(isLoading) {
+  ['saveCreateBtn', 'signCreateBtn', 'printCreateBtn'].forEach((id) => {
+    const btn = document.getElementById(id);
+    if (btn) btn.disabled = isLoading;
+  });
+}
+
+async function saveCreateOrdonnance(statut) {
+  const frameWindow = getCreateFrameWindow();
+  if (!frameWindow || typeof frameWindow.saveOrdonnance !== 'function') {
+    showToast('Le formulaire de création est encore en chargement.', 'error');
+    return;
+  }
+
+  setCreateActionLoading(true);
+  try {
+    const saved = await frameWindow.saveOrdonnance(statut);
+    if (!saved) {
+      setCreateActionLoading(false);
+    }
+  } catch (error) {
+    setCreateActionLoading(false);
+    showToast('Erreur enregistrement ordonnance', 'error');
+  }
+}
+
+function printCreateOrdonnance() {
+  const frameWindow = getCreateFrameWindow();
+  if (!frameWindow) {
+    showToast('Le formulaire de création est encore en chargement.', 'error');
+    return;
+  }
+
+  frameWindow.focus();
+  frameWindow.print();
 }
 
 function showToast(msg, type = 'info') {
@@ -318,10 +418,24 @@ document.addEventListener('DOMContentLoaded', async () => {
   const canLoad = await checkSession();
   if(!canLoad) return;
 
-  fetch('backend/ordonnance/get_my_ordonnances.php', { credentials:'same-origin' })
-    .then(r => r.json())
-    .then(data => renderOrdonnances(data))
-    .catch(() => renderOrdonnances({success:false, message:'Erreur chargement ordonnances'}));
+  document.getElementById('newOrdonnanceBtn').addEventListener('click', showCreateView);
+  document.getElementById('backToListBtn').addEventListener('click', showListView);
+  document.getElementById('saveCreateBtn').addEventListener('click', () => saveCreateOrdonnance('brouillon'));
+  document.getElementById('signCreateBtn').addEventListener('click', () => saveCreateOrdonnance('validee'));
+  document.getElementById('printCreateBtn').addEventListener('click', printCreateOrdonnance);
+  await loadOrdonnances();
+});
+
+window.addEventListener('message', async (event) => {
+  if (event.origin !== window.location.origin || !event.data || event.data.type !== 'ordonnance:saved') {
+    return;
+  }
+
+  showToast('Ordonnance enregistrée', 'success');
+  showListView();
+  setCreateActionLoading(false);
+  document.getElementById('createOrdonnanceFrame').src = '';
+  await loadOrdonnances();
 });
 </script>
 </body>

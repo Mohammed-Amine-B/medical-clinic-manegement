@@ -45,7 +45,7 @@ $dateOrdonnance = trim((string) ($data['date'] ?? $data['dateOrdonnance'] ?? '')
 $typeOrdonnance = trim((string) ($data['type'] ?? $data['typeOrdonnance'] ?? ''));
 $statut = trim((string) ($data['statut'] ?? 'brouillon'));
 $numeroOrdonnance = trim((string) ($data['numeroOrdonnance'] ?? $data['numero'] ?? ''));
-$medicaments = $data['medicaments'] ?? null;
+$medicaments = $data['items'] ?? $data['medicaments'] ?? null;
 
 if ($patientIdRaw === null || $patientIdRaw === '' || !ctype_digit((string) $patientIdRaw)) {
     respond(400, [
@@ -115,16 +115,6 @@ function tableColumns(PDO $pdo, string $table): array
         $columns[(string) $column['Field']] = true;
     }
     return $columns;
-}
-
-function ensureColumn(PDO $pdo, string $table, array &$columns, string $column, string $definition): void
-{
-    if (isset($columns[$column])) {
-        return;
-    }
-
-    $pdo->exec('ALTER TABLE `' . str_replace('`', '``', $table) . '` ADD COLUMN `' . str_replace('`', '``', $column) . '` ' . $definition);
-    $columns[$column] = true;
 }
 
 try {
@@ -204,41 +194,36 @@ try {
     }
 
     $columns = tableColumns($pdo, 'ordonnance');
-    ensureColumn($pdo, 'ordonnance', $columns, 'idPatient', 'INT(11) NULL');
-    ensureColumn($pdo, 'ordonnance', $columns, 'idMedecin', 'INT(11) NULL');
-    ensureColumn($pdo, 'ordonnance', $columns, 'idRDV', 'INT(11) NULL');
+    foreach (['idPatient', 'idMedecin', 'statut', 'numeroOrdonnance'] as $requiredColumn) {
+        if (!isset($columns[$requiredColumn])) {
+            throw new RuntimeException('Missing ordonnance column: ' . $requiredColumn);
+        }
+    }
 
-    $dateColumn = isset($columns['dateOrdonnance']) ? 'dateOrdonnance' : (isset($columns['date']) ? 'date' : 'dateOrdonnance');
-    ensureColumn($pdo, 'ordonnance', $columns, $dateColumn, 'DATE NULL');
+    $dateColumn = isset($columns['dateOrdonnance']) ? 'dateOrdonnance' : (isset($columns['date']) ? 'date' : null);
+    if ($dateColumn === null) {
+        throw new RuntimeException('Missing ordonnance date column');
+    }
 
-    $typeColumn = isset($columns['typeOrdonnance']) ? 'typeOrdonnance' : (isset($columns['type']) ? 'type' : 'typeOrdonnance');
-    ensureColumn($pdo, 'ordonnance', $columns, $typeColumn, 'VARCHAR(50) NULL');
-    ensureColumn($pdo, 'ordonnance', $columns, 'statut', "VARCHAR(30) NOT NULL DEFAULT 'brouillon'");
-    ensureColumn($pdo, 'ordonnance', $columns, 'numeroOrdonnance', 'VARCHAR(80) NULL');
+    $typeColumn = isset($columns['typeOrdonnance']) ? 'typeOrdonnance' : (isset($columns['type']) ? 'type' : null);
+    if ($typeColumn === null) {
+        throw new RuntimeException('Missing ordonnance type column');
+    }
 
-    $pdo->exec(
-        'CREATE TABLE IF NOT EXISTS ordonnance_items (
-            idOrdonnanceItem INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-            idOrdonnance INT(11) NOT NULL,
-            nom VARCHAR(150) NOT NULL,
-            posologie VARCHAR(255) NULL,
-            frequence VARCHAR(255) NULL,
-            duree VARCHAR(100) NULL,
-            note TEXT NULL,
-            INDEX idx_ordonnance_items_ordonnance (idOrdonnance)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4'
-    );
-
-    $insertColumns = ['idPatient', 'idMedecin', 'idRDV', $dateColumn, $typeColumn, 'statut', 'numeroOrdonnance'];
+    $insertColumns = ['idPatient', 'idMedecin', $dateColumn, $typeColumn, 'statut', 'numeroOrdonnance'];
     $values = [
         'idPatient' => (int) $patientIdRaw,
         'idMedecin' => (int) $medecin['idMedecin'],
-        'idRDV' => $idRDV !== null ? $idRDV : null,
         $dateColumn => $dateOrdonnance,
         $typeColumn => $typeOrdonnance,
         'statut' => $statut,
         'numeroOrdonnance' => $numeroOrdonnance !== '' ? $numeroOrdonnance : null
     ];
+
+    if (isset($columns['idRDV'])) {
+        $insertColumns[] = 'idRDV';
+        $values['idRDV'] = $idRDV !== null ? $idRDV : null;
+    }
 
     if (isset($columns['nomMedicament'])) {
         $insertColumns[] = 'nomMedicament';

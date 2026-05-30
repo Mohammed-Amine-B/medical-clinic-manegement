@@ -153,6 +153,9 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
 .dl-del{width:26px;height:26px;border-radius:7px;border:none;background:rgba(224,80,80,0.08);color:var(--red);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;}
 .dl-del:hover{background:var(--red);color:var(--white);}
 .dl-del svg{width:12px;height:12px;}
+.dl-actions{display:flex;align-items:center;gap:6px;}
+.dl-edit{height:26px;padding:0 10px;border-radius:7px;border:none;background:var(--gold-pale);color:var(--navy);font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;cursor:pointer;transition:all 0.2s;}
+.dl-edit:hover{background:var(--gold);color:var(--white);}
 .dl-body{padding:12px 14px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
 .dl-field label{font-size:9.5px;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);font-weight:500;display:block;margin-bottom:5px;}
 .dl-field input,.dl-field select{
@@ -177,6 +180,8 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
 }
 .add-drug-btn:hover{border-color:var(--gold);color:var(--navy);background:var(--gold-pale);}
 .add-drug-btn svg{width:15px;height:15px;}
+.cancel-edit-btn{display:none;margin-top:10px;border:none;background:transparent;color:var(--red);font-family:'DM Sans',sans-serif;font-size:12.5px;cursor:pointer;padding:4px 2px;}
+.cancel-edit-btn:hover{text-decoration:underline;}
 
 /* Conseils */
 .conseil-chip{
@@ -307,12 +312,12 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
 
 /* PRINT */
 @media print{
-  body{overflow:visible;background:white;}
-  .app{display:block;height:auto;}
+  @page{margin:12mm;}
+  html,body{height:auto !important;overflow:visible !important;background:white !important;}
+  .app,.main,.split{display:block !important;height:auto !important;overflow:visible !important;}
   .sidebar,.topbar,.editor-pane,.preview-label{display:none !important;}
-  .split{display:block;}
-  .preview-pane{background:white;padding:0;}
-  .rx-doc{max-width:100%;box-shadow:none;border-radius:0;}
+  .preview-pane{display:flex !important;background:white !important;padding:0 !important;overflow:visible !important;align-items:center !important;}
+  .rx-doc{display:block !important;width:100% !important;max-width:190mm !important;box-shadow:none !important;border-radius:0 !important;margin:0 auto !important;}
   .rx-watermark{display:none;}
 }
 
@@ -326,6 +331,9 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
   .topbar{padding:0 14px;}
   .editor-pane{padding:14px;}
 }
+body.embedded .sidebar,body.embedded .topbar{display:none;}
+body.embedded .main{width:100%;}
+body.embedded .split{height:100vh;}
 </style>
 </head>
 <body>
@@ -351,13 +359,9 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
       <svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="7" r="3.5" stroke="currentColor" stroke-width="1.3"/><path d="M3 17c0-3.314 3.134-6 7-6s7 2.686 7 6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
       Patients
     </a>
-    <a href="ordonnances-medecin.html" class="nav-item">
+    <a href="ordonnances-medecin.html" class="nav-item active">
       <svg viewBox="0 0 20 20" fill="none"><path d="M5 2h10a1 1 0 011 1v14a1 1 0 01-1 1H5a1 1 0 01-1-1V3a1 1 0 011-1z" stroke="currentColor" stroke-width="1.3"/><path d="M7 7h6M7 10h6M7 13h4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
       Ordonnances
-    </a>
-    <a href="lys-medical-ordonnance.html" class="nav-item active">
-      <svg viewBox="0 0 20 20" fill="none"><path d="M5 2h10a1 1 0 011 1v14a1 1 0 01-1 1H5a1 1 0 01-1-1V3a1 1 0 011-1z" stroke="currentColor" stroke-width="1.3"/><path d="M10 6v8M6 10h8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
-      Nouvelle ordonnance
     </a>
     <a href="notifications-medecin.html" class="nav-item">
       <svg viewBox="0 0 20 20" fill="none"><path d="M10 2a6 6 0 016 6c0 4 2 5 2 5H2s2-1 2-5a6 6 0 016-6z" stroke="currentColor" stroke-width="1.3"/><path d="M8 17a2 2 0 004 0" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
@@ -406,7 +410,7 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
         <svg viewBox="0 0 16 16" fill="none"><path d="M3 3l10 10M13 3L3 13" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
         Effacer
       </button>
-      <button class="tb-btn ghost" onclick="window.print()">
+      <button class="tb-btn ghost" onclick="window.print()" title="Vous pouvez choisir Enregistrer en PDF dans la fenêtre d’impression.">
         <svg viewBox="0 0 16 16" fill="none"><rect x="3" y="6" width="10" height="7" rx="1" stroke="currentColor" stroke-width="1.1"/><path d="M5 6V3h6v3M5 10h6M5 12h4" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>
         Imprimer
       </button>
@@ -414,7 +418,7 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
         <svg viewBox="0 0 16 16" fill="none"><path d="M2 3a1 1 0 011-1h8l3 3v8a1 1 0 01-1 1H3a1 1 0 01-1-1V3z" stroke="currentColor" stroke-width="1.1"/><path d="M5 2v4h6V2M5 9h6M5 11h4" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>
         Enregistrer
       </button>
-      <button class="tb-btn primary" onclick="signRx()">
+      <button class="tb-btn primary" type="button" id="signOrdonnanceBtn">
         <svg viewBox="0 0 16 16" fill="none"><path d="M2 12c2-1 4-5 5-5s1 2 2 2 3-4 4-4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M2 14h12" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>
         Signer & Valider
       </button>
@@ -483,20 +487,75 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
         </div>
         <div class="esect-body">
 
-          <!-- Drug search -->
-          <div class="drug-search-wrap" id="drugSearchWrap">
-            <svg class="drug-search-ico" viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="4.5" stroke="currentColor" stroke-width="1.2"/><path d="M10.5 10.5l3 3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
-            <input class="drug-search" type="text" id="drugSearch" placeholder="Rechercher un médicament…" oninput="filterDrugs(this.value)" onkeydown="searchKeyDown(event)">
-            <div class="drug-dropdown" id="drugDropdown"></div>
+          <div class="frow">
+            <div class="field">
+              <label>Nom du médicament</label>
+              <input class="finput no-icon" type="text" id="medNom" placeholder="ex: Paracétamol 1g">
+            </div>
+            <div class="field">
+              <label>Posologie</label>
+              <select class="finput no-icon" id="medPosologie" onchange="toggleMedicationOther('medPosologie','medPosologieOther')">
+                <option value="">Choisir une posologie</option>
+                <option value="1 comprimé">1 comprimé</option>
+                <option value="2 comprimés">2 comprimés</option>
+                <option value="1 gélule">1 gélule</option>
+                <option value="2 gélules">2 gélules</option>
+                <option value="1 cuillère">1 cuillère</option>
+                <option value="5 ml">5 ml</option>
+                <option value="10 ml">10 ml</option>
+                <option value="1 sachet">1 sachet</option>
+                <option value="1 application">1 application</option>
+                <option value="Autre">Autre</option>
+              </select>
+              <input class="finput no-icon" type="text" id="medPosologieOther" placeholder="Préciser la posologie" style="display:none;margin-top:8px;">
+            </div>
+          </div>
+          <div class="frow3">
+            <div class="field">
+              <label>Fréquence</label>
+              <select class="finput no-icon" id="medFrequence" onchange="toggleMedicationOther('medFrequence','medFrequenceOther')">
+                <option value="">Choisir une fréquence</option>
+                <option value="1 fois par jour">1 fois par jour</option>
+                <option value="2 fois par jour">2 fois par jour</option>
+                <option value="3 fois par jour">3 fois par jour</option>
+                <option value="Matin">Matin</option>
+                <option value="Midi">Midi</option>
+                <option value="Soir">Soir</option>
+                <option value="Matin et soir">Matin et soir</option>
+                <option value="Toutes les 8 heures">Toutes les 8 heures</option>
+                <option value="Si douleur">Si douleur</option>
+                <option value="Autre">Autre</option>
+              </select>
+              <input class="finput no-icon" type="text" id="medFrequenceOther" placeholder="Préciser la fréquence" style="display:none;margin-top:8px;">
+            </div>
+            <div class="field">
+              <label>Durée</label>
+              <select class="finput no-icon" id="medDuree" onchange="toggleMedicationOther('medDuree','medDureeOther')">
+                <option value="">Choisir une durée</option>
+                <option value="3 jours">3 jours</option>
+                <option value="5 jours">5 jours</option>
+                <option value="7 jours">7 jours</option>
+                <option value="10 jours">10 jours</option>
+                <option value="15 jours">15 jours</option>
+                <option value="1 mois">1 mois</option>
+                <option value="3 mois">3 mois</option>
+                <option value="Autre">Autre</option>
+              </select>
+              <input class="finput no-icon" type="text" id="medDureeOther" placeholder="Préciser la durée" style="display:none;margin-top:8px;">
+            </div>
+            <div class="field">
+              <label>Note / Instructions</label>
+              <textarea class="finput no-icon" id="medNote" placeholder="ex: après repas" style="height:78px;padding-top:10px;resize:vertical;"></textarea>
+            </div>
           </div>
 
-          <!-- Drug lines -->
-          <div class="drug-lines" id="drugLines"></div>
-
-          <button class="add-drug-btn" onclick="focusDrugSearch()">
+          <button class="add-drug-btn" type="button" id="medSubmitBtn" onclick="addMedicationItem()">
             <svg viewBox="0 0 16 16" fill="none"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
-            Ajouter un médicament
+            <span id="medSubmitText">Ajouter le médicament</span>
           </button>
+          <button class="cancel-edit-btn" type="button" id="cancelMedicationEditBtn" onclick="cancelMedicationEdit()">Annuler la modification</button>
+
+          <div class="drug-lines" id="medicationItems"></div>
         </div>
       </div>
 
@@ -586,42 +645,19 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
 <div id="toast"></div>
 
 <script>
-// ── DRUG DATABASE ──
-const DRUGS = [
-  {name:'Paracétamol 1g',cat:'Antalgique',dose:'1 cp',freq:'toutes les 6h si douleur',dur:'5 jours'},
-  {name:'Ibuprofène 400mg',cat:'Anti-inflammatoire',dose:'1 cp',freq:'3 fois/jour au repas',dur:'5 jours'},
-  {name:'Amoxicilline 1g',cat:'Antibiotique',dose:'1 cp',freq:'2 fois/jour',dur:'7 jours'},
-  {name:'Azithromycine 500mg',cat:'Antibiotique',dose:'1 cp',freq:'1 fois/jour',dur:'3 jours'},
-  {name:'Oméprazole 20mg',cat:'IPP',dose:'1 gél',freq:'matin à jeun',dur:'1 mois'},
-  {name:'Ventoline 100mcg',cat:'Bronchodilatateur',dose:'2 bouffées',freq:'si crise',dur:'Illimitée'},
-  {name:'Acide folique 0,4mg',cat:'Vitamine B9',dose:'1 cp',freq:'1 fois/jour matin',dur:'3 mois'},
-  {name:'Fer 80mg',cat:'Supplément',dose:'1 cp',freq:'à distance des repas',dur:'3 mois'},
-  {name:'Calcium 500mg',cat:'Minéral',dose:'1 cp',freq:'le soir',dur:'3 mois'},
-  {name:'Doliprane 500mg',cat:'Antalgique',dose:'1–2 cp',freq:'toutes les 4–6h',dur:'5 jours'},
-  {name:'Loratadine 10mg',cat:'Antihistaminique',dose:'1 cp',freq:'1 fois/jour',dur:'1 mois'},
-  {name:'Métronidazole 500mg',cat:'Antiparasitaire',dose:'1 cp',freq:'3 fois/jour au repas',dur:'7 jours'},
-  {name:'Vitamine D3 1000 UI',cat:'Vitamine',dose:'1 cp',freq:'1 fois/jour',dur:'3 mois'},
-  {name:'Prednisolone 20mg',cat:'Corticoïde',dose:'1 cp',freq:'matin au repas',dur:'7 jours'},
-  {name:'Cétirizine 10mg',cat:'Antihistaminique',dose:'1 cp',freq:'le soir',dur:'1 mois'},
-  {name:'Métformine 500mg',cat:'Antidiabétique',dose:'1 cp',freq:'au repas',dur:'3 mois'},
-  {name:'Salbutamol spray',cat:'Bronchodilatateur',dose:'2 bouffées',freq:'si besoin',dur:'3 mois'},
-  {name:'Bactrim Forte',cat:'Antibiotique',dose:'1 cp',freq:'2 fois/jour',dur:'7 jours'},
-];
+const isEmbedded = new URLSearchParams(window.location.search).get('embedded') === '1';
+if (isEmbedded) {
+  document.body.classList.add('embedded');
+}
 
-let drugLines = [];
+let ordonnanceItems = [];
 let conseils = [];
 let patients = [];
 let selectedPatient = null;
 let linkedRdvId = null;
+let isSavingOrdonnance = false;
+let editingItemIndex = null;
 
-// Pre-populate 2 drugs
-drugLines = [
-  {id:1,name:'Acide folique 0,4mg',dose:'1 cp',freq:'1 fois/jour matin',dur:'3 mois',note:''},
-  {id:2,name:'Fer 80mg',dose:'1 cp',freq:'à distance des repas',dur:'3 mois',note:'Peut colorer les selles'},
-];
-let nextId = 3;
-
-// ── DRUG SEARCH ──
 function escapeHtml(value) {
   return String(value ?? '').replace(/[&<>"']/g, ch => ({
     '&':'&amp;',
@@ -721,83 +757,180 @@ function handlePatientChange() {
   renderPreview();
 }
 
-function filterDrugs(val) {
-  const dd = document.getElementById('drugDropdown');
-  if(!val.trim()) { dd.classList.remove('open'); return; }
-  const results = DRUGS.filter(d => d.name.toLowerCase().includes(val.toLowerCase())).slice(0,6);
-  if(!results.length) { dd.classList.remove('open'); return; }
-  dd.innerHTML = results.map(d =>
-    `<div class="dd-item" onclick="addDrugFromSearch('${d.name}','${d.dose}','${d.freq}','${d.dur}')">
-      <div><div class="dd-name">${d.name}</div><div class="dd-cat">${d.cat}</div></div>
-      <span class="dd-add">+ Ajouter</span>
-    </div>`
-  ).join('');
-  dd.classList.add('open');
+function getMedicationInputValue(id) {
+  return document.getElementById(id).value.trim();
 }
 
-function searchKeyDown(e) {
-  if(e.key === 'Escape') document.getElementById('drugDropdown').classList.remove('open');
+function getMedicationSelectValue(selectId, otherId) {
+  const select = document.getElementById(selectId);
+  if (select.value === 'Autre') {
+    return getMedicationInputValue(otherId);
+  }
+  return select.value;
 }
 
-document.addEventListener('click', e => {
-  if(!document.getElementById('drugSearchWrap').contains(e.target))
-    document.getElementById('drugDropdown').classList.remove('open');
-});
+function selectHasValue(select, value) {
+  return Array.from(select.options).some((option) => option.value === value);
+}
 
-function addDrugFromSearch(name, dose, freq, dur) {
-  drugLines.push({id:nextId++,name,dose,freq,dur,note:''});
-  document.getElementById('drugSearch').value = '';
-  document.getElementById('drugDropdown').classList.remove('open');
-  renderDrugLines();
+function setMedicationSelectValue(selectId, otherId, value) {
+  const select = document.getElementById(selectId);
+  const other = document.getElementById(otherId);
+
+  if (!value) {
+    select.value = '';
+    other.value = '';
+    other.style.display = 'none';
+    return;
+  }
+
+  if (selectHasValue(select, value)) {
+    select.value = value;
+    other.value = '';
+    other.style.display = 'none';
+    return;
+  }
+
+  select.value = 'Autre';
+  other.value = value;
+  other.style.display = 'block';
+}
+
+function toggleMedicationOther(selectId, otherId) {
+  const select = document.getElementById(selectId);
+  const other = document.getElementById(otherId);
+  const isOther = select.value === 'Autre';
+  other.style.display = isOther ? 'block' : 'none';
+  if (!isOther) other.value = '';
+}
+
+function clearMedicationInputs() {
+  [
+    'medNom',
+    'medPosologie',
+    'medPosologieOther',
+    'medFrequence',
+    'medFrequenceOther',
+    'medDuree',
+    'medDureeOther',
+    'medNote'
+  ].forEach((id) => {
+    document.getElementById(id).value = '';
+  });
+  ['medPosologieOther', 'medFrequenceOther', 'medDureeOther'].forEach((id) => {
+    document.getElementById(id).style.display = 'none';
+  });
+  document.getElementById('medNom').focus();
+}
+
+function setMedicationEditMode(isEditing) {
+  document.getElementById('medSubmitText').textContent = isEditing ? 'Mettre à jour le médicament' : 'Ajouter le médicament';
+  document.getElementById('cancelMedicationEditBtn').style.display = isEditing ? 'inline-block' : 'none';
+}
+
+function addMedicationItem() {
+  const item = {
+    nom: getMedicationInputValue('medNom'),
+    posologie: getMedicationSelectValue('medPosologie', 'medPosologieOther'),
+    frequence: getMedicationSelectValue('medFrequence', 'medFrequenceOther'),
+    duree: getMedicationSelectValue('medDuree', 'medDureeOther'),
+    note: getMedicationInputValue('medNote')
+  };
+
+  if (!item.nom) {
+    showToast('Veuillez saisir le nom du médicament.', 'error');
+    document.getElementById('medNom').focus();
+    return;
+  }
+
+  if (editingItemIndex !== null) {
+    ordonnanceItems[editingItemIndex] = item;
+    editingItemIndex = null;
+    setMedicationEditMode(false);
+  } else {
+    ordonnanceItems.push(item);
+  }
+
+  renderMedicationItems();
   renderPreview();
+  clearMedicationInputs();
 }
 
-function focusDrugSearch() {
-  document.getElementById('drugSearch').focus();
+function editMedicationItem(index) {
+  const item = ordonnanceItems[index];
+  if (!item) return;
+
+  editingItemIndex = index;
+  document.getElementById('medNom').value = item.nom || '';
+  setMedicationSelectValue('medPosologie', 'medPosologieOther', item.posologie || '');
+  setMedicationSelectValue('medFrequence', 'medFrequenceOther', item.frequence || '');
+  setMedicationSelectValue('medDuree', 'medDureeOther', item.duree || '');
+  document.getElementById('medNote').value = item.note || '';
+  setMedicationEditMode(true);
+  document.getElementById('medNom').focus();
 }
 
-// ── DRUG LINES ──
-function renderDrugLines() {
-  const container = document.getElementById('drugLines');
-  container.innerHTML = drugLines.map((d,i) => `
-    <div class="drug-line" id="dl-${d.id}">
+function cancelMedicationEdit() {
+  editingItemIndex = null;
+  setMedicationEditMode(false);
+  clearMedicationInputs();
+}
+
+function renderMedicationItems() {
+  const container = document.getElementById('medicationItems');
+  if (!ordonnanceItems.length) {
+    container.innerHTML = '<div style="color:var(--text-muted);font-size:12.5px;padding:10px 2px;">Aucun médicament ajouté.</div>';
+    return;
+  }
+
+  container.innerHTML = ordonnanceItems.map((item, i) => `
+    <div class="drug-line">
       <div class="dl-header">
         <div class="dl-num">${i+1}</div>
-        <div class="dl-name">${d.name}</div>
-        <button class="dl-del" onclick="removeDrug(${d.id})">
-          <svg viewBox="0 0 12 12" fill="none"><path d="M2 2l8 8M10 2l-8 8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
-        </button>
-      </div>
-      <div class="dl-body">
-        <div class="dl-field">
-          <label>Posologie</label>
-          <input type="text" value="${d.dose}" placeholder="ex: 1 cp" oninput="updateDrug(${d.id},'dose',this.value)">
-        </div>
-        <div class="dl-field">
-          <label>Fréquence</label>
-          <input type="text" value="${d.freq}" placeholder="ex: 2x/jour" oninput="updateDrug(${d.id},'freq',this.value)">
-        </div>
-        <div class="dl-field">
-          <label>Durée</label>
-          <input type="text" value="${d.dur}" placeholder="ex: 7 jours" oninput="updateDrug(${d.id},'dur',this.value)">
-        </div>
-        <div class="dl-note">
-          <label>Note complémentaire</label>
-          <input type="text" value="${d.note}" placeholder="Instruction particulière…" oninput="updateDrug(${d.id},'note',this.value)">
+        <div class="dl-name">${escapeHtml(item.nom)}</div>
+        <div class="dl-actions">
+          <button class="dl-edit" type="button" onclick="editMedicationItem(${i})">Modifier</button>
+          <button class="dl-del" type="button" onclick="removeMedicationItem(${i})" aria-label="Supprimer ce médicament">
+            <svg viewBox="0 0 12 12" fill="none"><path d="M2 2l8 8M10 2l-8 8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+          </button>
         </div>
       </div>
+      ${renderMedicationItemDetails(item)}
     </div>
   `).join('');
 }
 
-function updateDrug(id, field, val) {
-  const d = drugLines.find(d=>d.id===id);
-  if(d) { d[field]=val; renderPreview(); }
+function renderMedicationItemDetails(item) {
+  const details = [
+    ['Posologie', item.posologie],
+    ['Fréquence', item.frequence],
+    ['Durée', item.duree],
+    ['Note / Instructions', item.note]
+  ].filter(([, value]) => value);
+
+  if (!details.length) return '';
+
+  return `
+    <div class="dl-body">
+      ${details.map(([label, value]) => `
+        <div class="dl-field">
+          <label>${label}</label>
+          <input type="text" value="${escapeHtml(value)}" readonly>
+        </div>
+      `).join('')}
+    </div>
+  `;
 }
 
-function removeDrug(id) {
-  drugLines = drugLines.filter(d=>d.id!==id);
-  renderDrugLines();
+function removeMedicationItem(index) {
+  if (editingItemIndex === index) {
+    cancelMedicationEdit();
+  } else if (editingItemIndex !== null && index < editingItemIndex) {
+    editingItemIndex -= 1;
+  }
+
+  ordonnanceItems.splice(index, 1);
+  renderMedicationItems();
   renderPreview();
 }
 
@@ -828,13 +961,20 @@ function renderPreview() {
     ? `N° #PT-${String(selectedPatient.idPatient).padStart(4, '0')}${selectedPatient.telephone ? ' · ' + selectedPatient.telephone : ''}`
     : 'Selectionner un patient avant enregistrement';
 
-  const drugsHTML = drugLines.length ? drugLines.map((d,i) => `
+  const drugsHTML = ordonnanceItems.length ? ordonnanceItems.map((item,i) => {
+    const details = [
+      item.posologie,
+      item.frequence,
+      item.duree
+    ].filter(Boolean).map(escapeHtml);
+    return `
     <div class="rx-drug-entry">
-      <div class="rx-d-name"><span class="rx-d-num">${i+1}</span>${d.name}</div>
-      <div class="rx-d-posologie">${d.dose} — ${d.freq} — ${d.dur}</div>
-      ${d.note ? `<div class="rx-d-note">${d.note}</div>` : ''}
+      <div class="rx-d-name"><span class="rx-d-num">${i+1}</span>${escapeHtml(item.nom)}</div>
+      ${details.length ? `<div class="rx-d-posologie">${details.join(' — ')}</div>` : ''}
+      ${item.note ? `<div class="rx-d-note">${escapeHtml(item.note)}</div>` : ''}
     </div>
-  `).join('') : '<div class="rx-empty-drugs">Aucun médicament ajouté</div>';
+  `;
+  }).join('') : '<div class="rx-empty-drugs">Aucun médicament ajouté.</div>';
 
   const renewText = renew === 'non' ? 'Non renouvelable' : `Renouvelable ${renew === 'illimite' ? 'indéfiniment' : renew+' fois'} — Délivrance ${delivery}`;
 
@@ -888,7 +1028,7 @@ function renderPreview() {
         <div class="rx-conseils">
           <div class="rx-conseils-label">Conseils & recommandations</div>
           <div class="rx-conseil-list">
-            ${allConseils.map(c=>`<div class="rx-conseil-item">${c}</div>`).join('')}
+            ${allConseils.map(c=>`<div class="rx-conseil-item">${escapeHtml(c)}</div>`).join('')}
           </div>
         </div>` : ''}
       <div style="margin-top:16px;font-size:11.5px;color:var(--text-muted);font-weight:300;">${renewText}</div>
@@ -916,26 +1056,33 @@ function renderPreview() {
 // ── ACTIONS ──
 function clearAll() {
   if(!confirm('Effacer toute l\'ordonnance ?')) return;
-  drugLines = []; conseils = [];
+  ordonnanceItems = []; conseils = [];
+  editingItemIndex = null;
+  setMedicationEditMode(false);
   document.querySelectorAll('.conseil-chip').forEach(c=>c.classList.remove('sel'));
   document.getElementById('freeNote').value='';
-  renderDrugLines(); renderPreview();
+  clearMedicationInputs();
+  renderMedicationItems(); renderPreview();
 }
 
-function collectOrdonnancePayload() {
+function collectOrdonnancePayload(statut = 'brouillon') {
+  const allConseils = document.getElementById('freeNote').value.trim()
+    ? [...conseils, document.getElementById('freeNote').value.trim()]
+    : conseils;
   const payload = {
     patient_id: document.getElementById('patientSelect').value,
+    idPatient: document.getElementById('patientSelect').value,
     date: document.getElementById('rxDate').value,
     type: document.getElementById('rxType').value,
+    typeOrdonnance: document.getElementById('rxType').value,
     numeroOrdonnance: document.getElementById('rxNum').value,
-    statut: 'brouillon',
-    medicaments: drugLines.map(drug => ({
-      nom: drug.name || '',
-      posologie: drug.dose || '',
-      frequence: drug.freq || '',
-      duree: drug.dur || '',
-      note: drug.note || ''
-    }))
+    renouvelable: document.getElementById('renew').value,
+    validite: document.getElementById('validity').value,
+    delivrance: document.getElementById('delivery').value,
+    recommandations: allConseils,
+    note: allConseils.join(' | '),
+    statut,
+    items: ordonnanceItems
   };
 
   if (linkedRdvId !== null) {
@@ -945,10 +1092,27 @@ function collectOrdonnancePayload() {
   return payload;
 }
 
-async function saveOrdonnance(){
-  const payload = collectOrdonnancePayload();
-  const btn = document.getElementById('saveOrdonnanceBtn');
-  btn.disabled = true;
+async function saveOrdonnance(statut = 'brouillon'){
+  if (isSavingOrdonnance) return false;
+
+  if (!document.getElementById('patientSelect').value) {
+    showToast('Veuillez sélectionner un patient.', 'error');
+    document.getElementById('patientSelect').focus();
+    return false;
+  }
+
+  if (!ordonnanceItems.length) {
+    showToast('Ajoutez au moins un médicament.', 'error');
+    document.getElementById('medNom').focus();
+    return false;
+  }
+
+  const payload = collectOrdonnancePayload(statut);
+  const saveBtn = document.getElementById('saveOrdonnanceBtn');
+  const signBtn = document.getElementById('signOrdonnanceBtn');
+  isSavingOrdonnance = true;
+  saveBtn.disabled = true;
+  signBtn.disabled = true;
 
   try {
     const res = await fetch('backend/ordonnance/create.php', {
@@ -962,14 +1126,21 @@ async function saveOrdonnance(){
 
     if(!res.ok || !data.success){
       showToast(data.message || 'Erreur enregistrement ordonnance', 'error');
-      return;
+      return false;
     }
 
-    showToast('Ordonnance enregistrée', 'success');
+    showToast(statut === 'validee' ? 'Ordonnance signée et validée' : 'Ordonnance enregistrée', 'success');
+    if (isEmbedded && window.parent && window.parent !== window) {
+      window.parent.postMessage({ type: 'ordonnance:saved', idOrdonnance: data.idOrdonnance }, window.location.origin);
+    }
+    return true;
   } catch (error) {
     showToast(error.message || 'Erreur enregistrement ordonnance', 'error');
+    return false;
   } finally {
-    btn.disabled = false;
+    isSavingOrdonnance = false;
+    saveBtn.disabled = false;
+    signBtn.disabled = false;
   }
 }
 
@@ -982,16 +1153,6 @@ function saveRx() {
     btn.innerHTML = `<svg viewBox="0 0 16 16" fill="none" width="13" height="13"><path d="M2 3a1 1 0 011-1h8l3 3v8a1 1 0 01-1 1H3a1 1 0 01-1-1V3z" stroke="currentColor" stroke-width="1.1"/></svg> Enregistrer`;
     btn.style.background=''; btn.style.color='';
   }, 2000);
-}
-
-function signRx() {
-  const dot = document.querySelector('.tb-dot');
-  const status = document.querySelector('.tb-status');
-  dot.style.background = 'var(--green)';
-  dot.style.animation = 'none';
-  status.querySelector('.tb-dot').style.background='var(--green)';
-  status.lastChild.textContent = ' Signée & validée';
-  status.style.color='var(--green)';
 }
 
 // ── INIT ──
@@ -1056,13 +1217,14 @@ if(logoutLink){
   });
 }
 
-document.getElementById('saveOrdonnanceBtn').addEventListener('click', saveOrdonnance);
+document.getElementById('saveOrdonnanceBtn').addEventListener('click', () => saveOrdonnance('brouillon'));
+document.getElementById('signOrdonnanceBtn').addEventListener('click', () => saveOrdonnance('validee'));
 window.addEventListener('DOMContentLoaded', async function(){
   const canLoad = await checkSession();
   if(!canLoad) return;
   await loadMyPatients();
   await applyRdvLink();
-  renderDrugLines();
+  renderMedicationItems();
   renderPreview();
 });
 </script>
